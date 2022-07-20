@@ -13,6 +13,16 @@ isort = "^5.10.1"
 black = "^22.6.0"
 mypy = "^0.971"
 
+[tool.isort]
+profile = "black"
+known_first_party = ["texdown"]
+
+[tool.mypy]
+disallow_any_generics = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
