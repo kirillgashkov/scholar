@@ -7,12 +7,12 @@ import click
 @click.option(
     "--output",
     "-o",
-    type=click.Path(dir_okay=False, writable=True, path_type=Path),
-    help="A PDF file to output to",
+    type=click.Path(writable=True, path_type=Path),
+    help="An output file or directory",
 )
 @click.argument(
     "input",
-    type=click.Path(exists=True, readable=True, path_type=Path),
+    type=click.Path(exists=True, dir_okay=False, readable=True, path_type=Path),
 )
 def texdown(input: Path, output: Path) -> None:
     """Convert the INPUT Markdown file to a PDF."""
