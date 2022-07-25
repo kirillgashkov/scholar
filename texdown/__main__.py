@@ -2,7 +2,9 @@ import click
 
 
 @click.command()
-def texdown() -> None:
+@click.option("--output", "-o", type=click.File("w"))
+@click.argument("input", type=click.File("r"))
+def texdown(output: click.File("w"), input: click.File("r")) -> None:
     pass
 
 
