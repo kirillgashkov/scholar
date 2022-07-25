@@ -2,9 +2,9 @@ import click
 
 
 @click.command()
-@click.option("--output", "-o", type=click.File("w"))
-@click.argument("input", type=click.File("r"))
-def texdown(output: click.File("w"), input: click.File("r")) -> None:
+@click.option("--output", "-o", type=str, help="A PDF file to output to")
+@click.argument("input", type=str, help="A Markdown file to convert")
+def texdown(output: str, input: str) -> None:
     pass
 
 
