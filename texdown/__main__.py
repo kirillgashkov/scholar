@@ -10,6 +10,7 @@ import click
     type=click.Path(writable=True, path_type=Path),
     help="An output file or directory",
 )
+@click.help_option("--help", "-h")
 @click.argument(
     "input",
     type=click.Path(exists=True, dir_okay=False, readable=True, path_type=Path),
