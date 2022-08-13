@@ -1,3 +1,4 @@
+import json
 import shutil
 import subprocess
 import sys
@@ -35,8 +36,6 @@ def texdown(input: Path, output: Path | None) -> None:
     else:
         output_pdf_file = output.absolute()
 
-    click.echo(click.style("Running pandoc", fg="yellow", bold=True))
-
     pandoc_command = [
         "pandoc",
         "--from",
@@ -48,6 +47,10 @@ def texdown(input: Path, output: Path | None) -> None:
         str(generated_latex_file),
         str(input_markdown_file),
     ]
+
+    click.echo(click.style("Running pandoc", fg="yellow", bold=True))
+    click.echo(click.style(json.dumps(pandoc_command, indent=4), bold=True))
+
     subprocess.run(
         pandoc_command,
         stdout=sys.stdout,
@@ -55,8 +58,6 @@ def texdown(input: Path, output: Path | None) -> None:
         cwd=subprocess_workdir,
         check=True,
     )
-
-    click.echo(click.style("Running latexmk", fg="yellow", bold=True))
 
     latexmk_command = [
         "latexmk",
@@ -68,6 +69,10 @@ def texdown(input: Path, output: Path | None) -> None:
         "-output-directory=" + str(subprocess_workdir),
         str(generated_latex_file),
     ]
+
+    click.echo(click.style("Running latexmk", fg="yellow", bold=True))
+    click.echo(click.style(json.dumps(latexmk_command, indent=4), bold=True))
+
     subprocess.run(
         latexmk_command,
         stdout=sys.stdout,
