@@ -2,9 +2,27 @@ import json
 import shutil
 import subprocess
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 import click
+
+
+def make_pandoc_input_format(
+    base_format: str,
+    enabled_extensions: Iterable[str] | None = None,
+    disabled_extensions: Iterable[str] | None = None,
+) -> str:
+    if enabled_extensions is None:
+        enabled_extensions = []
+    if disabled_extensions is None:
+        disabled_extensions = []
+
+    return (
+        base_format
+        + "".join(f"+{extension}" for extension in enabled_extensions)
+        + "".join(f"-{extension}" for extension in disabled_extensions)
+    )
 
 
 @click.command()
@@ -36,10 +54,41 @@ def texdown(input: Path, output: Path | None) -> None:
     else:
         output_pdf_file = output.absolute()
 
+    pandoc_markdown_extensions = [
+        # Required extensions
+        "header_attributes",
+        "fenced_divs",
+        "bracketed_spans",
+        "fenced_code_blocks",
+        "backtick_code_blocks",
+        "fenced_code_attributes",
+        "table_captions",
+        "grid_tables",
+        "pipe_tables",
+        "inline_code_attributes",
+        "raw_tex",
+        "implicit_figures",
+        "link_attributes",
+        "citations",
+        "yaml_metadata_block",
+        "tex_math_dollars",
+        # Commonmark-inspired extensions
+        "escaped_line_breaks",
+        "space_in_atx_header",
+        "startnum",
+        "all_symbols_escapable",
+        "intraword_underscores",
+        "shortcut_reference_links",
+        # GFM-inspired extensions
+        "task_lists",
+        "strikeout",
+    ]
     pandoc_command = [
         "pandoc",
         "--from",
-        "markdown",
+        make_pandoc_input_format(
+            "markdown_strict", enabled_extensions=pandoc_markdown_extensions
+        ),
         "--to",
         "latex",
         "--standalone",
