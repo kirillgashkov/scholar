@@ -37,13 +37,13 @@ def make_pandoc_input_format(
     "input",
     type=click.Path(exists=True, dir_okay=False, readable=True, path_type=Path),
 )
-def texdown(input: Path, output: Path | None) -> None:
+def scholar(input: Path, output: Path | None) -> None:
     """Convert the INPUT Markdown file to PDF."""
 
     if output is None:
         output = Path.cwd()
 
-    subprocess_workdir = Path(".texdown").absolute()
+    subprocess_workdir = Path(".scholar").absolute()
     subprocess_workdir.mkdir(parents=True, exist_ok=True)
 
     input_markdown_file = input.absolute()
@@ -134,4 +134,4 @@ def texdown(input: Path, output: Path | None) -> None:
 
 
 if __name__ == "__main__":
-    texdown()
+    scholar()
