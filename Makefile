@@ -6,7 +6,6 @@ install:
 	poetry install
 .PHONY: install
 
-
 lint:
 	autoflake --check -i -r --remove-all-unused-imports .
 	isort --check --atomic .
