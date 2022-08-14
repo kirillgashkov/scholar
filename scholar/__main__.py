@@ -7,6 +7,8 @@ from pathlib import Path
 
 import click
 
+from scholar.settings import PANDOC_TEMPLATE_FILEPATH
+
 
 def make_pandoc_input_format(
     base_format: str,
@@ -95,6 +97,8 @@ def scholar(input: Path, output: Path | None) -> None:
         "--standalone",
         "--filter",
         "pandoc-crossref",
+        "--template",
+        str(PANDOC_TEMPLATE_FILEPATH),
         "--output",
         str(generated_latex_file),
         str(input_markdown_file),
