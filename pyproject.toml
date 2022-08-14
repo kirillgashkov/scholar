@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "texdown"
+name = "scholar"
 version = "0.1.0"
 description = ""
 authors = ["Kirill Gashkov <kirill@gashkov.com>"]
@@ -16,7 +16,7 @@ mypy = "^0.971"
 
 [tool.isort]
 profile = "black"
-known_first_party = ["texdown"]
+known_first_party = ["scholar"]
 
 [tool.mypy]
 disallow_any_generics = true
