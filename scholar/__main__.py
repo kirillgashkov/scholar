@@ -83,15 +83,18 @@ def scholar(input: Path, output: Path | None) -> None:
         "task_lists",
         "strikeout",
     ]
+    pandoc_input_format = make_pandoc_input_format(
+        "markdown_strict", enabled_extensions=pandoc_markdown_extensions
+    )
     pandoc_command = [
         "pandoc",
         "--from",
-        make_pandoc_input_format(
-            "markdown_strict", enabled_extensions=pandoc_markdown_extensions
-        ),
+        pandoc_input_format,
         "--to",
         "latex",
         "--standalone",
+        "--filter",
+        "pandoc-crossref",
         "--output",
         str(generated_latex_file),
         str(input_markdown_file),
