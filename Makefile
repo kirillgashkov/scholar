@@ -17,4 +17,5 @@ fmt:
 	autoflake -i -r --remove-all-unused-imports .
 	isort --atomic .
 	black .
+	mypy .
 .PHONY: fmt
