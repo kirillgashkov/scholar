@@ -99,6 +99,8 @@ def scholar(input: Path, output: Path | None) -> None:
         "--to",
         pandoc_output_format,
         "--standalone",
+        "--shift-heading-level-by",
+        "-1",
         "--filter",
         "pandoc-crossref",
         "--template",
