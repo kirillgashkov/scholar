@@ -10,7 +10,7 @@ import click
 from scholar.settings import PANDOC_TEMPLATE_FILEPATH
 
 
-def make_pandoc_input_format(
+def make_pandoc_format(
     base_format: str,
     enabled_extensions: Iterable[str] | None = None,
     disabled_extensions: Iterable[str] | None = None,
@@ -85,16 +85,22 @@ def scholar(input: Path, output: Path | None) -> None:
         "task_lists",
         "strikeout",
     ]
-    pandoc_input_format = make_pandoc_input_format(
+    pandoc_input_format = make_pandoc_format(
         "markdown_strict", enabled_extensions=pandoc_markdown_extensions
+    )
+    pandoc_output_format = make_pandoc_format(
+        "latex",
+        disabled_extensions=["auto_identifiers", "smart"],
     )
     pandoc_command = [
         "pandoc",
         "--from",
         pandoc_input_format,
         "--to",
-        "latex",
+        pandoc_output_format,
         "--standalone",
+        "--shift-heading-level-by",
+        "-1",
         "--filter",
         "pandoc-crossref",
         "--template",
