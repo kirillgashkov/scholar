@@ -123,7 +123,7 @@ def scholar(input: Path, output: Path | None) -> None:
         )
     except subprocess.CalledProcessError as e:
         click.echo(click.style("Running pandoc failed", fg="red", bold=True))
-        exit(1)
+        sys.exit(1)
 
     latexmk_command = [
         "latexmk",
@@ -149,7 +149,7 @@ def scholar(input: Path, output: Path | None) -> None:
         )
     except subprocess.CalledProcessError as e:
         click.echo(click.style("Running latexmk failed", fg="red", bold=True))
-        exit(1)
+        sys.exit(1)
 
     shutil.copy(generated_pdf_file, output_pdf_file)
 
