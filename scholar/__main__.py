@@ -85,6 +85,7 @@ def scholar(
         should_generate_pdf = True
 
         pandoc_input_markdown_file = input_file
+        latexmk_input_latex_file = generated_latex_file
 
     if should_generate_latex:
         pandoc_markdown_extensions = [
