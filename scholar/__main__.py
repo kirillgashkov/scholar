@@ -113,13 +113,17 @@ def scholar(input: Path, output: Path | None) -> None:
     click.echo(click.style("Running pandoc", fg="yellow", bold=True))
     click.echo(click.style(json.dumps(pandoc_command, indent=4), bold=True))
 
-    subprocess.run(
-        pandoc_command,
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        cwd=subprocess_workdir,
-        check=True,
-    )
+    try:
+        subprocess.run(
+            pandoc_command,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            cwd=subprocess_workdir,
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        click.echo(click.style("Running pandoc failed", fg="red", bold=True))
+        exit(1)
 
     latexmk_command = [
         "latexmk",
@@ -135,13 +139,17 @@ def scholar(input: Path, output: Path | None) -> None:
     click.echo(click.style("Running latexmk", fg="yellow", bold=True))
     click.echo(click.style(json.dumps(latexmk_command, indent=4), bold=True))
 
-    subprocess.run(
-        latexmk_command,
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        cwd=subprocess_workdir,
-        check=True,
-    )
+    try:
+        subprocess.run(
+            latexmk_command,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            cwd=subprocess_workdir,
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        click.echo(click.style("Running latexmk failed", fg="red", bold=True))
+        exit(1)
 
     shutil.copy(generated_pdf_file, output_pdf_file)
 
