@@ -2,6 +2,7 @@ import json
 import shutil
 import subprocess
 import sys
+import os.path
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -194,10 +195,13 @@ def scholar(
     else:
         output_file = output.absolute()
 
-    if md_to_tex:
-        shutil.copy(generated_latex_file, output_file)
-    else:
-        shutil.copy(generated_pdf_file, output_file)
+    try:
+        if md_to_tex:
+            shutil.copy(generated_latex_file, output_file)
+        else:
+            shutil.copy(generated_pdf_file, output_file)
+    except shutil.SameFileError as f:
+        pass
 
 
 if __name__ == "__main__":
