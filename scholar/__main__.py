@@ -37,12 +37,12 @@ def make_pandoc_format(
 @click.option(
     "--md-to-tex",
     is_flag=True,
-    help="Convert the INPUT Markdown file to TeX.",
+    help="Convert to TeX instead of PDF.",
 )
 @click.option(
     "--tex-to-pdf",
     is_flag=True,
-    help="Convert the INPUT TeX file to PDF.",
+    help="Convert from TeX instead of Markdown.",
 )
 @click.help_option("--help", "-h")
 @click.argument(
