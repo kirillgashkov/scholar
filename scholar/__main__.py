@@ -57,6 +57,11 @@ def scholar(
     if output is None:
         output = Path.cwd()
 
+    if md_to_tex and tex_to_pdf:
+        raise click.UsageError(
+            "Options '--md-to-tex' and '--tex-to-pdf' are mutually exclusive."
+        )
+
     subprocess_workdir = Path(".scholar").absolute()
     subprocess_workdir.mkdir(parents=True, exist_ok=True)
 
