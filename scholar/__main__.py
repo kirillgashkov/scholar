@@ -34,12 +34,24 @@ def make_pandoc_format(
     type=click.Path(writable=True, path_type=Path),
     help="An output file or directory",
 )
+@click.option(
+    "--md-to-tex",
+    is_flag=True,
+    help="Convert the INPUT Markdown file to TeX.",
+)
+@click.option(
+    "--tex-to-pdf",
+    is_flag=True,
+    help="Convert the INPUT TeX file to PDF.",
+)
 @click.help_option("--help", "-h")
 @click.argument(
     "input",
     type=click.Path(exists=True, dir_okay=False, readable=True, path_type=Path),
 )
-def scholar(input: Path, output: Path | None) -> None:
+def scholar(
+    input: Path, output: Path | None, md_to_tex: bool, tex_to_pdf: bool
+) -> None:
     """Convert the INPUT Markdown file to PDF."""
 
     if output is None:
