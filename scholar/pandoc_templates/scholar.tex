@@ -98,6 +98,27 @@
 % two different styles of lists (loose and tight)
 \newcommand{\tightlist}{}
 
+%
+% Headings
+%
+
+\usepackage{titlesec}
+
+\titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
+\titleformat{name=\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+
+\titlespacing{name=\section,numberless}{0pt}{3ex}{2ex}
+\titlespacing{name=\section}{\parindent}{3ex}{2ex}
+\titlespacing{\subsection}{\parindent}{3ex}{2ex}
+\titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
+
+% Start a section on a new page
+\let\oldsection\section
+\def\newsection{\clearpage\oldsection}
+\renewcommand{\section}{\newsection}
+
 
 \begin{document}
 
