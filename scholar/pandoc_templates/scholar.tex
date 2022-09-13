@@ -37,6 +37,38 @@
 \hbadness=10000
 \frenchspacing
 
+%
+% Localization
+%
+
+\usepackage[shorthands=off,english,russian]{babel}
+
+% Set Russian and English alphabets for enumerations
+\makeatletter
+\def\russian@alph#1{\ifcase#1\or  % The letters Ё, З, Й, О, Ч, Ъ, Ы, Ь
+  а\or б\or в\or г\or д\or        % are skipped (see "ГОСТ Р 2.105-2019"
+  е\or ж\or и\or к\or л\or        % p. 6.3.5)
+  м\or н\or п\or р\or с\or
+  т\or у\or ф\or х\or ц\or
+  ш\or щ\or э\or ю\or я\else\@ctrerr\fi}
+\def\russian@Alph#1{\ifcase#1\or
+  А\or Б\or В\or Г\or Д\or
+  Е\or Ж\or И\or К\or Л\or
+  М\or Н\or П\or Р\or С\or
+  Т\or У\or Ф\or Х\or Ц\or
+  Ш\or Щ\or Э\or Ю\or Я\else\@ctrerr\fi}
+\def\@alph#1{\ifcase#1\or         % The letters I, O
+  a\or b\or c\or d\or e\or f\or   % are skipped (see "ГОСТ Р 2.105-2019"
+  g\or h\or j\or k\or l\or m\or   % p. 6.3.5)
+  n\or p\or q\or r\or s\or t\or
+  u\or v\or w\or x\or y\or z\else\@ctrerr\fi}
+\def\@Alph#1{\ifcase#1\or
+  A\or B\or C\or D\or E\or F\or
+  G\or H\or J\or K\or L\or M\or
+  N\or P\or Q\or R\or S\or T\or
+  U\or V\or W\or X\or Y\or Z\else\@ctrerr\fi}
+\makeatother
+
 
 \begin{document}
 
