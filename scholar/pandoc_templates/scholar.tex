@@ -16,7 +16,7 @@
 \setmainfont{XITS}
 
 %
-% Paragraph
+% Paragraphs
 %
 
 \usepackage{indentfirst}
@@ -68,6 +68,35 @@
   N\or P\or Q\or R\or S\or T\or
   U\or V\or W\or X\or Y\or Z\else\@ctrerr\fi}
 \makeatother
+
+%
+% Lists
+%
+
+\usepackage{enumitem}
+
+% Teach "enumitem" package the Russian alphabet for enumerations
+\makeatletter
+\AddEnumerateCounter{\asbuk}{\russian@alph}{щ}
+\AddEnumerateCounter{\Asbuk}{\russian@Alph}{Ж}
+\makeatother
+
+% Set common settings for all lists
+\setlist{labelindent=\parindent,leftmargin=*,listparindent=\parindent,topsep=0pt,partopsep=0pt,parsep=\parskip,itemsep=0pt}
+
+% Set additional settings for unordered lists
+\setlist[itemize]{label={--}}
+
+% Set additional settings for ordered lists
+\setlist[enumerate, 1]{label={\arabic*)}}
+\setlist[enumerate, 2]{label={\asbuk*)}}
+\setlist[enumerate, 3]{label={\arabic*)}}
+\setlist[enumerate, 4]{label={\asbuk*)}}
+
+% Provide the "\tightlist" command for Pandoc. I made it do nothing because
+% I needed all lists to look the same when Pandoc used this command to have
+% two different styles of lists (loose and tight)
+\newcommand{\tightlist}{}
 
 
 \begin{document}
