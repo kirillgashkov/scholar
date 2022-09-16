@@ -199,7 +199,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f846532e72b2b783aaa82a45826e62e6963aba529b26cff4f33648e2af10c6bf"
+content-hash = "8ddecc1ad746438d6b9889286eba2dc64f5aba2b787f2ed347b685a6005034a9"
 
 [metadata.files]
 autoflake = [
