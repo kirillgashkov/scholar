@@ -45,7 +45,7 @@ def main(
         "-o",
         writable=True,
         help="The output file or directory.",
-        show_default="CWD",
+        show_default="CWD",  # type: ignore[arg-type]  # See https://github.com/tiangolo/typer/issues/158
     ),
     convert_to_tex: bool = typer.Option(
         False,
