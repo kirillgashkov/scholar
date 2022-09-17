@@ -15,7 +15,7 @@ class MutuallyExclusiveOptionGroup:
         def callback(ctx: typer.Context, param: typer.CallbackParam, value: T) -> T:
             if self.other_param:
                 raise typer.BadParameter(
-                    f"'{param.name}' is mutually exclusive with '{self.other_param.name}'"
+                    f"Parameter '{param.name}' is mutually exclusive with '{self.other_param.name}'"
                 )
             else:
                 self.other_param = param
