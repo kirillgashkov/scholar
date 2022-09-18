@@ -1,8 +1,11 @@
+import shutil
 from collections.abc import Callable
 from pathlib import Path
 from typing import TypeVar
 
 import typer
+
+from scholar.converters import convert_md_to_tex, convert_tex_to_pdf
 
 T = TypeVar("T")
 
@@ -31,7 +34,7 @@ conversion_mode_callback_for_mutual_exclusivity = (
 
 
 def main(
-    input_path: Path = typer.Argument(
+    input_file: Path = typer.Argument(
         ...,
         metavar="INPUT",
         exists=True,
@@ -39,7 +42,7 @@ def main(
         readable=True,
         help="The input Markdown file.",
     ),
-    output_path: Path = typer.Option(
+    output_file_or_dir: Path = typer.Option(
         Path.cwd(),
         "--output",
         "-o",
@@ -47,22 +50,34 @@ def main(
         help="The output file or directory.",
         show_default="CWD",  # type: ignore[arg-type]  # See https://github.com/tiangolo/typer/issues/158
     ),
-    convert_to_tex: bool = typer.Option(
-        False,
-        "--to-tex",
-        help="Convert to LaTeX instead of PDF.",
-        callback=conversion_mode_callback_for_mutual_exclusivity,
-    ),
     convert_from_tex: bool = typer.Option(
         False,
         "--from-tex",
         help="Convert from LaTeX instead of Markdown.",
         callback=conversion_mode_callback_for_mutual_exclusivity,
     ),
+    convert_to_tex: bool = typer.Option(
+        False,
+        "--to-tex",
+        help="Convert to LaTeX instead of PDF.",
+        callback=conversion_mode_callback_for_mutual_exclusivity,
+    ),
 ) -> None:
     """
     Convert the INPUT Markdown file to PDF.
     """
+
+    if convert_from_tex:
+        tex_file = input_file
+    else:
+        tex_file = convert_md_to_tex(input_file)
+
+    if convert_to_tex:
+        file_to_output = tex_file
+    else:
+        file_to_output = convert_tex_to_pdf(tex_file)
+
+    shutil.copy(file_to_output, output_file_or_dir)
 
 
 if __name__ == "__main__":
