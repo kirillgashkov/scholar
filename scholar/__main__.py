@@ -5,8 +5,6 @@ from typing import TypeVar
 
 import typer
 
-from scholar.converters import convert_md_to_tex, convert_tex_to_pdf
-
 T = TypeVar("T")
 
 
@@ -78,6 +76,14 @@ def main(
         file_to_output = convert_tex_to_pdf(tex_file)
 
     shutil.copy(file_to_output, output_file_or_dir)
+
+
+def convert_md_to_tex(input_file: Path) -> Path:
+    ...
+
+
+def convert_tex_to_pdf(input_file: Path) -> Path:
+    ...
 
 
 if __name__ == "__main__":
