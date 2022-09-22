@@ -1,5 +1,4 @@
 import shutil
-from collections.abc import Callable
 from pathlib import Path
 from typing import TypeVar
 
@@ -13,29 +12,6 @@ from scholar.settings import (
 )
 
 T = TypeVar("T")
-
-
-class MutuallyExclusiveOptionGroup:
-    def __init__(self) -> None:
-        self.other_param: typer.CallbackParam | None = None
-
-    def make_callback(self) -> Callable[[typer.Context, typer.CallbackParam, T], T]:
-        def callback(ctx: typer.Context, param: typer.CallbackParam, value: T) -> T:
-            if self.other_param:
-                raise typer.BadParameter(
-                    f"Parameter '{param.name}' is mutually exclusive with '{self.other_param.name}'"
-                )
-            else:
-                self.other_param = param
-
-            return value
-
-        return callback
-
-
-conversion_mode_callback_for_mutual_exclusivity = (
-    MutuallyExclusiveOptionGroup().make_callback()
-)
 
 
 def main(
@@ -59,13 +35,11 @@ def main(
         False,
         "--from-tex",
         help="Convert from LaTeX instead of Markdown.",
-        callback=conversion_mode_callback_for_mutual_exclusivity,
     ),
     convert_to_tex: bool = typer.Option(
         False,
         "--to-tex",
         help="Convert to LaTeX instead of PDF.",
-        callback=conversion_mode_callback_for_mutual_exclusivity,
     ),
 ) -> None:
     """
