@@ -19,7 +19,7 @@ class MarkdownToLaTeXConverter(Converter):
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
-        output_file = self.cache_dir / input_file.with_suffix("tex").name
+        output_file = self.cache_dir / input_file.with_suffix(".tex").name
 
         try:
             print("[bold yellow]Running pandoc")
@@ -110,7 +110,7 @@ class LaTeXToPDFConverter(Converter):
             print("[bold red]Running latexmk failed")
             raise e
 
-        return output_dir / input_file.with_suffix("pdf").name
+        return output_dir / input_file.with_suffix(".pdf").name
 
     def _run_latexmk(self, input_file: Path, output_dir: Path) -> None:
         subprocess.run(
