@@ -19,15 +19,15 @@ class MarkdownToLatexConverter(Converter):
         markdown_pandoc_input_format: str,
         latex_pandoc_output_format: str,
         latex_pandoc_template_file: Path,
-        pandoc_filters: Iterable[str],
-        pandoc_custom_options: Iterable[str],
+        pandoc_filters: list[str],
+        pandoc_custom_options: list[str],
         cache_dir: Path,
     ) -> None:
         self.markdown_pandoc_input_format = markdown_pandoc_input_format
         self.latex_pandoc_output_format = latex_pandoc_output_format
         self.latex_pandoc_template_file = latex_pandoc_template_file
-        self.pandoc_filters = list(pandoc_filters)
-        self.pandoc_custom_options = list(pandoc_custom_options)
+        self.pandoc_filters = pandoc_filters
+        self.pandoc_custom_options = pandoc_custom_options
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -76,4 +76,40 @@ class MarkdownToLatexConverter(Converter):
 
 
 class LatexToPdfConverter(Converter):
-    ...
+    def __init__(self, latexmk_custom_options: list[str], cache_dir: Path) -> None:
+        self.latexmk_custom_options = latexmk_custom_options
+        self.cache_dir = cache_dir
+
+    def convert(self, input_file: Path) -> Path:
+        output_dir = self.cache_dir
+
+        try:
+            print("[bold yellow]Running latexmk")
+            self._run_latexmk(input_file, output_dir)
+        except subprocess.CalledProcessError as e:
+            print("[bold red]Running latexmk failed")
+            raise e
+
+        return output_dir / input_file.with_suffix("pdf").name
+
+    def _run_latexmk(self, input_file: Path, output_dir: Path):
+        subprocess.run(
+            [
+                "latexmk",
+                # Conversion options
+                "-xelatex",
+                "-bibtex",
+                # Interaction options
+                "-interaction=nonstopmode",
+                "-halt-on-error",
+                "-file-line-error",
+                # Custom options
+                *self.latexmk_custom_options,
+                # I/O options
+                "-output-directory=" + str(output_dir),
+                str(input_file),
+            ],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            check=True,
+        )
