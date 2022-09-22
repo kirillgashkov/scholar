@@ -7,6 +7,7 @@ import typer
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
     MD_TO_TEX_CACHE_DIR,
+    PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_TEMPLATE_FILE,
     TEX_TO_PDF_CACHE_DIR,
 )
@@ -61,7 +62,9 @@ def main(
 
 def convert_md_to_tex(input_file: Path) -> Path:
     MD_TO_TEX_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    converter = MarkdownToLaTeXConverter(PANDOC_TEMPLATE_FILE, MD_TO_TEX_CACHE_DIR)
+    converter = MarkdownToLaTeXConverter(
+        PANDOC_TEMPLATE_FILE, PANDOC_EXTRACTED_RESOURCES_DIR, MD_TO_TEX_CACHE_DIR
+    )
     return converter.convert(input_file)
 
 

@@ -15,8 +15,14 @@ class Converter(ABC):
 
 
 class MarkdownToLaTeXConverter(Converter):
-    def __init__(self, pandoc_template_file: Path, cache_dir: Path) -> None:
+    def __init__(
+        self,
+        pandoc_template_file: Path,
+        pandoc_extracted_resources_dir: Path,
+        cache_dir: Path,
+    ) -> None:
         self.pandoc_template_file = pandoc_template_file
+        self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -83,9 +89,11 @@ class MarkdownToLaTeXConverter(Converter):
                 # Filter options
                 "--filter",
                 "pandoc-crossref",
-                # Custom options
+                # Other options
                 "--shift-heading-level-by",
                 "-1",
+                "--extract-media",
+                self.pandoc_extracted_resources_dir,
                 # I/O options
                 "--output",
                 str(output_file),
@@ -117,7 +125,7 @@ class LaTeXToPDFConverter(Converter):
         subprocess.run(
             [
                 "latexmk",
-                # Conversion options
+                # Pipeline options
                 "-xelatex",
                 "-bibtex",
                 # Interaction options
