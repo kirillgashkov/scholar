@@ -5,6 +5,13 @@ from typing import TypeVar
 
 import typer
 
+from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
+from scholar.settings import (
+    MD_TO_TEX_CACHE_DIR,
+    PANDOC_TEMPLATE_FILE,
+    TEX_TO_PDF_CACHE_DIR,
+)
+
 T = TypeVar("T")
 
 
@@ -79,11 +86,13 @@ def main(
 
 
 def convert_md_to_tex(input_file: Path) -> Path:
-    ...
+    converter = MarkdownToLaTeXConverter(PANDOC_TEMPLATE_FILE, MD_TO_TEX_CACHE_DIR)
+    return converter.convert(input_file)
 
 
 def convert_tex_to_pdf(input_file: Path) -> Path:
-    ...
+    converter = LaTeXToPDFConverter(TEX_TO_PDF_CACHE_DIR)
+    return converter.convert(input_file)
 
 
 if __name__ == "__main__":
