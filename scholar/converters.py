@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from pathlib import Path
 
+import typer
 from rich import print
 
 
@@ -26,7 +27,7 @@ class MarkdownToLaTeXConverter(Converter):
             self._run_pandoc(input_file, output_file)
         except subprocess.CalledProcessError as e:
             print("[bold red]Running pandoc failed")
-            raise e
+            raise typer.Exit(1)
 
         return output_file
 
@@ -108,7 +109,7 @@ class LaTeXToPDFConverter(Converter):
             self._run_latexmk(input_file, output_dir)
         except subprocess.CalledProcessError as e:
             print("[bold red]Running latexmk failed")
-            raise e
+            raise typer.Exit(1)
 
         return output_dir / input_file.with_suffix(".pdf").name
 
