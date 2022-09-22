@@ -60,11 +60,13 @@ def main(
 
 
 def convert_md_to_tex(input_file: Path) -> Path:
+    MD_TO_TEX_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(PANDOC_TEMPLATE_FILE, MD_TO_TEX_CACHE_DIR)
     return converter.convert(input_file)
 
 
 def convert_tex_to_pdf(input_file: Path) -> Path:
+    TEX_TO_PDF_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     converter = LaTeXToPDFConverter(TEX_TO_PDF_CACHE_DIR)
     return converter.convert(input_file)
 
