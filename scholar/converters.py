@@ -13,21 +13,9 @@ class Converter(ABC):
         pass
 
 
-class MarkdownToLatexConverter(Converter):
-    def __init__(
-        self,
-        markdown_pandoc_input_format: str,
-        latex_pandoc_output_format: str,
-        latex_pandoc_template_file: Path,
-        pandoc_filters: list[str],
-        pandoc_custom_options: list[str],
-        cache_dir: Path,
-    ) -> None:
-        self.markdown_pandoc_input_format = markdown_pandoc_input_format
-        self.latex_pandoc_output_format = latex_pandoc_output_format
-        self.latex_pandoc_template_file = latex_pandoc_template_file
-        self.pandoc_filters = pandoc_filters
-        self.pandoc_custom_options = pandoc_custom_options
+class MarkdownToLaTeXConverter(Converter):
+    def __init__(self, pandoc_template_file: Path, cache_dir: Path) -> None:
+        self.pandoc_template_file = pandoc_template_file
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -43,22 +31,60 @@ class MarkdownToLatexConverter(Converter):
         return output_file
 
     def _run_pandoc(self, input_file: Path, output_file: Path) -> None:
+        markdown_pandoc_input_format = _make_pandoc_format(
+            "markdown_strict",
+            enabled_extensions=[
+                # Must-have extensions
+                "header_attributes",
+                "fenced_divs",
+                "bracketed_spans",
+                "fenced_code_blocks",
+                "backtick_code_blocks",
+                "fenced_code_attributes",
+                "table_captions",
+                "grid_tables",
+                "pipe_tables",
+                "inline_code_attributes",
+                "raw_tex",
+                "implicit_figures",
+                "link_attributes",
+                "citations",
+                "yaml_metadata_block",
+                "tex_math_dollars",
+                # Commonmark-inspired extensions
+                "escaped_line_breaks",
+                "space_in_atx_header",
+                "startnum",
+                "all_symbols_escapable",
+                "intraword_underscores",
+                "shortcut_reference_links",
+                # GFM-inspired extensions
+                "task_lists",
+                "strikeout",
+            ],
+        )
+        latex_pandoc_output_format = _make_pandoc_format(
+            "latex", disabled_extensions=["auto_identifiers", "smart"]
+        )
+
         subprocess.run(
             [
                 "pandoc",
                 # Format options
                 "--from",
-                self.markdown_pandoc_input_format,
+                markdown_pandoc_input_format,
                 "--to",
-                self.latex_pandoc_output_format,
+                latex_pandoc_output_format,
                 # Template options
                 "--standalone",
                 "--template",
-                str(self.latex_pandoc_template_file),
+                str(self.pandoc_template_file),
                 # Filter options
-                *self._pandoc_filter_options(),
+                "--filter",
+                "pandoc-crossref",
                 # Custom options
-                *self.pandoc_custom_options,
+                "--shift-heading-level-by",
+                "-1",
                 # I/O options
                 "--output",
                 str(output_file),
@@ -69,15 +95,9 @@ class MarkdownToLatexConverter(Converter):
             check=True,
         )
 
-    def _pandoc_filter_options(self) -> Iterable[str]:
-        for pandoc_filter in self.pandoc_filters:
-            yield "--filter"
-            yield pandoc_filter
 
-
-class LatexToPdfConverter(Converter):
-    def __init__(self, latexmk_custom_options: list[str], cache_dir: Path) -> None:
-        self.latexmk_custom_options = latexmk_custom_options
+class LaTeXToPDFConverter(Converter):
+    def __init__(self, cache_dir: Path) -> None:
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -92,7 +112,7 @@ class LatexToPdfConverter(Converter):
 
         return output_dir / input_file.with_suffix("pdf").name
 
-    def _run_latexmk(self, input_file: Path, output_dir: Path):
+    def _run_latexmk(self, input_file: Path, output_dir: Path) -> None:
         subprocess.run(
             [
                 "latexmk",
@@ -103,8 +123,6 @@ class LatexToPdfConverter(Converter):
                 "-interaction=nonstopmode",
                 "-halt-on-error",
                 "-file-line-error",
-                # Custom options
-                *self.latexmk_custom_options,
                 # I/O options
                 "-output-directory=" + str(output_dir),
                 str(input_file),
@@ -113,3 +131,19 @@ class LatexToPdfConverter(Converter):
             stderr=sys.stderr,
             check=True,
         )
+
+
+def _make_pandoc_format(
+    base_format: str,
+    enabled_extensions: Iterable[str] | None = None,
+    disabled_extensions: Iterable[str] | None = None,
+) -> str:
+    pandoc_format = base_format
+
+    for extension in enabled_extensions or []:
+        pandoc_format = f"{pandoc_format}+{extension}"
+
+    for extension in disabled_extensions or []:
+        pandoc_format = f"{pandoc_format}-{extension}"
+
+    return pandoc_format
