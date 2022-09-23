@@ -121,7 +121,8 @@ class LaTeXToPDFConverter(Converter):
 
         return output_dir / input_file.with_suffix(".pdf").name
 
-    def _run_latexmk(self, input_file: Path, output_dir: Path) -> None:
+    @staticmethod
+    def _run_latexmk(input_file: Path, output_dir: Path) -> None:
         subprocess.run(
             [
                 "latexmk",
