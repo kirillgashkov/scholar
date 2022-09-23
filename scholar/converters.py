@@ -19,10 +19,16 @@ class MarkdownToLaTeXConverter(Converter):
         self,
         pandoc_template_file: Path,
         pandoc_extracted_resources_dir: Path,
+        pandoc_generated_resources_dir: Path,
+        convert_svg_to_pdf_pandoc_filter_file: Path,
         cache_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
+        self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
+        self.convert_svg_to_pdf_pandoc_filter_file = (
+            convert_svg_to_pdf_pandoc_filter_file
+        )
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -89,11 +95,15 @@ class MarkdownToLaTeXConverter(Converter):
                 # Filter options
                 "--filter",
                 "pandoc-crossref",
+                "--filter",
+                str(self.convert_svg_to_pdf_pandoc_filter_file),
                 # Other options
                 "--shift-heading-level-by",
                 "-1",
                 "--extract-media",
-                self.pandoc_extracted_resources_dir,
+                str(self.pandoc_extracted_resources_dir),
+                "--metadata",
+                f"generated_resources_dir={self.pandoc_generated_resources_dir}",
                 # I/O options
                 "--output",
                 str(output_file),
