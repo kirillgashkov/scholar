@@ -62,6 +62,12 @@ def _run_rsvg_convert(input_svg_image_path: Path, output_pdf_image_path: Path) -
             "rsvg-convert",
             "--format",
             "pdf",
+            # Instead of the default 96 dpi use 72 because
+            # tools like Figma use the latter for exports
+            "--dpi-x",
+            "72",
+            "--dpi-y",
+            "72",
             "--output",
             str(output_pdf_image_path),
             str(input_svg_image_path),
