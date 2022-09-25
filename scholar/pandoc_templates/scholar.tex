@@ -125,6 +125,17 @@
 
 \usepackage{graphicx}
 
+% Set the default \includegraphics options (tell LaTeX to not upscale images
+% that fit and to downscale images that don't; downscaled images will keep their
+% aspect ratio and have a width of 3/4 of the current paragraph's width;
+% extremely narrow images will probably overflow, therefore you should set their
+% height manually by overriding the defaults)
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>0.75\linewidth 0.75\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight \textheight\else\Gin@nat@height\fi}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\makeatother
+
 % Set the default figure placement to [H]ERE (i.e. tell LaTeX to never place
 % figures before the paragraphs preceding them in the source code)
 \usepackage{float}
