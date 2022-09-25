@@ -119,6 +119,19 @@
 \def\newsection{\clearpage\oldsection}
 \renewcommand{\section}{\newsection}
 
+%
+% Figures
+%
+
+\usepackage{graphicx}
+
+% Set the default figure placement to [H]ERE (i.e. tell LaTeX to never place
+% figures before the paragraphs preceding them in the source code)
+\usepackage{float}
+\makeatletter
+\def\fps@figure{H}
+\makeatother
+
 
 \begin{document}
 
