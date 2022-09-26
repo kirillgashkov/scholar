@@ -143,6 +143,24 @@
 \def\fps@figure{H}
 \makeatother
 
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{custom}{ --- }
+\captionsetup[figure]{
+  format=plain,
+  labelformat=simple,
+  labelsep=custom,
+  justification=centering,
+  width=0.75\linewidth, % WTF: If \captionsetup didn't have the [figure] option, the \linewidth would be smaller than it should be
+  position=below,
+  aboveskip=0.5\baselineskip,
+  belowskip=-0.5\baselineskip, % WTF: Without this option there is too much vertical space between the caption and the following text
+}
+
+% Set the vertical spacing before and after figures to the height of a line
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\floatsep}{\baselineskip}
+\setlength{\intextsep}{\baselineskip}
+
 
 \begin{document}
 
