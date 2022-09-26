@@ -125,7 +125,7 @@
 % Set the vertical spacing before and after floats. '\baselineskip - 1.6ex' is
 % supposed to cancel out the removed vertical space from the bottom of floats
 \setlength{\textfloatsep}{\dimexpr \baselineskip - 1.6ex + \baselineskip \relax} % WTF: For some reason in contrary to [h]ere floats [t]op floats don't have extra vertical spacing between the caption and the text, but since we remove this extra spacing for all floats during \captionsetup, we need to return the removed spacing for [t]op floats here
-\setlength{\floatsep}{\dimexpr \baselineskip - 1.6ex + \baselineskip \relax} % WTF: This length controls the spacing between two subsequent [t]op (or [b]ottom) floats. Because during \captionsetup we remove some of the vertical spacing around captions to make [h]ere floats look better with the adjacent main text and because there is no main text between two subsequent floats, we need to return the removed spacing here
+\setlength{\floatsep}{\dimexpr \baselineskip - 1.6ex + 1.2\baselineskip \relax} % WTF: This length controls the spacing between two subsequent [t]op (or [b]ottom) floats. Because during \captionsetup we remove some of the vertical spacing around captions to make [h]ere floats look better with the adjacent main text and because there is no main text between two subsequent floats, we need to return the removed spacing here
 \setlength{\intextsep}{\baselineskip}
 
 % Make floats always appear after their definition
