@@ -178,9 +178,13 @@
   justification=centering,
   width=0.75\linewidth, % WTF: If \captionsetup didn't have the [figure] option, the \linewidth would be smaller than it should be
   position=below,
-  aboveskip=0.5\baselineskip,
-  belowskip=-0.5\baselineskip, % WTF: Without this option there is too much vertical space between the caption and the following text
+  skip=0.5\baselineskip,
 }
+
+% Reduce the vertical space below the figure
+% (see https://tex.stackexchange.com/q/32614)
+\RequirePackage{etoolbox}
+\AfterEndEnvironment{figure}{\kern \dimexpr -\baselineskip + 1.6ex \relax}
 
 
 \begin{document}
