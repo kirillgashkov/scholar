@@ -122,11 +122,18 @@
 % Floats (figures, tables, listings)
 %
 
-% Set the vertical spacing before and after
-% floats to the current height of a line
-\setlength{\textfloatsep}{\baselineskip}
-\setlength{\floatsep}{\baselineskip}
-\setlength{\intextsep}{\baselineskip}
+% Remove the extra vertical space from the bottom of floats
+% (see https://tex.stackexchange.com/q/32614)
+\RequirePackage{etoolbox}
+\AfterEndEnvironment{figure}{\kern \dimexpr -\baselineskip + 1.6ex \relax}
+% \AfterEndEnvironment{table}{\kern \dimexpr -\baselineskip + 1.6ex \relax} % FIXME: Probably uncomment
+% \AfterEndEnvironment{listing}{\kern \dimexpr -\baselineskip + 1.6ex \relax} % FIXME: Probably uncomment
+
+% Set the vertical spacing before and after floats. '\baselineskip - 1.6ex' is
+% supposed to cancel out the removed vertical space from the bottom of floats
+\setlength{\textfloatsep}{\dimexpr \baselineskip - 1.6ex + 0.5\baselineskip \relax}
+\setlength{\floatsep}{\dimexpr \baselineskip - 1.6ex + 0.5\baselineskip \relax}
+\setlength{\intextsep}{\dimexpr \baselineskip - 1.6ex + 0.5\baselineskip \relax}
 
 % Make floats always appear after their definition
 \usepackage{flafter}
@@ -180,11 +187,6 @@
   position=below,
   skip=0.5\baselineskip,
 }
-
-% Reduce the vertical space below the figure
-% (see https://tex.stackexchange.com/q/32614)
-\RequirePackage{etoolbox}
-\AfterEndEnvironment{figure}{\kern \dimexpr -\baselineskip + 1.6ex \relax}
 
 
 \begin{document}
