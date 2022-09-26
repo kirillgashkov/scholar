@@ -122,10 +122,10 @@
 % Floats (figures, tables, listings)
 %
 
-% Set the vertical spacing before and after
-% floats to the current height of a line
-\setlength{\textfloatsep}{\baselineskip}
-\setlength{\floatsep}{\baselineskip}
+% Set the vertical spacing before and after floats. '\baselineskip - 1.6ex' is
+% supposed to cancel out the removed vertical space from the bottom of floats
+\setlength{\textfloatsep}{\dimexpr \baselineskip - 1.6ex + \baselineskip \relax} % WTF: For some reason in contrary to [h]ere floats [t]op floats don't have extra vertical spacing between the caption and the text, but since we remove this extra spacing for all floats during \captionsetup, we need to return the removed spacing for [t]op floats here
+\setlength{\floatsep}{\dimexpr \baselineskip - 1.6ex + 1.2\baselineskip \relax} % WTF: This length controls the spacing between two subsequent [t]op (or [b]ottom) floats. Because during \captionsetup we remove some of the vertical spacing around captions to make [h]ere floats look better with the adjacent main text and because there is no main text between two subsequent floats, we need to return the removed spacing here
 \setlength{\intextsep}{\baselineskip}
 
 % Make floats always appear after their definition
@@ -156,9 +156,10 @@
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 \makeatother
 
-% FIXME: Update the comment
-% Set the default figure placement to [H]ERE (i.e. tell LaTeX to never place
-% figures before the paragraphs preceding them in the source code)
+% Allow figures to be placed [h]ere, at [t]op, [b]ottom or on a special [p]age
+% (where exactly to put them is up to LaTeX's float algorithm) (also the
+% exclamation mark (!) causes LaTeX to lift some of its restrictions regarding
+% the float placement)
 \usepackage{float}
 \makeatletter
 \def\fps@figure{htbp!}
@@ -179,7 +180,7 @@
   width=0.75\linewidth, % WTF: If \captionsetup didn't have the [figure] option, the \linewidth would be smaller than it should be
   position=below,
   aboveskip=0.5\baselineskip,
-  belowskip=-0.5\baselineskip, % WTF: Without this option there is too much vertical space between the caption and the following text
+  belowskip=\dimexpr -\baselineskip + 1.6ex \relax, % WTF: Remove the extra vertical space from the bottom of figures (see https://tex.stackexchange.com/q/32614)
 }
 
 
