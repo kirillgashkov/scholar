@@ -116,7 +116,7 @@
 
 % Start a section on a new page
 \RequirePackage{etoolbox}
-\pretocmd{\section}{\clearpage}{}{}
+\pretocmd{\section}{\clearpage}{}{\GenericError{}{Command patching failed}{}{}}
 
 %
 % Figures, tables, listings
