@@ -114,10 +114,6 @@
 \titlespacing{\subsection}{\parindent}{3ex}{2ex}
 \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
 
-% Start a section on a new page
-\RequirePackage{etoolbox}
-\pretocmd{\section}{\clearpage}{}{\GenericError{}{Command patching failed}{}{}}
-
 %
 % Floats (figures, tables, listings)
 %
@@ -131,11 +127,60 @@
 % Make floats always appear after their definition
 \usepackage{flafter}
 
-% Prevent floats from crossing their section,
-% subsection, or subsubsection divisions
+% Set restrictions for the float-placing algorithm
+% (small floats aren't allowed on float-only pages)
+\renewcommand{\topfraction}{0.75}
+\renewcommand{\floatpagefraction}{0.70}
+
+% Prevent floats from crossing section divisions and start each section on a new
+% page.
+%
+% Actually calling \clearpage is enough to cause the unplaced floats to be
+% placed but below we also call \FloatBarrier from the "placeins" package, all
+% in attempt to make the final output look better. The problem lies in
+% float-only pages and how \clearpage forces the floats on them. Without the
+% sophisticated mechanism below you can find yourself with pages consisting of 1
+% tiny float in the center which is definitely unsatisfactory.
+%
+% When a new section is about to start, we first call \FloatBarrier. It "nicely"
+% asks LaTeX's float algorithm to place the floats it has with (often with than
+% without) respect to restrictions. A tiny figure wouldn't be placed just yet
+% but a huge figure would and it would be vertically centered. After
+% \FloatBarrier did its job we temporary change the way floats on float-only
+% pages are displayed: floats on these pages will appear at the top, not in the
+% center. Then we force the rest of the floats to be placed by calling
+% \clearpage.
+%
+% In rare cases, for example when you have a tiny figure and a huge figure at
+% the end of a section, you still can get unsatisfactory results like the ones
+% described above but you can fix that if you play with figure sizes a little.
+% Generally this mechanism shouldn't cause any problems.
 \usepackage{placeins}
 \RequirePackage{etoolbox}
-\pretocmd{\section}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+\makeatletter
+\newlength{\old@fptop}
+\newlength{\old@fpsep}
+\newlength{\old@fpbot}
+\pretocmd{\section}{%
+  \FloatBarrier%
+  % Save original values
+  \setlength{\old@fptop}{\@fptop}%
+  \setlength{\old@fpsep}{\@fpsep}%
+  \setlength{\old@fpbot}{\@fpbot}%
+  % Push floats on float-only pages to the top
+  \setlength{\@fptop}{0pt}%
+  \setlength{\@fpsep}{1.2\baselineskip}%
+  \setlength{\@fpbot}{0pt plus 1fil}%
+  \clearpage%
+  % Restore original values
+  \setlength{\@fptop}{\old@fptop}%
+  \setlength{\@fpsep}{\old@fpsep}%
+  \setlength{\@fpbot}{\old@fpbot}%
+}{}{\GenericError{}{Command patching failed}{}{}}
+\makeatother
+
+% Also prevent floats from crossing subsection and subsubsection divisions
+% but since we don't call \clearpage for them, the handling is a bit easier
 \pretocmd{\subsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
 \pretocmd{\subsubsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
 
