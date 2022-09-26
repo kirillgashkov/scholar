@@ -115,20 +115,29 @@
 \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
 
 % Start a section on a new page
-\let\oldsection\section
-\def\newsection{\clearpage\oldsection}
-\renewcommand{\section}{\newsection}
-
+\RequirePackage{etoolbox}
+\pretocmd{\section}{\clearpage}{}{\GenericError{}{Command patching failed}{}{}}
 
 %
-% Figures, tables, listings
+% Floats (figures, tables, listings)
 %
 
-% Set the vertical spacing before and after figures, tables,
-% listings to the current height of a line
+% Set the vertical spacing before and after
+% floats to the current height of a line
 \setlength{\textfloatsep}{\baselineskip}
 \setlength{\floatsep}{\baselineskip}
 \setlength{\intextsep}{\baselineskip}
+
+% Make floats always appear after their definition
+\usepackage{flafter}
+
+% Prevent floats from crossing their section,
+% subsection, or subsubsection divisions
+\usepackage{placeins}
+\RequirePackage{etoolbox}
+\pretocmd{\section}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+\pretocmd{\subsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+\pretocmd{\subsubsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
 
 %
 % Figures
@@ -147,11 +156,12 @@
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 \makeatother
 
+% FIXME: Update the comment
 % Set the default figure placement to [H]ERE (i.e. tell LaTeX to never place
 % figures before the paragraphs preceding them in the source code)
 \usepackage{float}
 \makeatletter
-\def\fps@figure{H}
+\def\fps@figure{htbp!}
 \makeatother
 
 \RequirePackage{babel}
