@@ -115,10 +115,8 @@
 \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
 
 % Start a section on a new page
-\let\oldsection\section
-\def\newsection{\clearpage\oldsection}
-\renewcommand{\section}{\newsection}
-
+\RequirePackage{etoolbox}
+\pretocmd{\section}{\clearpage}{}{}
 
 %
 % Figures, tables, listings
