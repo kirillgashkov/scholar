@@ -128,6 +128,17 @@
 \setlength{\floatsep}{\baselineskip}
 \setlength{\intextsep}{\baselineskip}
 
+% Make floats always appear after their definition
+\usepackage{flafter}
+
+% Prevent floats from crossing their section,
+% subsection, or subsubsection divisions
+\usepackage{placeins}
+\RequirePackage{etoolbox}
+\pretocmd{\section}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+\pretocmd{\subsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+\pretocmd{\subsubsection}{\FloatBarrier}{}{\GenericError{}{Command patching failed}{}{}}
+
 %
 % Figures
 %
