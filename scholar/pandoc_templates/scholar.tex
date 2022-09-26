@@ -156,9 +156,10 @@
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
 \makeatother
 
-% FIXME: Update the comment
-% Set the default figure placement to [H]ERE (i.e. tell LaTeX to never place
-% figures before the paragraphs preceding them in the source code)
+% Allow figures to be placed [h]ere, at [t]op, [b]ottom or on a special [p]age
+% (where exactly to put them is up to LaTeX's float algorithm) (also the
+% exclamation mark (!) causes LaTeX to lift some of its restrictions regarding
+% the float placement)
 \usepackage{float}
 \makeatletter
 \def\fps@figure{htbp!}
