@@ -119,6 +119,17 @@
 \def\newsection{\clearpage\oldsection}
 \renewcommand{\section}{\newsection}
 
+
+%
+% Figures, tables, listings
+%
+
+% Set the vertical spacing before and after figures, tables,
+% listings to the current height of a line
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\floatsep}{\baselineskip}
+\setlength{\intextsep}{\baselineskip}
+
 %
 % Figures
 %
@@ -143,6 +154,11 @@
 \def\fps@figure{H}
 \makeatother
 
+\RequirePackage{babel}
+\addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
+
+\counterwithin{figure}{section}
+
 \usepackage{caption}
 \DeclareCaptionLabelSeparator{custom}{ --- }
 \captionsetup[figure]{
@@ -155,16 +171,6 @@
   aboveskip=0.5\baselineskip,
   belowskip=-0.5\baselineskip, % WTF: Without this option there is too much vertical space between the caption and the following text
 }
-
-\RequirePackage{babel}
-\addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
-
-% Set the vertical spacing before and after figures to the height of a line
-\setlength{\textfloatsep}{\baselineskip}
-\setlength{\floatsep}{\baselineskip}
-\setlength{\intextsep}{\baselineskip}
-
-\counterwithin{figure}{section}
 
 
 \begin{document}
