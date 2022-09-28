@@ -112,15 +112,19 @@
 
 \usepackage{titlesec}
 
-\titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
-\titleformat{name=\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
 \titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}
 \titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+\titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
+\titleformat{name=\subsection,numberless}[block]{\filcenter\large\bfseries}{}{0pt}{}
+\titleformat{name=\subsubsection,numberless}[block]{\filcenter\normalsize\bfseries}{}{0pt}{}
 
-\titlespacing{name=\section,numberless}{0pt}{3ex}{2ex}
-\titlespacing{name=\section}{\parindent}{3ex}{2ex}
+\titlespacing{\section}{\parindent}{3ex}{2ex}
 \titlespacing{\subsection}{\parindent}{3ex}{2ex}
 \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
+\titlespacing{name=\section,numberless}{0pt}{3ex}{2ex}
+\titlespacing{name=\subsection,numberless}{0pt}{3ex}{2ex}
+\titlespacing{name=\subsubsection,numberless}{0pt}{3ex}{2ex}
 
 %
 % Floats (figures, tables, listings)
