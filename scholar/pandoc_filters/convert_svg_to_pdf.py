@@ -19,7 +19,9 @@ def convert_svg_to_pdf(
     if object_type != "Image":
         return None
 
-    image_attributes, image_caption, [image_path_as_str, image_id] = object_value
+    # WTF: 'image_extra' is actually an HTML image title but since
+    # it doesn't do anything useful for LaTeX output, we neglect it
+    image_attrs, image_caption, [image_path_as_str, image_extra] = object_value
     image_path = Path(image_path_as_str)
 
     if image_path.suffix.lower() != ".svg":
@@ -38,7 +40,7 @@ def convert_svg_to_pdf(
         filter_generated_resources_dirpath.mkdir(parents=True, exist_ok=True)
         _run_rsvg_convert(svg_image_path, pdf_image_path)
 
-    return Image(image_attributes, image_caption, [str(pdf_image_path), image_id])
+    return Image(image_attrs, image_caption, [str(pdf_image_path), image_extra])
 
 
 def _get_filter_generated_resources_dirpath(document_metadata: dict[str, Any]) -> Path:
