@@ -241,6 +241,23 @@
   belowskip=\dimexpr -\baselineskip + 1.6ex \relax, % WTF: Remove the extra vertical space from the bottom of figures (see https://tex.stackexchange.com/q/32614)
 }
 
+%
+% Tables
+%
+
+% Add the table support code from the default Pandoc template
+\usepackage{longtable,booktabs,array}
+\usepackage{multirow}
+\usepackage{calc}
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+
+
+
 
 \begin{document}
 
