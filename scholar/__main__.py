@@ -60,7 +60,10 @@ def main(
     else:
         file_to_output = convert_tex_to_pdf(tex_file)
 
-    shutil.copy(file_to_output, output_file_or_dir)
+    try:
+        shutil.copy(file_to_output, output_file_or_dir)
+    except shutil.SameFileError:
+        pass
 
 
 def convert_md_to_tex(input_file: Path) -> Path:
