@@ -11,6 +11,7 @@ PANDOC_TEMPLATE_FILE = PANDOC_TEMPLATES_DIR / "scholar.tex"
 PANDOC_FILTERS_DIR = ROOT / "pandoc_filters"
 
 CONVERT_SVG_TO_PDF_PANDOC_FILTER_FILE = PANDOC_FILTERS_DIR / "convert_svg_to_pdf.py"
+MAKE_LATEX_TABLE_PANDOC_FILTER_FILE = PANDOC_FILTERS_DIR / "make_latex_table.py"
 
 
 CACHE_DIR = Path.cwd() / ".scholar"
