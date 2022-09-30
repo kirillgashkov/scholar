@@ -171,7 +171,7 @@
 % See https://tex.stackexchange.com/a/39020 to find more about LaTeX's
 % float-placing algorithm.
 \usepackage{placeins}
-\RequirePackage{etoolbox}
+\usepackage{etoolbox}
 \makeatletter
 \newlength{\old@fptop}
 \newlength{\old@fpsep}
@@ -223,7 +223,7 @@
 \def\fps@figure{htbp}
 \makeatother
 
-\RequirePackage{babel}
+\usepackage{babel}
 \addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
 
 \counterwithin{figure}{section}
