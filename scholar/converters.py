@@ -21,7 +21,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
-        make_latex_table_pandoc_json_filter_file: Path,
+        make_latex_table_pandoc_lua_filter_file: Path,
         cache_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
@@ -30,8 +30,8 @@ class MarkdownToLaTeXConverter(Converter):
         self.convert_svg_to_pdf_pandoc_json_filter_file = (
             convert_svg_to_pdf_pandoc_json_filter_file
         )
-        self.make_latex_table_pandoc_json_filter_file = (
-            make_latex_table_pandoc_json_filter_file
+        self.make_latex_table_pandoc_lua_filter_file = (
+            make_latex_table_pandoc_lua_filter_file
         )
         self.cache_dir = cache_dir
 
@@ -101,8 +101,8 @@ class MarkdownToLaTeXConverter(Converter):
                 "pandoc-crossref",
                 "--filter",
                 str(self.convert_svg_to_pdf_pandoc_json_filter_file),
-                "--filter",
-                str(self.make_latex_table_pandoc_json_filter_file),
+                "--lua-filter",
+                str(self.make_latex_table_pandoc_lua_filter_file),
                 # Other options
                 "--shift-heading-level-by",
                 "-1",

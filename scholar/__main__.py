@@ -7,7 +7,7 @@ import typer
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
     CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
-    MAKE_LATEX_TABLE_PANDOC_JSON_FILTER_FILE,
+    MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
     MD_TO_TEX_CACHE_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
@@ -73,7 +73,7 @@ def convert_md_to_tex(input_file: Path) -> Path:
         PANDOC_EXTRACTED_RESOURCES_DIR,
         PANDOC_GENERATED_RESOURCES_DIR,
         CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
-        MAKE_LATEX_TABLE_PANDOC_JSON_FILTER_FILE,
+        MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
         MD_TO_TEX_CACHE_DIR,
     )
     return converter.convert(input_file)
