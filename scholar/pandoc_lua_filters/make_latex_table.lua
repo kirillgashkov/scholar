@@ -13,7 +13,7 @@ local function make_table_cell_as_inlines(cell)
 end
 
 
-local function make_table_row_as_block(cells)
+local function table_row_to_block(cells)
     local inlines = pandoc.Inlines({})
 
     inlines:extend(make_table_cell_as_inlines(cells[1]))
@@ -53,17 +53,13 @@ end
 local function table_body_to_blocks()
     return pandoc.Blocks({
         -- FIXME: Replace dummy
-        make_table_row_as_block({
+        table_row_to_block({ -- FIXME: Use {cells = {...}} to mock a table row
             {contents = {pandoc.Plain({pandoc.Str("a")})}},
             {contents = {pandoc.Plain({pandoc.Str("b")})}}
         }),
-        make_table_row_as_block({
+        table_row_to_block({ -- FIXME: Use {cells = {...}} to mock a table row
             {contents = {pandoc.Plain({pandoc.Str("c")})}},
             {contents = {pandoc.Plain({pandoc.Str("d")})}}
-        }),
-        make_table_row_as_block({
-            {contents = {pandoc.Plain({pandoc.Str("e")})}},
-            {contents = {pandoc.Plain({pandoc.Str("f")})}}
         }),
     })
 end
