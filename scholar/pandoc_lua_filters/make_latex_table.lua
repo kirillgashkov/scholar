@@ -42,26 +42,26 @@ local function table_row_to_block(row_el)
 end
 
 
-local function table_spec_to_latex()
+local function table_colspecs_to_latex(colspec_els)
     return "{c c}" -- FIXME: Replace dummy
 end
 
 
-local function table_head_to_blocks()
+local function table_head_to_blocks(head_el, caption_el)
     return pandoc.Blocks({
         -- FIXME: ...
     })
 end
 
 
-local function table_foot_to_blocks()
+local function table_foot_to_blocks(foot_el)
     return pandoc.Blocks({
         -- FIXME: ...
     })
 end
 
 
-local function table_body_to_blocks()
+local function table_bodies_to_blocks(body_els)
     return pandoc.Blocks({
         -- FIXME: Replace dummy
         table_row_to_block({cells = {
@@ -90,11 +90,16 @@ local function table_to_blocks(table_el)
 
     local blocks = pandoc.Blocks({})
 
-    -- FIXME: Pass arguments to the builder functions
-    blocks:insert(pandoc.RawBlock("latex", "\\begin{longtable}" .. table_spec_to_latex()))
-    blocks:extend(table_head_to_blocks())
-    blocks:extend(table_foot_to_blocks())
-    blocks:extend(table_body_to_blocks())
+    -- FIXME: What if
+    -- 1. table_el.colspecs is missing/inaccessible?
+    -- 2. table_el.head is missing/inaccessible?
+    -- 3. table_el.caption is missing/inaccessible?
+    -- 4. table_el.foot is missing/inaccessible?
+    -- 5. table_el.bodies is missing/inaccessible?
+    blocks:insert(pandoc.RawBlock("latex", "\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs)))
+    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption))
+    blocks:extend(table_foot_to_blocks(table_el.foot))
+    blocks:extend(table_bodies_to_blocks(table_el.bodies))
     blocks:insert(pandoc.RawBlock("latex", "\\end{longtable}"))
 
     return blocks
