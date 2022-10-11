@@ -31,26 +31,26 @@ local function make_table_row_as_block(cells)
 end
 
 
-local function make_table_spec_as_string()
+local function table_spec_to_latex()
     return "{c c}" -- FIXME: Replace dummy
 end
 
 
-local function make_table_head_as_blocks()
+local function table_head_to_blocks()
     return pandoc.Blocks({
         -- FIXME: ...
     })
 end
 
 
-local function make_table_foot_as_blocks()
+local function table_foot_to_blocks()
     return pandoc.Blocks({
         -- FIXME: ...
     })
 end
 
 
-local function make_table_body_as_blocks()
+local function table_body_to_blocks()
     return pandoc.Blocks({
         -- FIXME: Replace dummy
         make_table_row_as_block({
@@ -81,10 +81,10 @@ local function table_to_blocks(table_el)
     local blocks = pandoc.Blocks({})
 
     -- FIXME: Pass arguments to the builder functions
-    blocks:insert(pandoc.RawBlock("latex", "\\begin{longtable}" .. make_table_spec_as_string()))
-    blocks:extend(make_table_head_as_blocks())
-    blocks:extend(make_table_foot_as_blocks())
-    blocks:extend(make_table_body_as_blocks())
+    blocks:insert(pandoc.RawBlock("latex", "\\begin{longtable}" .. table_spec_to_latex()))
+    blocks:extend(table_head_to_blocks())
+    blocks:extend(table_foot_to_blocks())
+    blocks:extend(table_body_to_blocks())
     blocks:insert(pandoc.RawBlock("latex", "\\end{longtable}"))
 
     return blocks
