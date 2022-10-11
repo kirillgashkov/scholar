@@ -70,6 +70,14 @@ end
 
 
 local function make_table_as_blocks(table_element)
+    --[[ Temporary debug prints
+    print("--------------------")
+    for k, v in pairs(table_element) do
+        print(k, v)
+    end
+    print("--------------------")
+    --]]
+
     local blocks = pandoc.Blocks({})
 
     -- FIXME: Pass arguments to the builder functions
