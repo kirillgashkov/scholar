@@ -1,14 +1,16 @@
-local function make_table_cell_as_inlines(cell)
+local function table_cell_to_inlines(cell)
     local inlines = pandoc.Inlines({})
 
     if #cell.contents == 1 and cell.contents[1].tag == "Plain" then
         inlines = cell.contents[1].content -- "Plain.content" is "Inlines"
     else
-        warn("make_table_cell_as_inlines: cell.contents is not a simple text block")
-        -- TODO: Consider using pandoc.LineBreak as separator
+        warn("table_cell_to_inlines: cell.contents is not a simple text block")
+        -- TODO: Consider using pandoc.LineBreak as a separator
         inlines = pandoc.utils.blocks_to_inlines(cell.contents)
     end
 
+    -- TODO: Consider returning a single pandoc.Span
+    -- inline (check how Pandoc handles this)
     return inlines
 end
 
@@ -16,12 +18,12 @@ end
 local function table_row_to_block(cells)
     local inlines = pandoc.Inlines({})
 
-    inlines:extend(make_table_cell_as_inlines(cells[1]))
+    inlines:extend(table_cell_to_inlines(cells[1]))
     for i = 2, #cells do
         inlines:insert(pandoc.Space())
         inlines:insert(pandoc.RawInline("latex", "&"))
         inlines:insert(pandoc.Space())
-        inlines:extend(make_table_cell_as_inlines(cells[i]))
+        inlines:extend(table_cell_to_inlines(cells[i]))
     end
     inlines:insert(pandoc.RawInline("latex", "\\\\"))
 
