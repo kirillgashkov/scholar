@@ -15,15 +15,16 @@ local function table_cell_to_inlines(cell)
 end
 
 
-local function table_row_to_block(cells)
+local function table_row_to_block(table_row_el)
     local inlines = pandoc.Inlines({})
 
-    inlines:extend(table_cell_to_inlines(cells[1]))
-    for i = 2, #cells do
+    -- FIXME: What if table_row_el.cells is empty or missing?
+    inlines:extend(table_cell_to_inlines(table_row_el.cells[1]))
+    for i = 2, #table_row_el.cells do
         inlines:insert(pandoc.Space())
         inlines:insert(pandoc.RawInline("latex", "&"))
         inlines:insert(pandoc.Space())
-        inlines:extend(table_cell_to_inlines(cells[i]))
+        inlines:extend(table_cell_to_inlines(table_row_el.cells[i]))
     end
     inlines:insert(pandoc.RawInline("latex", "\\\\"))
 
@@ -55,25 +56,28 @@ end
 local function table_body_to_blocks()
     return pandoc.Blocks({
         -- FIXME: Replace dummy
-        table_row_to_block({ -- FIXME: Use {cells = {...}} to mock a table row
+        table_row_to_block({cells = {
             {contents = {pandoc.Plain({pandoc.Str("a")})}},
             {contents = {pandoc.Plain({pandoc.Str("b")})}}
-        }),
-        table_row_to_block({ -- FIXME: Use {cells = {...}} to mock a table row
+        }}),
+        table_row_to_block({cells = {
             {contents = {pandoc.Plain({pandoc.Str("c")})}},
             {contents = {pandoc.Plain({pandoc.Str("d")})}}
-        }),
+        }}),
     })
 end
 
 
 local function table_to_blocks(table_el)
     --[[ Temporary debug prints
-    print("--------------------")
-    for k, v in pairs(table_element) do
-        print(k, v)
+    if pandoc.utils.stringify(table_el) ~= "ti" then -- If not the aux table
+        print("--------------------")
+        -- "table_el.bodies[1].body[1]" selects a table row
+        for k, v in pairs(table_el.bodies[1].body[1]) do
+            print(k, v)
+        end
+        print("--------------------")
     end
-    print("--------------------")
     --]]
 
     local blocks = pandoc.Blocks({})
