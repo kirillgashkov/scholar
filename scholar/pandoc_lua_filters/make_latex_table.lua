@@ -1,12 +1,17 @@
-local function table_cell_to_inlines(cell)
+local function table_cell_to_inlines(cell_el)
     local inlines = pandoc.Inlines({})
 
-    if #cell.contents == 1 and cell.contents[1].tag == "Plain" then
-        inlines = cell.contents[1].content -- "Plain.content" is "Inlines"
+    -- FIXME: What if
+    -- 1. cell_el.contents is missing/inaccessible?
+    -- 2. cell_el.contents[1] is missing/inaccessible?
+    -- 3. cell_el.contents[1].tag is missing/inaccessible?
+    -- 4. cell_el.contents[1].content is missing/inaccessible?
+    if #cell_el.contents == 1 and cell_el.contents[1].tag == "Plain" then
+        inlines = cell_el.contents[1].content -- "Plain.content" is "Inlines"
     else
         warn("table_cell_to_inlines: cell.contents is not a simple text block")
         -- TODO: Consider using pandoc.LineBreak as a separator
-        inlines = pandoc.utils.blocks_to_inlines(cell.contents)
+        inlines = pandoc.utils.blocks_to_inlines(cell_el.contents)
     end
 
     -- TODO: Consider returning a single pandoc.Span
@@ -15,16 +20,19 @@ local function table_cell_to_inlines(cell)
 end
 
 
-local function table_row_to_block(table_row_el)
+local function table_row_to_block(row_el)
     local inlines = pandoc.Inlines({})
 
-    -- FIXME: What if table_row_el.cells is empty or missing?
-    inlines:extend(table_cell_to_inlines(table_row_el.cells[1]))
-    for i = 2, #table_row_el.cells do
+    -- FIXME: What if
+    -- 1. row_el.cells is missing/inaccessible?
+    -- 2. row_el.cells[1] is missing/inaccessible (e.g. list is empty)?
+    -- 3. row_el.cells[i] is missing/inaccessible?
+    inlines:extend(table_cell_to_inlines(row_el.cells[1]))
+    for i = 2, #row_el.cells do
         inlines:insert(pandoc.Space())
         inlines:insert(pandoc.RawInline("latex", "&"))
         inlines:insert(pandoc.Space())
-        inlines:extend(table_cell_to_inlines(table_row_el.cells[i]))
+        inlines:extend(table_cell_to_inlines(row_el.cells[i]))
     end
     inlines:insert(pandoc.RawInline("latex", "\\\\"))
 
