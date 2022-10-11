@@ -69,7 +69,7 @@ local function make_table_body_as_blocks()
 end
 
 
-local function make_table_as_blocks(table_element)
+local function table_to_blocks(table_el)
     --[[ Temporary debug prints
     print("--------------------")
     for k, v in pairs(table_element) do
@@ -94,7 +94,7 @@ end
 if FORMAT:match("latex") then
     return {
         {
-            Table = make_table_as_blocks,
+            Table = table_to_blocks,
         }
     }
 end
