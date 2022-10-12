@@ -47,6 +47,9 @@ local function table_colspecs_to_latex(colspec_els)
 end
 
 
+-- Table head
+
+
 local function table_head_to_blocks(head_el, caption_el)
     return pandoc.Blocks({
         -- FIXME: ...
@@ -54,11 +57,17 @@ local function table_head_to_blocks(head_el, caption_el)
 end
 
 
+-- Table foot
+
+
 local function table_foot_to_blocks(foot_el)
     return pandoc.Blocks({
         -- FIXME: ...
     })
 end
+
+
+-- Table bodies
 
 
 local function table_bodies_to_blocks(body_els)
@@ -76,12 +85,15 @@ local function table_bodies_to_blocks(body_els)
 end
 
 
+-- Table
+
+
 local function table_to_blocks(table_el)
     --[[ Temporary debug prints
     if pandoc.utils.stringify(table_el) ~= "ti" then -- If not the aux table
         print("--------------------")
         -- "table_el.bodies[1].body[1]" selects a table row
-        for k, v in pairs(table_el.bodies[1].body[1]) do
+        for k, v in pairs(table_el.caption) do
             print(k, v)
         end
         print("--------------------")
