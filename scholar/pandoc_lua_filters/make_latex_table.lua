@@ -135,10 +135,10 @@ local function table_head_to_blocks(head_el, caption_el, table_id)
     local blocks = pandoc.Blocks({})
     blocks:extend(first_caption_blocks)
     blocks:extend(head_content_blocks)
-    blocks.insert(pandoc.RawBlock("latex", "\\endfirsthead"))
+    blocks:insert(pandoc.RawBlock("latex", "\\endfirsthead"))
     blocks:extend(continuation_caption_blocks)
     blocks:extend(head_content_blocks)
-    blocks.insert(pandoc.RawBlock("latex", "\\endhead"))
+    blocks:insert(pandoc.RawBlock("latex", "\\endhead"))
     return blocks
 end
 
@@ -195,7 +195,7 @@ local function table_to_blocks(table_el)
     -- 4. table_el.foot is missing/inaccessible?
     -- 5. table_el.bodies is missing/inaccessible?
     blocks:insert(pandoc.RawBlock("latex", "\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs)))
-    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption))
+    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.attr.identifier))
     blocks:extend(table_foot_to_blocks(table_el.foot))
     blocks:extend(table_bodies_to_blocks(table_el.bodies))
     blocks:insert(pandoc.RawBlock("latex", "\\end{longtable}"))
