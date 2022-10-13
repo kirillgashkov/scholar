@@ -171,17 +171,24 @@ end
 
 
 local function table_bodies_to_blocks(body_els)
-    return pandoc.Blocks({
-        -- FIXME: Replace dummy
-        table_row_to_block({cells = {
-            {contents = {pandoc.Plain({pandoc.Str("a")})}},
-            {contents = {pandoc.Plain({pandoc.Str("b")})}}
-        }}),
-        table_row_to_block({cells = {
-            {contents = {pandoc.Plain({pandoc.Str("c")})}},
-            {contents = {pandoc.Plain({pandoc.Str("d")})}}
-        }}),
-    })
+    local rows = pandoc.List({})
+    
+    for _, body_el in ipairs(body_els) do
+        rows:extend(body_el.head)
+        rows:extend(body_el.body)
+    end
+
+    local blocks = pandoc.Blocks({})
+
+    -- FIXME: What if
+    -- 1. rows[#rows] is missing/inaccessible (e.g. rows is empty)?
+    for i = 1, #rows - 1 do
+        blocks:insert(table_row_to_block(rows[i]))
+        blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt")))
+    end
+    blocks:insert(table_row_to_block(rows[#rows]))
+
+    return blocks
 end
 
 
