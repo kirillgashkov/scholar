@@ -61,7 +61,32 @@ local function table_id_to_latex_label(identifier)
 end
 
 
-local function table_head_to_blocks(head_el, caption_el)
+local function table_caption_to_blocks(caption_el, table_id)
+    -- TODO: Don't ignore optional caption_el.short
+    local long_caption_content_blocks = caption_el.long
+    local long_caption_content_inlines = pandoc.utils.blocks_to_inlines(long_caption_content_blocks)
+    local latex_label = table_id_to_latex_label(table_id)
+
+    -- FIXME: What if
+    -- 1. long_caption_content_inlines is empty and latex_label is not?
+    -- 2. long_caption_content_inlines contains special characters (e.g. '}')?
+    -- TODO: Can and should we use pandoc.layout.braces(...) here?
+    if #long_caption_content_inlines == 0 and latex_label == "" then
+        return pandoc.Blocks({})
+    else
+        local inlines = pandoc.Inlines({})
+        inlines:insert(pandoc.RawInline("latex", "\\caption"))
+        inlines:insert(pandoc.RawInline("latex", "{"))
+        inlines:extend(long_caption_content_inlines)
+        inlines:insert(pandoc.RawInline("latex", "}"))
+        inlines:insert(pandoc.Space())
+        inlines:insert(pandoc.RawInline("latex", "\\\\")) -- In Pandoc '\tabularnewline' was used instead of '\\'
+        return pandoc.Blocks({pandoc.Plain(inlines)})
+    end
+end
+
+
+local function table_head_to_blocks(head_el, caption_el, table_id)
     return pandoc.Blocks({
         -- FIXME: ...
     })
