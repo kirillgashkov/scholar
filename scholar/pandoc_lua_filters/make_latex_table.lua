@@ -50,6 +50,16 @@ end
 -- Table head
 
 
+local function table_id_to_latex_label(identifier)
+    if identifier == "" then
+        return ""
+    end
+
+    -- TODO: Add an ability to turn this error into a warning with a setting
+    error("table_id_to_latex_label: unexpected non-empty identifier; currently native table IDs are not supported, however, if you still need to reference your tables, consider running the 'pandoc-crossref' filter before this filter, it will extact table IDs, convert them to LaTeX labels and insert them directly into the contents of your captions")
+end
+
+
 local function table_head_to_blocks(head_el, caption_el)
     return pandoc.Blocks({
         -- FIXME: ...
