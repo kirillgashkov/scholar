@@ -48,6 +48,11 @@ local function table_colspecs_to_latex(colspec_els)
 end
 
 
+local function hrule_latex(thickness)
+    return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
+end
+
+
 -- Table head
 
 
