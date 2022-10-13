@@ -34,6 +34,7 @@ local function table_row_to_block(row_el)
         inlines:insert(pandoc.Space())
         inlines:extend(table_cell_to_inlines(row_el.cells[i]))
     end
+    inlines:insert(pandoc.Space())
     inlines:insert(pandoc.RawInline("latex", "\\\\"))
 
     -- TODO: Consider using pandoc.Span with
