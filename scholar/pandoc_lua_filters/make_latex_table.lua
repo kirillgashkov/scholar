@@ -43,8 +43,14 @@ local function table_row_to_block(row_el)
 end
 
 
+local function vrule_latex(thickness)
+    return "!{\\vrule width " .. thickness .. "}"
+end
+
+
 local function table_colspecs_to_latex(colspec_els)
-    return "{c c}" -- FIXME: Replace dummy
+    -- FIXME: Replace dummy
+    return "{" .. vrule_latex("1pt") .. "c" .. vrule_latex("0.5pt") .. "c" .. vrule_latex("1pt") .. "}"
 end
 
 
