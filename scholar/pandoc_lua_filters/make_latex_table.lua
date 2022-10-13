@@ -121,9 +121,25 @@ end
 
 
 local function table_head_to_blocks(head_el, caption_el, table_id)
-    return pandoc.Blocks({
-        -- FIXME: ...
-    })
+    local head_content_blocks = pandoc.Blocks({})
+
+    head_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("1pt")))
+    for _, row in ipairs(head_el.rows) do
+        head_content_blocks:insert(table_row_to_block(row))
+        head_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt")))
+    end
+
+    local first_caption_blocks = table_caption_to_first_caption_blocks(caption_el, table_id)
+    local continuation_caption_blocks = table_caption_to_continuation_caption_blocks(caption_el, table_id)
+
+    local blocks = pandoc.Blocks({})
+    blocks:extend(first_caption_blocks)
+    blocks:extend(head_content_blocks)
+    blocks.insert(pandoc.RawBlock("latex", "\\endfirsthead"))
+    blocks:extend(continuation_caption_blocks)
+    blocks:extend(head_content_blocks)
+    blocks.insert(pandoc.RawBlock("latex", "\\endhead"))
+    return blocks
 end
 
 
