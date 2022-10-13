@@ -147,18 +147,15 @@ end
 
 
 local function table_foot_to_blocks(foot_el)
-    local foot_content_blocks = pandoc.Blocks({})
-
-    for _, row in ipairs(foot_el.rows) do
-        foot_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt")))
-        foot_content_blocks:insert(table_row_to_block(row))
+    if #foot_el.rows ~= 0 then
+        -- TODO: Add an ability to turn this error into a warning with a setting
+        error("table_foot_to_blocks: unexpected footer rows; currently footer rows are not supported, however, if you still need footer rows, consider creating a custom LaTeX table")
     end
-    foot_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("1pt")))
 
     local blocks = pandoc.Blocks({})
     blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt"))) -- WTF: At the bottom of each table part I need a horizontal rule with 1pt thickness. When a page break occurs in a longtable, one of the middle \specialrule{0.5pt}s will be caught in the crossfire. Usually that rule would stay at the end of the previous table part instead of going to the start of the next one, which means that we already have 0.5pt thickness at the bottom. We add the extra 0.5pt thickness here, so that we had 1pt of total thickness. (Warning: I made an assumption that the middle \specialrule{0.5pt} wouldn't appear on the next page, because in my testing it never did. If it actually can appear there, the output will be a bit wrong but it's not critical)
     blocks:insert(pandoc.RawBlock("latex", "\\endfoot"))
-    blocks:extend(foot_content_blocks)
+    blocks:insert(pandoc.RawBlock("latex", hrule_latex("1pt")))
     blocks:insert(pandoc.RawBlock("latex", "\\endlastfoot"))
     return blocks
 end
