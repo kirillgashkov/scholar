@@ -48,14 +48,17 @@ local function vrule_latex(thickness)
 end
 
 
-local function table_colspecs_to_latex(colspec_els)
-    -- FIXME: Replace dummy
-    return "{" .. vrule_latex("1pt") .. "c" .. vrule_latex("0.5pt") .. "c" .. vrule_latex("1pt") .. "}"
+local function hrule_latex(thickness)
+    return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
 end
 
 
-local function hrule_latex(thickness)
-    return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
+-- Table colspecs
+
+
+local function table_colspecs_to_latex(colspec_els)
+    -- FIXME: Replace dummy
+    return "{" .. vrule_latex("1pt") .. "c" .. vrule_latex("0.5pt") .. "c" .. vrule_latex("1pt") .. "}"
 end
 
 
