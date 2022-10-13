@@ -90,6 +90,7 @@ local function table_caption_to_first_caption_blocks(caption_el, table_id)
     end
 end
 
+
 local function table_caption_to_continuation_caption_blocks(caption_el, table_id)
     -- TODO: Don't ignore optional caption_el.short
     local long_caption_content_blocks = caption_el.long
@@ -109,11 +110,12 @@ local function table_caption_to_continuation_caption_blocks(caption_el, table_id
         -- don't insert any content here because we don't want extra '\label's
         -- in our tables which can be introduced by the 'pandoc-crossref'
         -- filter
-        local inlines = pandoc.Inlines({})
-        inlines:insert(pandoc.RawInline("latex", "\\caption[]{}")) -- [] is used here to not mess with short captions in the continuations of a table
-        inlines:insert(pandoc.Space())
-        inlines:insert(pandoc.RawInline("latex", "\\\\")) -- In Pandoc '\tabularnewline' was used instead of '\\'
-        return pandoc.Blocks({pandoc.Plain(inlines)})
+        local blocks = pandoc.Blocks({})
+        blocks:insert(pandoc.RawBlock("latex", "\\captionsetup{style=customTableContinuation}")) -- This class is defined in our custom Pandoc template
+        blocks:insert(pandoc.RawBlock("latex", "\\caption[]{} \\\\"))
+        -- [] is used here to not mess with short captions in the continuations of a table;
+        -- In Pandoc '\tabularnewline' was used instead of '\\'.
+        return blocks
     end
 end
 
