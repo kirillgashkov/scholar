@@ -95,7 +95,9 @@ local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
             latex_alignment_command = "\\raggedright"
         end
 
-        latex_column_descriptors:insert(">{" .. latex_alignment_command .. "\\arraybackslash}" .. "p{(\\columnwidth - " .. string.format("%d", (#colspec_els - 1) * 2) .. "\\tabcolsep) * \\real{" .. string.format("%.4f", width) .. "}}")
+        -- "\columnwidth - {#colspec_els * 2}\tabcolsep" is the width of the
+        -- table minus the width of every cell's left and right paddings
+        latex_column_descriptors:insert(">{" .. latex_alignment_command .. "\\arraybackslash}" .. "p{(\\columnwidth - " .. string.format("%d", #colspec_els * 2) .. "\\tabcolsep) * \\real{" .. string.format("%.4f", width) .. "}}")
     end
 
     return latex_column_descriptors
@@ -103,8 +105,6 @@ end
 
 
 local function table_colspecs_to_latex(colspec_els)
-    -- "{" .. colDescriptors(tbl) .. "}"
-
     local default_widths_only = true
     for _, colspec_el in ipairs(colspec_els) do
         if colspec_el[2] ~= nil then
