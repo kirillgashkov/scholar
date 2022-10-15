@@ -236,16 +236,35 @@ local function table_foot_to_blocks(foot_el)
     return blocks
 end
 
--- Table bodies
+-- Table bodies to blocks
 
-local function table_bodies_to_blocks(body_els)
+local function table_body_to_table_rows(
+    body_el -- pandoc.TableBody
+)
     local rows = pandoc.List({})
-    
+
+    rows:extend(body_el.head)
+    rows:extend(body_el.body)
+
+    return rows
+end
+
+local function table_bodies_to_table_rows(
+    body_els -- pandoc.List of pandoc.TableBody
+)
+    local rows = pandoc.List({})
+
     for _, body_el in ipairs(body_els) do
-        rows:extend(body_el.head)
-        rows:extend(body_el.body)
+        rows:extend(table_body_to_table_rows(body_el))
     end
 
+    return rows
+end
+
+local function table_bodies_to_blocks(
+    body_els -- pandoc.List of pandoc.TableBody
+)
+    local rows = table_bodies_to_table_rows(body_els)
     local blocks = pandoc.Blocks({})
 
     -- FIXME: What if
@@ -261,7 +280,9 @@ end
 
 -- Table to blocks
 
-local function table_to_blocks(table_el)
+local function table_to_blocks(
+    table_el -- pandoc.Table
+)
     local blocks = pandoc.Blocks({})
 
     -- WTF: Table foot goes before table body because of the way longtable works
