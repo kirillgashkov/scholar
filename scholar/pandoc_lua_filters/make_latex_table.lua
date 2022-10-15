@@ -222,17 +222,31 @@ end
 
 -- Table foot
 
-local function table_foot_to_blocks(foot_el)
-    if #foot_el.rows ~= 0 then
-        -- TODO: Add an ability to turn this error into a warning with a setting
-        error("table_foot_to_blocks: unexpected footer rows; currently footer rows are not supported, however, if you still need footer rows, consider creating a custom LaTeX table")
-    end
+local function table_foot_to_table_rows(
+    foot_el -- pandoc.TableFoot
+)
+    return foot_el.rows
+end
 
+local function table_foot_to_blocks(
+    foot_el -- pandoc.TableFoot
+)
     local blocks = pandoc.Blocks({})
-    blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt"))) -- WTF: At the bottom of each table part I need a horizontal rule with 1pt thickness. When a page break occurs in a longtable, one of the middle \specialrule{0.5pt}s will be caught in the crossfire. Usually that rule would stay at the end of the previous table part instead of going to the start of the next one, which means that we already have 0.5pt thickness at the bottom. We add the extra 0.5pt thickness here, so that we had 1pt of total thickness. (Warning: I made an assumption that the middle \specialrule{0.5pt} wouldn't appear on the next page, because in my testing it never did. If it actually can appear there, the output will be a bit wrong but it's not critical)
-    blocks:insert(pandoc.RawBlock("latex", "\\endfoot"))
-    blocks:insert(pandoc.RawBlock("latex", hrule_latex("1pt")))
-    blocks:insert(pandoc.RawBlock("latex", "\\endlastfoot"))
+
+    -- WTF: This horizontal rule at the bottom of every table part except
+    -- the last is 0.5pt thick (instead of desired 1pt) because this rule
+    -- imediately follows a horizontal rule from the table body which has
+    -- a 0.5pt thickness already
+    blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+    blocks:insert(latex_to_block("\\endfoot"))
+
+    for _, row_el in ipairs(table_foot_to_table_rows(foot_el)) do
+        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+        blocks:insert(table_row_to_block(row_el))
+    end
+    blocks:insert(latex_to_block(hrule_latex("1pt")))
+    blocks:insert(latex_to_block("\\endlastfoot"))
+
     return blocks
 end
 
@@ -283,7 +297,8 @@ local function table_to_blocks(
 )
     local blocks = pandoc.Blocks({})
 
-    -- WTF: Table foot goes before table body because of the way longtable works
+    -- WTF: The table foot goes before the table body
+    -- because of the way longtables works
     blocks:insert(latex_to_block("\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs)))
     blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.identifier))
     blocks:extend(table_foot_to_blocks(table_el.foot))
