@@ -18,7 +18,6 @@ end
 
 --
 
-
 local function table_cell_to_inlines(cell_el)
     local inlines = pandoc.Inlines({})
 
@@ -39,7 +38,6 @@ local function table_cell_to_inlines(cell_el)
     -- inline (check how Pandoc handles this)
     return inlines
 end
-
 
 local function table_row_to_block(row_el)
     local inlines = pandoc.Inlines({})
@@ -63,9 +61,7 @@ local function table_row_to_block(row_el)
     return pandoc.Plain(inlines)
 end
 
-
 -- Table colspecs
-
 
 local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
     local latex_column_descriptors = pandoc.List({})
@@ -86,7 +82,6 @@ local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
 
     return latex_column_descriptors
 end
-
 
 local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
     local latex_column_descriptors = pandoc.List({})
@@ -114,7 +109,6 @@ local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
     return latex_column_descriptors
 end
 
-
 local function table_colspecs_to_latex(colspec_els)
     local default_widths_only = true
     for _, colspec_el in ipairs(colspec_els) do
@@ -141,9 +135,7 @@ local function table_colspecs_to_latex(colspec_els)
     return latex_colspecs
 end
 
-
 -- Table head
-
 
 local function table_id_to_latex_label(identifier)
     if identifier == "" then
@@ -153,7 +145,6 @@ local function table_id_to_latex_label(identifier)
     -- TODO: Add an ability to turn this error into a warning with a setting
     error("table_id_to_latex_label: unexpected non-empty identifier; currently native table IDs are not supported, however, if you still need to reference your tables, consider running the 'pandoc-crossref' filter before this filter, it will extact table IDs, convert them to LaTeX labels and insert them directly into the contents of your captions")
 end
-
 
 local function table_caption_to_first_caption_blocks(caption_el, table_id)
     -- TODO: Don't ignore optional caption_el.short
@@ -178,7 +169,6 @@ local function table_caption_to_first_caption_blocks(caption_el, table_id)
         return pandoc.Blocks({pandoc.Plain(inlines)})
     end
 end
-
 
 local function table_caption_to_continuation_caption_blocks(caption_el, table_id)
     -- TODO: Don't ignore optional caption_el.short
@@ -208,7 +198,6 @@ local function table_caption_to_continuation_caption_blocks(caption_el, table_id
     end
 end
 
-
 local function table_head_to_blocks(head_el, caption_el, table_id)
     local head_content_blocks = pandoc.Blocks({})
 
@@ -231,9 +220,7 @@ local function table_head_to_blocks(head_el, caption_el, table_id)
     return blocks
 end
 
-
 -- Table foot
-
 
 local function table_foot_to_blocks(foot_el)
     if #foot_el.rows ~= 0 then
@@ -249,9 +236,7 @@ local function table_foot_to_blocks(foot_el)
     return blocks
 end
 
-
 -- Table bodies
-
 
 local function table_bodies_to_blocks(body_els)
     local rows = pandoc.List({})
@@ -273,7 +258,6 @@ local function table_bodies_to_blocks(body_els)
 
     return blocks
 end
-
 
 -- Table to blocks
 
