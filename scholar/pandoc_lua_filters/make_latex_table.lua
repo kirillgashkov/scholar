@@ -135,92 +135,83 @@ local function table_colspecs_to_latex(colspec_els)
     return latex_colspecs
 end
 
--- Table head
+-- Table head to blocks
 
-local function table_id_to_latex_label(identifier)
-    if identifier == "" then
-        return ""
-    end
-
-    -- TODO: Add an ability to turn this error into a warning with a setting
-    error("table_id_to_latex_label: unexpected non-empty identifier; currently native table IDs are not supported, however, if you still need to reference your tables, consider running the 'pandoc-crossref' filter before this filter, it will extact table IDs, convert them to LaTeX labels and insert them directly into the contents of your captions")
+local function table_caption_to_main_caption_block(
+    caption_el, -- pandoc.Caption
+    table_id -- string
+)
+    -- TODO: Implement
 end
 
-local function table_caption_to_first_caption_blocks(caption_el, table_id)
-    -- TODO: Don't ignore optional caption_el.short
-    local long_caption_content_blocks = caption_el.long
-    local long_caption_content_inlines = pandoc.utils.blocks_to_inlines(long_caption_content_blocks)
-    local latex_label = table_id_to_latex_label(table_id)
-
-    -- FIXME: What if
-    -- 1. long_caption_content_inlines is empty and latex_label is not?
-    -- 2. long_caption_content_inlines contains special characters (e.g. '}')?
-    -- TODO: Can and should we use pandoc.layout.braces(...) here?
-    if #long_caption_content_inlines == 0 and latex_label == "" then
-        return pandoc.Blocks({})
-    else
-        local inlines = pandoc.Inlines({})
-        inlines:insert(pandoc.RawInline("latex", "\\caption"))
-        inlines:insert(pandoc.RawInline("latex", "{"))
-        inlines:extend(long_caption_content_inlines)
-        inlines:insert(pandoc.RawInline("latex", "}"))
-        inlines:insert(pandoc.Space())
-        inlines:insert(pandoc.RawInline("latex", "\\\\")) -- In Pandoc '\tabularnewline' was used instead of '\\'
-        return pandoc.Blocks({pandoc.Plain(inlines)})
-    end
+local function table_caption_to_continuation_caption_block(
+    caption_el, -- pandoc.Caption
+    table_id -- string
+)
+    -- TODO: Implement
 end
 
-local function table_caption_to_continuation_caption_blocks(caption_el, table_id)
-    -- TODO: Don't ignore optional caption_el.short
-    local long_caption_content_blocks = caption_el.long
-    local long_caption_content_inlines = pandoc.utils.blocks_to_inlines(long_caption_content_blocks)
-    local latex_label = table_id_to_latex_label(table_id)
-
-    -- FIXME: What if
-    -- 1. long_caption_content_inlines is empty and latex_label is not?
-    -- 2. long_caption_content_inlines contains special characters (e.g. '}')?
-    -- TODO: Can and should we use pandoc.layout.braces(...) here?
-    if #long_caption_content_inlines == 0 and latex_label == "" then
-        return pandoc.Blocks({})
-    else
-        -- We don't insert the caption content here because this is a
-        -- continuation caption which shouldn't have any content. Although this
-        -- behavior is already secured by our custom Pandoc template, we still
-        -- don't insert any content here because we don't want extra '\label's
-        -- in our tables which can be introduced by the 'pandoc-crossref'
-        -- filter
-        local blocks = pandoc.Blocks({})
-        blocks:insert(pandoc.RawBlock("latex", "\\captionsetup{style=customTableContinuation}")) -- This class is defined in our custom Pandoc template
-        blocks:insert(pandoc.RawBlock("latex", "\\caption[]{} \\\\"))
-        -- [] is used here to not mess with short captions in the continuations of a table;
-        -- In Pandoc '\tabularnewline' was used instead of '\\'.
-        return blocks
-    end
+local function table_head_to_table_rows(
+    head_el -- pandoc.TableHead
+)
+    return head_el.rows
 end
 
-local function table_head_to_blocks(head_el, caption_el, table_id)
-    local head_content_blocks = pandoc.Blocks({})
-
-    head_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("1pt")))
-    for _, row in ipairs(head_el.rows) do
-        head_content_blocks:insert(table_row_to_block(row))
-        head_content_blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt")))
-    end
-
-    local first_caption_blocks = table_caption_to_first_caption_blocks(caption_el, table_id)
-    local continuation_caption_blocks = table_caption_to_continuation_caption_blocks(caption_el, table_id)
-
+local function table_head_to_content_blocks(
+    head_el -- pandoc.TableHead
+)
     local blocks = pandoc.Blocks({})
-    blocks:extend(first_caption_blocks)
-    blocks:extend(head_content_blocks)
-    blocks:insert(pandoc.RawBlock("latex", "\\endfirsthead"))
-    blocks:extend(continuation_caption_blocks)
-    blocks:extend(head_content_blocks)
-    blocks:insert(pandoc.RawBlock("latex", "\\endhead"))
+
+    for i, row_el in ipairs(table_head_to_table_rows(head_el)) do
+        if i == 1 then
+            blocks:insert(latex_to_block(hrule_latex("1pt")))
+        end
+        blocks:insert(table_row_to_block(row_el))
+        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+    end
+
     return blocks
 end
 
--- Table foot
+local function is_table_caption_empty(
+    caption_el -- pandoc.Caption
+)
+    return #caption_el.long == 0 and caption_el.short == nil
+end
+
+local function is_table_id_empty(
+    identifier -- string
+)
+    return identifier == ""
+end
+
+local function table_head_to_blocks(
+    head_el, -- pandoc.TableHead
+    table_caption_el, -- pandoc.Caption
+    table_id -- string
+)
+    local blocks = pandoc.Blocks({})
+
+    local content_blocks = table_head_to_content_blocks(head_el)
+    local has_caption = not is_table_caption_empty(table_caption_el)
+    local has_identifier = not is_table_id_empty(table_id)
+
+    if has_caption or has_identifier then
+        blocks:insert(table_caption_to_main_caption_block(table_caption_el, table_id))
+    end
+    blocks:extend(content_blocks)
+    blocks:insert(latex_to_block("\\endfirsthead"))
+
+    if has_caption or has_identifier then
+        blocks:insert(table_caption_to_continuation_caption_block(table_caption_el, table_id))
+    end
+    blocks:extend(content_blocks)
+    blocks:insert(latex_to_block("\\endhead"))
+
+    return blocks
+end
+
+-- Table foot to blocks
 
 local function table_foot_to_table_rows(
     foot_el -- pandoc.TableFoot
@@ -308,7 +299,7 @@ local function table_to_blocks(
     return blocks
 end
 
--- Export
+-- Module exports
 
 if FORMAT:match("latex") then
     return {
