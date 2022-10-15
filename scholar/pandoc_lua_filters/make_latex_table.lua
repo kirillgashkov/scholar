@@ -148,7 +148,14 @@ local function table_caption_to_continuation_caption_block(
     caption_el, -- pandoc.Caption
     table_id -- string
 )
-    -- TODO: Implement
+    local blocks = pandoc.Blocks({})
+
+    -- 'customTableContinuation' has to be defined in the custom Pandoc template
+    blocks:insert(latex_to_block("\\captionsetup{style=customTableContinuation}"))
+    -- Pandoc generates their tables with '\tabularnewline' instead of '\\'
+    blocks:insert(latex_to_block("\\caption[]{} \\\\"))
+
+    return blocks
 end
 
 local function table_head_to_table_rows(
