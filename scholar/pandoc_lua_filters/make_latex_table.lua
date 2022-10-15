@@ -264,16 +264,14 @@ end
 local function table_bodies_to_blocks(
     body_els -- pandoc.List of pandoc.TableBody
 )
-    local rows = table_bodies_to_table_rows(body_els)
     local blocks = pandoc.Blocks({})
 
-    -- FIXME: What if
-    -- 1. rows[#rows] is missing/inaccessible (e.g. rows is empty)?
-    for i = 1, #rows - 1 do
-        blocks:insert(table_row_to_block(rows[i]))
-        blocks:insert(pandoc.RawBlock("latex", hrule_latex("0.5pt")))
+    for i, row_el in ipairs(table_bodies_to_table_rows(body_els)) do
+        if i ~= 1 then
+            blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+        end
+        blocks:insert(table_row_to_block(row_el))
     end
-    blocks:insert(table_row_to_block(rows[#rows]))
 
     return blocks
 end
