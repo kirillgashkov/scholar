@@ -56,9 +56,78 @@ end
 -- Table colspecs
 
 
+local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
+    local latex_column_descriptors = pandoc.List({})
+
+    for _, colspec_el in ipairs(colspec_els) do
+        local alignment = colspec_el[1]
+
+        if alignment == "AlignLeft" then
+            latex_column_descriptors:insert("l")
+        elseif alignment == "AlignRight" then
+            latex_column_descriptors:insert("r")
+        elseif alignment == "AlignCenter" then
+            latex_column_descriptors:insert("c")
+        elseif alignment == "AlignDefault" then
+            latex_column_descriptors:insert("l")
+        end
+    end
+
+    return latex_column_descriptors
+end
+
+
+local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
+    local latex_column_descriptors = pandoc.List({})
+
+    for _, colspec_el in ipairs(colspec_els) do
+        local alignment = colspec_el[1]
+        local width = colspec_el[2] or 0
+
+        local latex_alignment_command
+        if alignment == "AlignLeft" then
+            latex_alignment_command = "\\raggedright"
+        elseif alignment == "AlignRight" then
+            latex_alignment_command = "\\raggedleft"
+        elseif alignment == "AlignCenter" then
+            latex_alignment_command = "\\centering"
+        elseif alignment == "AlignDefault" then
+            latex_alignment_command = "\\raggedright"
+        end
+
+        latex_column_descriptors:insert(">{" .. latex_alignment_command .. "\\arraybackslash}" .. "p{(\\columnwidth - " .. string.format("%d", (#colspec_els - 1) * 2) .. "\\tabcolsep) * \\real{" .. string.format("%.4f", width) .. "}}")
+    end
+
+    return latex_column_descriptors
+end
+
+
 local function table_colspecs_to_latex(colspec_els)
-    -- FIXME: Replace dummy
-    return "{" .. vrule_latex("1pt") .. "c" .. vrule_latex("0.5pt") .. "c" .. vrule_latex("1pt") .. "}"
+    -- "{" .. colDescriptors(tbl) .. "}"
+
+    local default_widths_only = true
+    for _, colspec_el in ipairs(colspec_els) do
+        if colspec_el[2] ~= nil then
+            default_widths_only = false
+            break
+        end
+    end
+
+    local latex_column_descriptors = pandoc.List({})
+    if default_widths_only then
+        latex_column_descriptors = table_colspecs_to_simple_latex_column_descriptors(colspec_els)
+    else
+        latex_column_descriptors = table_colspecs_to_complex_latex_column_descriptors(colspec_els)
+    end
+
+    -- FIXME: What if latex_column_descriptors is empty?
+    local latex_colspecs = "{" .. vrule_latex("1pt")
+    for i = 1, #latex_column_descriptors - 1 do
+        latex_colspecs = latex_colspecs .. latex_column_descriptors[i] .. vrule_latex("0.5pt")
+    end
+    latex_colspecs = latex_colspecs .. latex_column_descriptors[#latex_column_descriptors] .. vrule_latex("1pt") .. "}"
+    
+    return latex_colspecs
 end
 
 
