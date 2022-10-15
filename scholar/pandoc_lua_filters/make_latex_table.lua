@@ -268,17 +268,6 @@ end
 
 
 local function table_to_blocks(table_el)
-    --[[ Temporary debug prints
-    if pandoc.utils.stringify(table_el) ~= "ti" then -- If not the aux table
-        print("--------------------")
-        -- "table_el.bodies[1].body[1]" selects a table row
-        for k, v in pairs(table_el.caption) do
-            print(k, v)
-        end
-        print("--------------------")
-    end
-    --]]
-
     local blocks = pandoc.Blocks({})
 
     -- FIXME: What if
