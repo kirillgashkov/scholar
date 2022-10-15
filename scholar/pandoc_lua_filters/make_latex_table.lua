@@ -6,6 +6,15 @@ local function latex_to_block(latex)
     return pandoc.RawBlock("latex", latex)
 end
 
+--
+
+local function vrule_latex(thickness)
+    return "!{\\vrule width " .. thickness .. "}"
+end
+
+local function hrule_latex(thickness)
+    return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
+end
 
 --
 
@@ -52,16 +61,6 @@ local function table_row_to_block(row_el)
     -- TODO: Consider using pandoc.Span with
     -- pandoc.LineBreak instead of pandoc.Plain
     return pandoc.Plain(inlines)
-end
-
-
-local function vrule_latex(thickness)
-    return "!{\\vrule width " .. thickness .. "}"
-end
-
-
-local function hrule_latex(thickness)
-    return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
 end
 
 
