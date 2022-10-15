@@ -1,3 +1,15 @@
+local function latex_to_inline(latex)
+    return pandoc.RawInline("latex", latex)
+end
+
+local function latex_to_block(latex)
+    return pandoc.RawBlock("latex", latex)
+end
+
+
+--
+
+
 local function table_cell_to_inlines(cell_el)
     local inlines = pandoc.Inlines({})
 
