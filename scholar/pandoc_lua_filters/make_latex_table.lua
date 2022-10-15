@@ -283,7 +283,7 @@ local function table_to_blocks(table_el)
 
     -- WTF: Table foot goes before table body because of the way longtable works
     blocks:insert(latex_to_block("\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs)))
-    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.attr.identifier))
+    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.identifier))
     blocks:extend(table_foot_to_blocks(table_el.foot))
     blocks:extend(table_bodies_to_blocks(table_el.bodies))
     blocks:insert(latex_to_block("\\end{longtable}"))
