@@ -291,11 +291,14 @@ local function table_to_blocks(table_el)
     return blocks
 end
 
+-- Module
 
 if FORMAT:match("latex") then
     return {
         {
-            Table = table_to_blocks,
+            Table = function (table_el)
+                return table_to_blocks(table_el)
+            end,
         }
     }
 end
