@@ -276,7 +276,7 @@ local function table_bodies_to_blocks(body_els)
 end
 
 
--- Table
+-- Table to blocks
 
 local function table_to_blocks(table_el)
     local blocks = pandoc.Blocks({})
@@ -291,7 +291,7 @@ local function table_to_blocks(table_el)
     return blocks
 end
 
--- Module
+-- Export
 
 if FORMAT:match("latex") then
     return {
