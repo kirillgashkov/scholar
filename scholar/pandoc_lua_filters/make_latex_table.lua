@@ -97,7 +97,7 @@ local function table_rows_to_blocks(
     return blocks
 end
 
--- Table colspecs
+-- Longtable spec
 
 local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
     local latex_column_descriptors = pandoc.List({})
@@ -176,7 +176,7 @@ local function make_longtable_spec_latex(
     return longtable_spec_latex
 end
 
--- Table caption
+-- Caption
 
 local function table_id_to_latex(
     identifier -- string
@@ -248,7 +248,7 @@ local function make_caption_block_of_unnumbered_table_continuation()
     return blocks
 end
 
--- Table head to blocks
+-- Longtable head
 
 local function table_head_to_table_rows(
     head_el -- pandoc.TableHead
@@ -296,7 +296,7 @@ local function make_longtable_head_blocks(
     return blocks
 end
 
--- Table foot to blocks
+-- Longtable foot
 
 local function table_foot_to_table_rows(
     foot_el -- pandoc.TableFoot
@@ -326,7 +326,7 @@ local function make_longtable_foot_blocks(
     return blocks
 end
 
--- Table bodies to blocks
+-- Longtable body
 
 local function table_body_to_table_rows(
     body_el -- pandoc.TableBody
@@ -366,7 +366,7 @@ local function make_longtable_body_blocks(
     return blocks
 end
 
--- Table to blocks
+-- Longtable
 
 local function table_to_blocks(
     table_el -- pandoc.Table
