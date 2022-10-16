@@ -340,12 +340,12 @@ local function table_bodies_to_table_rows(
     return rows
 end
 
-local function table_bodies_to_blocks(
-    body_els -- pandoc.List of pandoc.TableBody
+local function make_longtable_body_blocks(
+    table_body_els -- pandoc.List of pandoc.TableBody
 )
     local blocks = pandoc.Blocks({})
 
-    for i, row_el in ipairs(table_bodies_to_table_rows(body_els)) do
+    for i, row_el in ipairs(table_bodies_to_table_rows(table_body_els)) do
         if i ~= 1 then
             blocks:insert(latex_to_block(hrule_latex("0.5pt")))
         end
@@ -384,11 +384,6 @@ end
 
 local function make_longtable_foot_blocks(
     table_foot_el -- pandoc.TableFoot
-)
-end
-
-local function make_longtable_body_blocks(
-    table_body_els -- pandoc.List of pandoc.TableBody
 )
 end
 
