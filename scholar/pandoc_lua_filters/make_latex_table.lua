@@ -166,30 +166,6 @@ end
 local function make_caption_block_of_unnumbered_table_continuation()
 end
 
--- Table head to blocks
-
-local function table_head_to_table_rows(
-    head_el -- pandoc.TableHead
-)
-    return head_el.rows
-end
-
-local function table_head_to_content_blocks(
-    head_el -- pandoc.TableHead
-)
-    local blocks = pandoc.Blocks({})
-
-    for i, row_el in ipairs(table_head_to_table_rows(head_el)) do
-        if i == 1 then
-            blocks:insert(latex_to_block(hrule_latex("1pt")))
-        end
-        blocks:insert(table_row_to_block(row_el))
-        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
-    end
-
-    return blocks
-end
-
 local function table_id_to_latex(
     identifier -- string
 )
@@ -254,6 +230,30 @@ local function make_continued_table_caption_block(
     else
         blocks:insert(latex_to_block("\\captionsetup{style=customUnnumberedTableContinuation}"))
         blocks:insert(latex_to_block("\\caption*{} \\\\"))
+    end
+
+    return blocks
+end
+
+-- Table head to blocks
+
+local function table_head_to_table_rows(
+    head_el -- pandoc.TableHead
+)
+    return head_el.rows
+end
+
+local function table_head_to_content_blocks(
+    head_el -- pandoc.TableHead
+)
+    local blocks = pandoc.Blocks({})
+
+    for i, row_el in ipairs(table_head_to_table_rows(head_el)) do
+        if i == 1 then
+            blocks:insert(latex_to_block(hrule_latex("1pt")))
+        end
+        blocks:insert(table_row_to_block(row_el))
+        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
     end
 
     return blocks
