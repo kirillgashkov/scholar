@@ -135,6 +135,21 @@ local function table_colspecs_to_latex(colspec_els)
     return latex_colspecs
 end
 
+-- Table caption
+
+local function make_caption_block_of_numbered_table_start(
+    main_caption_blocks, -- pandoc.Blocks
+    lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
+    table_id -- string
+)
+end
+
+local function make_caption_block_of_numbered_table_continuation()
+end
+
+local function make_caption_block_of_unnumbered_table_continuation()
+end
+
 -- Table head to blocks
 
 local function table_head_to_table_rows(
@@ -339,19 +354,26 @@ local function is_main_table_caption_provided(
 end
 
 local function is_lot_table_caption_provided(
-    lot_caption_inlines -- table.Inlines or nil
+    lot_caption_inlines_or_nil -- table.Inlines or nil
 )
-    return lot_caption_inlines ~= nil
+    return lot_caption_inlines_or_nil ~= nil
 end
 
-local function is_table_numbered(
-    table_el -- pandoc.Table
+local function make_longtable_head_blocks(
+    table_head_el, -- pandoc.TableHead
+    caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
+    caption_block_of_table_continuation -- pandoc.Block-like
 )
-    local is_identifier_provided = is_table_id_provided(table_el.identifier)
-    local is_main_caption_provided = is_main_table_caption_provided(table_el.caption.long)
-    local is_lot_caption_provided = is_lot_table_caption_provided(table_el.caption.short)
+end
 
-    return is_identifier_provided or is_main_caption_provided or is_lot_caption_provided
+local function make_longtable_foot_blocks(
+    table_foot_el -- pandoc.TableFoot
+)
+end
+
+local function make_longtable_body_blocks(
+    table_body_els -- pandoc.List of pandoc.TableBody
+)
 end
 
 local function table_to_blocks(
@@ -359,25 +381,37 @@ local function table_to_blocks(
 )
     local blocks = pandoc.Blocks({})
 
-    local is_numbered = is_table_numbered(table_el)
-    local begin_block
-    local end_block
-    
-    if is_numbered then
-        begin_block = latex_to_block("\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs))
-        end_block = latex_to_block("\\end{longtable}")
+    local latex_environment_name_of_table
+    local caption_block_or_nil_of_table_start
+    local caption_block_of_table_continuation
+
+    if (
+        is_main_table_caption_provided(table_el.caption.long)
+        or is_lot_table_caption_provided(table_el.caption.short)
+        or is_table_id_provided(table_el.identifier)
+    ) then
+        latex_environment_name_of_table = "longtable"
+        caption_block_or_nil_of_table_start = make_caption_block_of_numbered_table_start(
+            table_el.caption.long, table_el.caption.short, table_el.identifier
+        )
+        caption_block_of_table_continuation = (
+            make_caption_block_of_numbered_table_continuation()
+        )
     else
-        begin_block = latex_to_block("\\begin{longtable*}" .. table_colspecs_to_latex(table_el.colspecs))
-        end_block = latex_to_block("\\end{longtable*}")
+        latex_environment_name_of_table = "longtable*"
+        caption_block_or_nil_of_table_start = nil
+        caption_block_of_table_continuation = (
+            make_caption_block_of_unnumbered_table_continuation()
+        )
     end
 
     -- WTF: The table foot goes before the table body
     -- because of the way longtables works
-    blocks:insert(begin_block)
-    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.identifier, is_numbered))
-    blocks:extend(table_foot_to_blocks(table_el.foot))
-    blocks:extend(table_bodies_to_blocks(table_el.bodies))
-    blocks:insert(end_block)
+    blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. table_colspecs_to_latex(table_el.colspecs)))
+    blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_or_nil_of_table_start, caption_block_of_table_continuation))
+    blocks:extend(make_longtable_foot_blocks(table_el.foot))
+    blocks:extend(make_longtable_body_blocks(table_el.bodies))
+    blocks:insert(latex_to_block("\\end{" .. latex_environment_name_of_table .. "}"))
 
     return blocks
 end
