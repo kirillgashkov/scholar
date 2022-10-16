@@ -293,8 +293,8 @@ local function table_foot_to_table_rows(
     return foot_el.rows
 end
 
-local function table_foot_to_blocks(
-    foot_el -- pandoc.TableFoot
+local function make_longtable_foot_blocks(
+    table_foot_el -- pandoc.TableFoot
 )
     local blocks = pandoc.Blocks({})
 
@@ -305,7 +305,7 @@ local function table_foot_to_blocks(
     blocks:insert(latex_to_block(hrule_latex("0.5pt")))
     blocks:insert(latex_to_block("\\endfoot"))
 
-    for _, row_el in ipairs(table_foot_to_table_rows(foot_el)) do
+    for _, row_el in ipairs(table_foot_to_table_rows(table_foot_el)) do
         blocks:insert(latex_to_block(hrule_latex("0.5pt")))
         blocks:insert(table_row_to_block(row_el))
     end
@@ -379,11 +379,6 @@ local function make_longtable_head_blocks(
     table_head_el, -- pandoc.TableHead
     caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
     caption_block_or_nil_of_table_continuation -- pandoc.Block-like or nil
-)
-end
-
-local function make_longtable_foot_blocks(
-    table_foot_el -- pandoc.TableFoot
 )
 end
 
