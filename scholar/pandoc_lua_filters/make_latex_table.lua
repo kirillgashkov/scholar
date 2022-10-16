@@ -145,32 +145,6 @@ local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
     return latex_column_descriptors
 end
 
-local function table_colspecs_to_latex(colspec_els)
-    local default_widths_only = true
-    for _, colspec_el in ipairs(colspec_els) do
-        if colspec_el[2] ~= nil then
-            default_widths_only = false
-            break
-        end
-    end
-
-    local latex_column_descriptors = pandoc.List({})
-    if default_widths_only then
-        latex_column_descriptors = table_colspecs_to_simple_latex_column_descriptors(colspec_els)
-    else
-        latex_column_descriptors = table_colspecs_to_complex_latex_column_descriptors(colspec_els)
-    end
-
-    -- FIXME: What if latex_column_descriptors is empty?
-    local latex_colspecs = "{" .. vrule_latex("1pt")
-    for i = 1, #latex_column_descriptors - 1 do
-        latex_colspecs = latex_colspecs .. latex_column_descriptors[i] .. vrule_latex("0.5pt")
-    end
-    latex_colspecs = latex_colspecs .. latex_column_descriptors[#latex_column_descriptors] .. vrule_latex("1pt") .. "}"
-    
-    return latex_colspecs
-end
-
 local function make_longtable_spec_latex(
     table_colspec_els -- pandoc.List of pandoc.ColSpec
 )
