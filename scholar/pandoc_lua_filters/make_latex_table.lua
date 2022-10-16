@@ -18,6 +18,26 @@ end
 
 --
 
+local function is_table_id_provided(
+    identifier -- string
+)
+    return identifier ~= ""
+end
+
+local function is_main_table_caption_provided(
+    main_caption_blocks -- table.Blocks
+)
+    return #main_caption_blocks ~= 0
+end
+
+local function is_lot_table_caption_provided(
+    lot_caption_inlines_or_nil -- table.Inlines or nil
+)
+    return lot_caption_inlines_or_nil ~= nil
+end
+
+--
+
 local function table_cell_to_inlines(cell_el)
     local inlines = pandoc.Inlines({})
 
@@ -354,24 +374,6 @@ local function make_longtable_body_blocks(
 end
 
 -- Table to blocks
-
-local function is_table_id_provided(
-    identifier -- string
-)
-    return identifier ~= ""
-end
-
-local function is_main_table_caption_provided(
-    main_caption_blocks -- table.Blocks
-)
-    return #main_caption_blocks ~= 0
-end
-
-local function is_lot_table_caption_provided(
-    lot_caption_inlines_or_nil -- table.Inlines or nil
-)
-    return lot_caption_inlines_or_nil ~= nil
-end
 
 local function table_to_blocks(
     table_el -- pandoc.Table
