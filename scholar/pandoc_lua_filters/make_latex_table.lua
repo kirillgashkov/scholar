@@ -226,23 +226,25 @@ local function make_caption_block_of_numbered_table_start(
 end
 
 local function make_caption_block_of_numbered_table_continuation()
-    local blocks = pandoc.Blocks({})
+    local inlines = pandoc.Inlines({})
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
-    blocks:insert(latex_to_block("\\captionsetup{style=customNumberedTableContinuation}"))
-    blocks:insert(latex_to_block("\\caption[]{} \\\\"))
+    inlines:insert(latex_to_inline("\\captionsetup{style=customNumberedTableContinuation}"))
+    inlines:insert(pandoc.LineBreak())
+    inlines:insert(latex_to_inline("\\caption[]{} \\\\"))
 
-    return blocks
+    return pandoc.Plain(inlines)
 end
 
 local function make_caption_block_of_unnumbered_table_continuation()
-    local blocks = pandoc.Blocks({})
+    local inlines = pandoc.Inlines({})
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
-    blocks:insert(latex_to_block("\\captionsetup{style=customUnnumberedTableContinuation}"))
-    blocks:insert(latex_to_block("\\caption*{} \\\\"))
+    inlines:insert(latex_to_inline("\\captionsetup{style=customUnnumberedTableContinuation}"))
+    inlines:insert(pandoc.LineBreak())
+    inlines:insert(latex_to_inline("\\caption*{} \\\\"))
 
-    return blocks
+    return pandoc.Plain(inlines)
 end
 
 -- Longtable head
