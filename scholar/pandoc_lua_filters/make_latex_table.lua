@@ -153,19 +153,6 @@ end
 
 -- Table caption
 
-local function make_caption_block_of_numbered_table_start(
-    main_caption_blocks, -- pandoc.Blocks
-    lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
-    table_id -- string
-)
-end
-
-local function make_caption_block_of_numbered_table_continuation()
-end
-
-local function make_caption_block_of_unnumbered_table_continuation()
-end
-
 local function table_id_to_latex(
     identifier -- string
 )
@@ -233,6 +220,19 @@ local function make_continued_table_caption_block(
     end
 
     return blocks
+end
+
+local function make_caption_block_of_numbered_table_start(
+    main_caption_blocks, -- pandoc.Blocks
+    lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
+    table_id -- string
+)
+end
+
+local function make_caption_block_of_numbered_table_continuation()
+end
+
+local function make_caption_block_of_unnumbered_table_continuation()
 end
 
 -- Table head to blocks
