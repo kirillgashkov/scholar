@@ -171,6 +171,11 @@ local function table_colspecs_to_latex(colspec_els)
     return latex_colspecs
 end
 
+local function make_longtable_spec_latex(
+    table_colspec_els -- pandoc.List of pandoc.ColSpec
+)
+end
+
 -- Table caption
 
 local function table_id_to_latex(
@@ -398,7 +403,7 @@ local function table_to_blocks(
 
     -- WTF: The table foot goes before the table body
     -- because of the way longtables works
-    blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. table_colspecs_to_latex(table_el.colspecs)))
+    blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. make_longtable_spec_latex(table_el.colspecs)))
     blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_of_table_start_or_nil, caption_block_of_table_continuation))
     blocks:extend(make_longtable_foot_blocks(table_el.foot))
     blocks:extend(make_longtable_body_blocks(table_el.bodies))
