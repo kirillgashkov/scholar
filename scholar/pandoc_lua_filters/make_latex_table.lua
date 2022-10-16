@@ -1,10 +1,14 @@
 -- Utility LaTeX builders
 
-local function vrule_latex(thickness)
+local function vrule_latex(
+    thickness -- string (e.g. "0.5pt")
+)
     return "!{\\vrule width " .. thickness .. "}"
 end
 
-local function hrule_latex(thickness)
+local function hrule_latex(
+    thickness -- string (e.g. "0.5pt")
+)
     return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
 end
 
@@ -42,11 +46,15 @@ end
 
 -- LaTeX
 
-local function latex_to_inline(latex)
+local function latex_to_inline(
+    latex -- string
+)
     return pandoc.RawInline("latex", latex)
 end
 
-local function latex_to_block(latex)
+local function latex_to_block(
+    latex -- string
+)
     return pandoc.RawBlock("latex", latex)
 end
 
