@@ -230,7 +230,6 @@ local function make_caption_block_of_numbered_table_continuation()
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
     inlines:insert(latex_to_inline("\\captionsetup{style=customNumberedTableContinuation}"))
-    inlines:insert(pandoc.LineBreak())
     inlines:insert(latex_to_inline("\\caption[]{} \\\\"))
 
     return pandoc.Plain(inlines)
@@ -241,7 +240,6 @@ local function make_caption_block_of_unnumbered_table_continuation()
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
     inlines:insert(latex_to_inline("\\captionsetup{style=customUnnumberedTableContinuation}"))
-    inlines:insert(pandoc.LineBreak())
     inlines:insert(latex_to_inline("\\caption*{} \\\\"))
 
     return pandoc.Plain(inlines)
