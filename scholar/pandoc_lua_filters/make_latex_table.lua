@@ -378,7 +378,7 @@ end
 local function make_longtable_head_blocks(
     table_head_el, -- pandoc.TableHead
     caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
-    caption_block_of_table_continuation -- pandoc.Block-like
+    caption_block_or_nil_of_table_continuation -- pandoc.Block-like or nil
 )
 end
 
