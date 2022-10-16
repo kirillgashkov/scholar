@@ -188,43 +188,6 @@ local function table_id_to_latex(
     return ""
 end
 
-local function make_main_table_caption_block_or_nil(
-    table_caption_el, -- pandoc.Caption
-    table_id, -- string
-    is_table_numbered -- boolean
-)
-    if not is_table_numbered then
-        return nil
-    end
-
-    local inlines = pandoc.Inlines({})
-
-    local main_caption_blocks = table_caption_el.long -- pandoc.Blocks
-    local lot_caption_inlines = table_caption_el.short -- pandoc.Inlines or nil
-
-    inlines:insert(latex_to_inline("\\caption"))
-
-    if lot_caption_inlines ~= nil then
-        inlines:insert(latex_to_inline("["))
-        inlines:extend(lot_caption_inlines)
-        inlines:insert(latex_to_inline("]"))
-    end
-
-    inlines:insert(latex_to_inline("{"))
-    inlines:extend(pandoc.utils.blocks_to_inlines(main_caption_blocks))
-    inlines:insert(latex_to_inline("}"))
-
-    if table_id ~= "" then
-        inlines:insert(latex_to_inline(table_id_to_latex(table_id)))
-    end
-
-    -- Pandoc generates captions with '\tabularnewline' instead of '\\'
-    inlines:insert(pandoc.Space())
-    inlines:insert("\\\\")
-
-    return pandoc.Plain(inlines)
-end
-
 local function make_continued_table_caption_block(
     is_table_numbered -- boolean
 )
