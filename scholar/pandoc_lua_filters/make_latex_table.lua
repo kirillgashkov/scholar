@@ -169,7 +169,7 @@ local function table_id_to_latex(
 )
     if identifier == "" then
         warn(
-            "non-empty table IDs are not supported; treating a non-empty table ID as empty"
+            "nonempty table IDs are not supported; treating a nonempty table ID as empty"
         )
         -- WTF: Because the 'pandoc-crossref' filter parses the table ID on
         -- itself, converts it to LaTeX's '\label{...}' command and embeds it
