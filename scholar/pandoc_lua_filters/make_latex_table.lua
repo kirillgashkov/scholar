@@ -241,9 +241,23 @@ local function make_caption_block_of_numbered_table_start(
 end
 
 local function make_caption_block_of_numbered_table_continuation()
+    local blocks = pandoc.Blocks({})
+
+    -- Pandoc generates captions with '\tabularnewline' instead of '\\'
+    blocks:insert(latex_to_block("\\captionsetup{style=customNumberedTableContinuation}"))
+    blocks:insert(latex_to_block("\\caption[]{} \\\\"))
+
+    return blocks
 end
 
 local function make_caption_block_of_unnumbered_table_continuation()
+    local blocks = pandoc.Blocks({})
+
+    -- Pandoc generates captions with '\tabularnewline' instead of '\\'
+    blocks:insert(latex_to_block("\\captionsetup{style=customUnnumberedTableContinuation}"))
+    blocks:insert(latex_to_block("\\caption*{} \\\\"))
+
+    return blocks
 end
 
 -- Table head to blocks
