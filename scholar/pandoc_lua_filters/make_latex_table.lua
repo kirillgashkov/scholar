@@ -77,7 +77,7 @@ local function table_row_to_block(
 
     for i, cell_el in ipairs(row_el.cells) do
         if i ~= 1 then
-            inlines:insert(pandoc.RawInline("latex", "&"))
+            inlines:insert(latex_to_inline("&"))
             inlines:insert(pandoc.Space())
         end
 
@@ -85,7 +85,7 @@ local function table_row_to_block(
         inlines:insert(pandoc.Space())
     end
     
-    inlines:insert(pandoc.RawInline("latex", "\\\\"))
+    inlines:insert(latex_to_inline("\\\\"))
 
     return pandoc.Plain(inlines)
 end
