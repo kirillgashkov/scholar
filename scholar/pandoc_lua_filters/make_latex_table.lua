@@ -99,7 +99,9 @@ end
 
 -- Longtable spec
 
-local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
+local function table_colspecs_to_simple_latex_column_descriptors(
+    colspec_els -- pandoc.List of pandoc.ColSpec
+)
     local latex_column_descriptors = pandoc.List({})
 
     for _, colspec_el in ipairs(colspec_els) do
@@ -119,7 +121,9 @@ local function table_colspecs_to_simple_latex_column_descriptors(colspec_els)
     return latex_column_descriptors
 end
 
-local function table_colspecs_to_complex_latex_column_descriptors(colspec_els)
+local function table_colspecs_to_complex_latex_column_descriptors(
+    colspec_els -- pandoc.List of pandoc.ColSpec
+)
     local latex_column_descriptors = pandoc.List({})
 
     for _, colspec_el in ipairs(colspec_els) do
