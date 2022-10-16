@@ -174,6 +174,32 @@ end
 local function make_longtable_spec_latex(
     table_colspec_els -- pandoc.List of pandoc.ColSpec
 )
+    local default_widths_only = true
+    for _, colspec_el in ipairs(table_colspec_els) do
+        if colspec_el[2] ~= nil then
+            default_widths_only = false
+            break
+        end
+    end
+
+    local latex_column_descriptors = pandoc.List({})
+    if default_widths_only then
+        latex_column_descriptors = table_colspecs_to_simple_latex_column_descriptors(table_colspec_els)
+    else
+        latex_column_descriptors = table_colspecs_to_complex_latex_column_descriptors(table_colspec_els)
+    end
+
+    local longtable_spec_latex = "{" .. vrule_latex("1pt")
+    for i, latex_column_descriptor in ipairs(latex_column_descriptors) do
+        if i ~= 1 then
+            longtable_spec_latex = longtable_spec_latex .. vrule_latex("0.5pt")
+        end
+
+        longtable_spec_latex = longtable_spec_latex .. latex_column_descriptor
+    end
+    longtable_spec_latex = longtable_spec_latex .. vrule_latex("1pt") .."}"
+
+    return longtable_spec_latex
 end
 
 -- Table caption
