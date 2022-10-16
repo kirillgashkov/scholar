@@ -259,26 +259,24 @@ local function make_continued_table_caption_block(
     return blocks
 end
 
-local function table_head_to_blocks(
-    head_el, -- pandoc.TableHead
-    table_caption_el, -- pandoc.Caption
-    table_id, -- string
-    is_table_numbered -- boolean
+local function make_longtable_head_blocks(
+    table_head_el, -- pandoc.TableHead
+    caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
+    caption_block_or_nil_of_table_continuation -- pandoc.Block-like or nil
 )
     local blocks = pandoc.Blocks({})
 
-    local content_blocks = table_head_to_content_blocks(head_el)
-    local main_table_caption_block = make_main_table_caption_block_or_nil(
-        table_caption_el, table_id, is_table_numbered
-    ) -- Block or nil
+    local content_blocks = table_head_to_content_blocks(table_head_el)
 
-    if main_table_caption_block ~= nil then
-        blocks:insert(main_table_caption_block)
+    if caption_block_or_nil_of_table_start ~= nil then
+        blocks:insert(caption_block_or_nil_of_table_start)
     end
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endfirsthead"))
 
-    blocks:insert(make_continued_table_caption_block(is_table_numbered))
+    if caption_block_or_nil_of_table_continuation ~= nil then
+        blocks:insert(caption_block_or_nil_of_table_continuation)
+    end
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endhead"))
 
@@ -373,13 +371,6 @@ local function is_lot_table_caption_provided(
     lot_caption_inlines_or_nil -- table.Inlines or nil
 )
     return lot_caption_inlines_or_nil ~= nil
-end
-
-local function make_longtable_head_blocks(
-    table_head_el, -- pandoc.TableHead
-    caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
-    caption_block_or_nil_of_table_continuation -- pandoc.Block-like or nil
-)
 end
 
 local function table_to_blocks(
