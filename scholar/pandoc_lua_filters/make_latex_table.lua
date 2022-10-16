@@ -36,27 +36,28 @@ local function is_lot_table_caption_provided(
     return lot_caption_inlines_or_nil ~= nil
 end
 
+local function is_table_cell_simple(
+    cell_el -- pandoc.Cell
+)
+    local cell_blocks = cell_el.contents
+
+    return (
+        (#cell_blocks == 0)
+        or (#cell_blocks == 1 and cell_blocks[1].tag == "Plain")
+        or (#cell_blocks == 1 and cell_blocks[1].tag == "Para")
+    )
+end
+
 --
 
-local function table_cell_to_inlines(cell_el)
-    local inlines = pandoc.Inlines({})
-
-    -- FIXME: What if
-    -- 1. cell_el.contents is missing/inaccessible?
-    -- 2. cell_el.contents[1] is missing/inaccessible?
-    -- 3. cell_el.contents[1].tag is missing/inaccessible?
-    -- 4. cell_el.contents[1].content is missing/inaccessible?
-    if #cell_el.contents == 1 and cell_el.contents[1].tag == "Plain" then
-        inlines = cell_el.contents[1].content -- "Plain.content" is "Inlines"
-    else
-        warn("table_cell_to_inlines: cell.contents is not a simple text block")
-        -- TODO: Consider using pandoc.LineBreak as a separator
-        inlines = pandoc.utils.blocks_to_inlines(cell_el.contents)
+local function table_cell_to_inlines(
+    cell_el -- pandoc.Cell
+)
+    if not is_table_cell_simple(cell_el) then
+        warn("nonsimple table cells are not supported; converting a nonsimple cell to simple")
     end
 
-    -- TODO: Consider returning a single pandoc.Span
-    -- inline (check how Pandoc handles this)
-    return inlines
+    return pandoc.utils.blocks_to_inlines(cell_el.contents)
 end
 
 local function table_row_to_block(
