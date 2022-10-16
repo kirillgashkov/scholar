@@ -220,7 +220,7 @@ local function make_caption_block_of_numbered_table_start(
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
     inlines:insert(pandoc.Space())
-    inlines:insert("\\\\")
+    inlines:insert(latex_to_inline("\\\\"))
 
     return pandoc.Plain(inlines)
 end
