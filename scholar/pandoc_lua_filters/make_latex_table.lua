@@ -81,22 +81,6 @@ local function table_row_to_block(row_el)
     return pandoc.Plain(inlines)
 end
 
-local function table_rows_to_blocks(
-    row_els, -- pandoc.List of pandoc.Row
-    separator_block_or_nil -- pandoc.Block-like or nil
-)
-    local blocks = pandoc.Blocks({})
-
-    for i, row_el in ipairs(row_els) do
-        if i ~= 1 and separator_block_or_nil ~= nil then
-            blocks:insert(separator_block_or_nil)
-        end
-        blocks:insert(table_row_to_block(row_el))
-    end
-
-    return blocks
-end
-
 -- Longtable spec
 
 local function table_colspecs_to_simple_latex_column_descriptors(
