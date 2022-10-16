@@ -162,7 +162,8 @@ end
 local function table_head_to_blocks(
     head_el, -- pandoc.TableHead
     table_caption_el, -- pandoc.Caption
-    table_id -- string
+    table_id, -- string
+    is_table_numbered -- boolean
 )
     local blocks = pandoc.Blocks({})
 
@@ -251,18 +252,58 @@ end
 
 -- Table to blocks
 
+local function is_table_id_provided(
+    identifier -- string
+)
+    return identifier ~= ""
+end
+
+local function is_main_table_caption_provided(
+    main_caption_blocks -- table.Blocks
+)
+    return #main_caption_blocks ~= 0
+end
+
+local function is_lot_table_caption_provided(
+    lot_caption_inlines -- table.Inlines or nil
+)
+    return lot_caption_inlines ~= nil
+end
+
+local function is_table_numbered(
+    table_el -- pandoc.Table
+)
+    local is_identifier_provided = is_table_id_provided(table_el.identifier)
+    local is_main_caption_provided = is_main_table_caption_provided(table_el.caption.long)
+    local is_lot_caption_provided = is_lot_table_caption_provided(table_el.caption.short)
+
+    return is_identifier_provided or is_main_caption_provided or is_lot_caption_provided
+end
+
 local function table_to_blocks(
     table_el -- pandoc.Table
 )
     local blocks = pandoc.Blocks({})
 
+    local is_numbered = is_table_numbered(table_el)
+    local begin_block
+    local end_block
+    
+    if is_numbered then
+        begin_block = latex_to_block("\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs))
+        end_block = latex_to_block("\\end{longtable}")
+    else
+        begin_block = latex_to_block("\\begin{longtable*}" .. table_colspecs_to_latex(table_el.colspecs))
+        end_block = latex_to_block("\\end{longtable*}")
+    end
+
     -- WTF: The table foot goes before the table body
     -- because of the way longtables works
-    blocks:insert(latex_to_block("\\begin{longtable}" .. table_colspecs_to_latex(table_el.colspecs)))
-    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.identifier))
+    blocks:insert(begin_block)
+    blocks:extend(table_head_to_blocks(table_el.head, table_el.caption, table_el.identifier, is_numbered))
     blocks:extend(table_foot_to_blocks(table_el.foot))
     blocks:extend(table_bodies_to_blocks(table_el.bodies))
-    blocks:insert(latex_to_block("\\end{longtable}"))
+    blocks:insert(end_block)
 
     return blocks
 end
