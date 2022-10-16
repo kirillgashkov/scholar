@@ -407,8 +407,12 @@ local function table_to_blocks(
         or is_table_id_provided(table_el.identifier)
     ) then
         latex_environment_name_of_table = "longtable"
-        caption_block_or_nil_of_table_start = make_caption_block_of_numbered_table_start(
-            table_el.caption.long, table_el.caption.short, table_el.identifier
+        caption_block_or_nil_of_table_start = (
+            make_caption_block_of_numbered_table_start(
+                table_el.caption.long,
+                table_el.caption.short,
+                table_el.identifier
+            )
         )
         caption_block_of_table_continuation = (
             make_caption_block_of_numbered_table_continuation()
