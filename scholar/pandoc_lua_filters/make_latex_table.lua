@@ -1,12 +1,4 @@
-local function latex_to_inline(latex)
-    return pandoc.RawInline("latex", latex)
-end
-
-local function latex_to_block(latex)
-    return pandoc.RawBlock("latex", latex)
-end
-
---
+-- Utility LaTeX builders
 
 local function vrule_latex(thickness)
     return "!{\\vrule width " .. thickness .. "}"
@@ -16,7 +8,7 @@ local function hrule_latex(thickness)
     return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
 end
 
---
+-- Utility property checkers
 
 local function is_table_id_provided(
     identifier -- string
@@ -48,7 +40,17 @@ local function is_table_cell_simple(
     )
 end
 
---
+-- LaTeX
+
+local function latex_to_inline(latex)
+    return pandoc.RawInline("latex", latex)
+end
+
+local function latex_to_block(latex)
+    return pandoc.RawBlock("latex", latex)
+end
+
+-- Table row
 
 local function table_cell_to_inlines(
     cell_el -- pandoc.Cell
