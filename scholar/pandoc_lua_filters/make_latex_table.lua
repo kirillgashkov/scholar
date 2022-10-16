@@ -269,21 +269,21 @@ end
 
 local function make_longtable_head_blocks(
     table_head_el, -- pandoc.TableHead
-    caption_block_or_nil_of_table_start, -- pandoc.Block-like or nil
-    caption_block_or_nil_of_table_continuation -- pandoc.Block-like or nil
+    caption_block_of_table_start_or_nil, -- pandoc.Block-like or nil
+    caption_block_of_table_continuation_or_nil -- pandoc.Block-like or nil
 )
     local blocks = pandoc.Blocks({})
 
     local content_blocks = table_head_to_content_blocks(table_head_el)
 
-    if caption_block_or_nil_of_table_start ~= nil then
-        blocks:insert(caption_block_or_nil_of_table_start)
+    if caption_block_of_table_start_or_nil ~= nil then
+        blocks:insert(caption_block_of_table_start_or_nil)
     end
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endfirsthead"))
 
-    if caption_block_or_nil_of_table_continuation ~= nil then
-        blocks:insert(caption_block_or_nil_of_table_continuation)
+    if caption_block_of_table_continuation_or_nil ~= nil then
+        blocks:insert(caption_block_of_table_continuation_or_nil)
     end
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endhead"))
@@ -369,7 +369,7 @@ local function table_to_blocks(
     local blocks = pandoc.Blocks({})
 
     local latex_environment_name_of_table
-    local caption_block_or_nil_of_table_start
+    local caption_block_of_table_start_or_nil
     local caption_block_of_table_continuation
 
     if (
@@ -378,7 +378,7 @@ local function table_to_blocks(
         or is_table_id_provided(table_el.identifier)
     ) then
         latex_environment_name_of_table = "longtable"
-        caption_block_or_nil_of_table_start = (
+        caption_block_of_table_start_or_nil = (
             make_caption_block_of_numbered_table_start(
                 table_el.caption.long,
                 table_el.caption.short,
@@ -390,7 +390,7 @@ local function table_to_blocks(
         )
     else
         latex_environment_name_of_table = "longtable*"
-        caption_block_or_nil_of_table_start = nil
+        caption_block_of_table_start_or_nil = nil
         caption_block_of_table_continuation = (
             make_caption_block_of_unnumbered_table_continuation()
         )
@@ -399,7 +399,7 @@ local function table_to_blocks(
     -- WTF: The table foot goes before the table body
     -- because of the way longtables works
     blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. table_colspecs_to_latex(table_el.colspecs)))
-    blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_or_nil_of_table_start, caption_block_of_table_continuation))
+    blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_of_table_start_or_nil, caption_block_of_table_continuation))
     blocks:extend(make_longtable_foot_blocks(table_el.foot))
     blocks:extend(make_longtable_body_blocks(table_el.bodies))
     blocks:insert(latex_to_block("\\end{" .. latex_environment_name_of_table .. "}"))
