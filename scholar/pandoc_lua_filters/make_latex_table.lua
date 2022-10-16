@@ -59,25 +59,23 @@ local function table_cell_to_inlines(cell_el)
     return inlines
 end
 
-local function table_row_to_block(row_el)
+local function table_row_to_block(
+    row_el -- pandoc.Row
+)
     local inlines = pandoc.Inlines({})
 
-    -- FIXME: What if
-    -- 1. row_el.cells is missing/inaccessible?
-    -- 2. row_el.cells[1] is missing/inaccessible (e.g. list is empty)?
-    -- 3. row_el.cells[i] is missing/inaccessible?
-    inlines:extend(table_cell_to_inlines(row_el.cells[1]))
-    for i = 2, #row_el.cells do
+    for i, cell_el in ipairs(row_el.cells) do
+        if i ~= 1 then
+            inlines:insert(pandoc.RawInline("latex", "&"))
+            inlines:insert(pandoc.Space())
+        end
+
+        inlines:extend(table_cell_to_inlines(cell_el))
         inlines:insert(pandoc.Space())
-        inlines:insert(pandoc.RawInline("latex", "&"))
-        inlines:insert(pandoc.Space())
-        inlines:extend(table_cell_to_inlines(row_el.cells[i]))
     end
-    inlines:insert(pandoc.Space())
+    
     inlines:insert(pandoc.RawInline("latex", "\\\\"))
 
-    -- TODO: Consider using pandoc.Span with
-    -- pandoc.LineBreak instead of pandoc.Plain
     return pandoc.Plain(inlines)
 end
 
