@@ -188,23 +188,6 @@ local function table_id_to_latex(
     return ""
 end
 
-local function make_continued_table_caption_block(
-    is_table_numbered -- boolean
-)
-    local blocks = pandoc.Blocks({})
-
-    -- Pandoc generates captions with '\tabularnewline' instead of '\\'
-    if is_table_numbered then
-        blocks:insert(latex_to_block("\\captionsetup{style=customNumberedTableContinuation}"))
-        blocks:insert(latex_to_block("\\caption[]{} \\\\"))
-    else
-        blocks:insert(latex_to_block("\\captionsetup{style=customUnnumberedTableContinuation}"))
-        blocks:insert(latex_to_block("\\caption*{} \\\\"))
-    end
-
-    return blocks
-end
-
 local function make_caption_block_of_numbered_table_start(
     main_caption_blocks, -- pandoc.Blocks
     lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
