@@ -137,27 +137,6 @@ end
 
 -- Table head to blocks
 
-local function table_caption_to_main_caption_block(
-    caption_el, -- pandoc.Caption
-    table_id -- string
-)
-    -- TODO: Implement
-end
-
-local function table_caption_to_continuation_caption_block(
-    caption_el, -- pandoc.Caption
-    table_id -- string
-)
-    local blocks = pandoc.Blocks({})
-
-    -- 'customTableContinuation' has to be defined in the custom Pandoc template
-    blocks:insert(latex_to_block("\\captionsetup{style=customTableContinuation}"))
-    -- Pandoc generates their tables with '\tabularnewline' instead of '\\'
-    blocks:insert(latex_to_block("\\caption[]{} \\\\"))
-
-    return blocks
-end
-
 local function table_head_to_table_rows(
     head_el -- pandoc.TableHead
 )
@@ -180,18 +159,6 @@ local function table_head_to_content_blocks(
     return blocks
 end
 
-local function is_table_caption_empty(
-    caption_el -- pandoc.Caption
-)
-    return #caption_el.long == 0 and caption_el.short == nil
-end
-
-local function is_table_id_empty(
-    identifier -- string
-)
-    return identifier == ""
-end
-
 local function table_head_to_blocks(
     head_el, -- pandoc.TableHead
     table_caption_el, -- pandoc.Caption
@@ -200,18 +167,12 @@ local function table_head_to_blocks(
     local blocks = pandoc.Blocks({})
 
     local content_blocks = table_head_to_content_blocks(head_el)
-    local has_caption = not is_table_caption_empty(table_caption_el)
-    local has_identifier = not is_table_id_empty(table_id)
 
-    if has_caption or has_identifier then
-        blocks:insert(table_caption_to_main_caption_block(table_caption_el, table_id))
-    end
+    -- blocks:insert(make_main_caption_block())
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endfirsthead"))
 
-    if has_caption or has_identifier then
-        blocks:insert(table_caption_to_continuation_caption_block(table_caption_el, table_id))
-    end
+    -- blocks:insert(make_continuation_caption_block())
     blocks:extend(content_blocks)
     blocks:insert(latex_to_block("\\endhead"))
 
