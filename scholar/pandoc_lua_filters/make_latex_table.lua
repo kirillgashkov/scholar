@@ -247,6 +247,34 @@ local function make_caption_block_of_numbered_table_start(
     lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
     table_id -- string
 )
+    local inlines = pandoc.Inlines({})
+
+    inlines:insert(latex_to_inline("\\caption"))
+
+    if is_lot_table_caption_provided(lot_caption_inlines_or_nil) then
+        inlines:insert(latex_to_inline("["))
+        inlines:extend(lot_caption_inlines_or_nil)
+        inlines:insert(latex_to_inline("]"))
+    end
+
+    if is_main_table_caption_provided(main_caption_blocks) then
+        inlines:insert(latex_to_inline("{"))
+        inlines:extend(pandoc.utils.blocks_to_inlines(main_caption_blocks))
+        inlines:insert(latex_to_inline("}"))
+    else
+        inlines:insert(latex_to_inline("{"))
+        inlines:insert(latex_to_inline("}"))
+    end
+
+    if is_table_id_provided(table_id) then
+        inlines:insert(latex_to_inline(table_id_to_latex(table_id)))
+    end
+
+    -- Pandoc generates captions with '\tabularnewline' instead of '\\'
+    inlines:insert(pandoc.Space())
+    inlines:insert("\\\\")
+
+    return pandoc.Plain(inlines)
 end
 
 local function make_caption_block_of_numbered_table_continuation()
