@@ -365,7 +365,7 @@ end
 
 -- Longtable
 
-local function table_to_blocks(
+local function make_longtable_blocks(
     table_el -- pandoc.Table
 )
     local blocks = pandoc.Blocks({})
@@ -407,7 +407,7 @@ if FORMAT:match("latex") then
     return {
         {
             Table = function (table_el)
-                return table_to_blocks(table_el)
+                return make_longtable_blocks(table_el)
             end,
         }
     }
