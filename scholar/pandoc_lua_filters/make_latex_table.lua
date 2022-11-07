@@ -184,7 +184,7 @@ local function table_id_to_latex(
         )
         -- WTF: Because the 'pandoc-crossref' filter parses the table ID on
         -- itself, converts it to LaTeX's '\label{...}' command and embeds it
-        -- into the caption as raw LaTeX
+        -- into the caption as raw LaTeX.
     end
 
     return ""
@@ -309,7 +309,7 @@ local function make_longtable_foot_blocks(
     -- WTF: This horizontal rule at the bottom of every table part except
     -- the last is 0.5pt thick (instead of desired 1pt) because this rule
     -- imediately follows a horizontal rule from the table body which has
-    -- a 0.5pt thickness already
+    -- a 0.5pt thickness already.
     blocks:insert(latex_to_block(hrule_latex("0.5pt")))
     blocks:insert(latex_to_block("\\endfoot"))
 
@@ -391,7 +391,7 @@ local function make_longtable_blocks(
     end
 
     -- WTF: The table foot goes before the table body
-    -- because of the way longtables works
+    -- because of the way longtables works.
     blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. make_longtable_spec_latex(table_el.colspecs)))
     blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_of_table_start_or_nil, caption_block_of_table_continuation))
     blocks:extend(make_longtable_foot_blocks(table_el.foot))
