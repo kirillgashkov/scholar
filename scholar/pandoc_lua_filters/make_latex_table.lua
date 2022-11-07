@@ -370,32 +370,24 @@ local function table_to_blocks(
 )
     local blocks = pandoc.Blocks({})
 
-    local latex_environment_name_of_table
-    local caption_block_of_table_start_or_nil
-    local caption_block_of_table_continuation
-
-    if (
+    local is_table_numbered = (
         is_main_table_caption_provided(table_el.caption.long)
         or is_lot_table_caption_provided(table_el.caption.short)
         or is_table_id_provided(table_el.identifier)
-    ) then
+    )
+
+    local latex_environment_name_of_table
+    local caption_block_of_table_start_or_nil
+    local caption_block_of_table_continuation
+    
+    if is_table_numbered then
         latex_environment_name_of_table = "longtable"
-        caption_block_of_table_start_or_nil = (
-            make_caption_block_of_numbered_table_start(
-                table_el.caption.long,
-                table_el.caption.short,
-                table_el.identifier
-            )
-        )
-        caption_block_of_table_continuation = (
-            make_caption_block_of_numbered_table_continuation()
-        )
+        caption_block_of_table_start_or_nil = make_caption_block_of_numbered_table_start(table_el.caption.long, table_el.caption.short, table_el.identifier)
+        caption_block_of_table_continuation = make_caption_block_of_numbered_table_continuation()
     else
         latex_environment_name_of_table = "longtable*"
         caption_block_of_table_start_or_nil = nil
-        caption_block_of_table_continuation = (
-            make_caption_block_of_unnumbered_table_continuation()
-        )
+        caption_block_of_table_continuation = make_caption_block_of_unnumbered_table_continuation()
     end
 
     -- WTF: The table foot goes before the table body
