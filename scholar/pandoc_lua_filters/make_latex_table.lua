@@ -12,6 +12,20 @@ local function hrule_latex(
     return "\\specialrule{" .. thickness .. "}{0pt}{0pt}"
 end
 
+-- LaTeX
+
+local function latex_to_inline(
+    latex -- string
+)
+    return pandoc.RawInline("latex", latex)
+end
+
+local function latex_to_block(
+    latex -- string
+)
+    return pandoc.RawBlock("latex", latex)
+end
+
 -- Utility property checkers
 
 local function is_table_id_provided(
@@ -42,20 +56,6 @@ local function is_table_cell_simple(
         or (#cell_blocks == 1 and cell_blocks[1].tag == "Plain")
         or (#cell_blocks == 1 and cell_blocks[1].tag == "Para")
     )
-end
-
--- LaTeX
-
-local function latex_to_inline(
-    latex -- string
-)
-    return pandoc.RawInline("latex", latex)
-end
-
-local function latex_to_block(
-    latex -- string
-)
-    return pandoc.RawBlock("latex", latex)
 end
 
 -- Table row
