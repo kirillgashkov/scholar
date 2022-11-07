@@ -142,7 +142,7 @@ local function table_colspecs_to_complex_latex_column_descriptors(
     return latex_column_descriptors
 end
 
-local function make_longtable_spec_latex(
+local function longtable_spec_latex(
     table_colspec_els -- pandoc.List of pandoc.ColSpec
 )
     local default_widths_only = true
@@ -190,7 +190,7 @@ local function table_id_to_latex(
     return ""
 end
 
-local function make_caption_block_of_numbered_table_start(
+local function caption_block_of_numbered_table_start(
     main_caption_blocks, -- pandoc.Blocks
     lot_caption_inlines_or_nil, -- pandoc.Inlines or nil
     table_id -- string
@@ -225,7 +225,7 @@ local function make_caption_block_of_numbered_table_start(
     return pandoc.Plain(inlines)
 end
 
-local function make_caption_block_of_numbered_table_continuation()
+local function caption_block_of_numbered_table_continuation()
     local inlines = pandoc.Inlines({})
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
@@ -235,7 +235,7 @@ local function make_caption_block_of_numbered_table_continuation()
     return pandoc.Plain(inlines)
 end
 
-local function make_caption_block_of_unnumbered_table_continuation()
+local function caption_block_of_unnumbered_table_continuation()
     local inlines = pandoc.Inlines({})
 
     -- Pandoc generates captions with '\tabularnewline' instead of '\\'
@@ -269,7 +269,7 @@ local function table_head_to_content_blocks(
     return blocks
 end
 
-local function make_longtable_head_blocks(
+local function longtable_head_blocks(
     table_head_el, -- pandoc.TableHead
     caption_block_of_table_start_or_nil, -- pandoc.Block-like or nil
     caption_block_of_table_continuation_or_nil -- pandoc.Block-like or nil
@@ -301,7 +301,7 @@ local function table_foot_to_table_rows(
     return foot_el.rows
 end
 
-local function make_longtable_foot_blocks(
+local function longtable_foot_blocks(
     table_foot_el -- pandoc.TableFoot
 )
     local blocks = pandoc.Blocks({})
@@ -348,7 +348,7 @@ local function table_bodies_to_table_rows(
     return rows
 end
 
-local function make_longtable_body_blocks(
+local function longtable_body_blocks(
     table_body_els -- pandoc.List of pandoc.TableBody
 )
     local blocks = pandoc.Blocks({})
@@ -365,7 +365,7 @@ end
 
 -- Longtable
 
-local function make_longtable_blocks(
+local function longtable_blocks(
     table_el -- pandoc.Table
 )
     local blocks = pandoc.Blocks({})
@@ -382,20 +382,20 @@ local function make_longtable_blocks(
     
     if is_table_numbered then
         latex_environment_name_of_table = "longtable"
-        caption_block_of_table_start_or_nil = make_caption_block_of_numbered_table_start(table_el.caption.long, table_el.caption.short, table_el.identifier)
-        caption_block_of_table_continuation = make_caption_block_of_numbered_table_continuation()
+        caption_block_of_table_start_or_nil = caption_block_of_numbered_table_start(table_el.caption.long, table_el.caption.short, table_el.identifier)
+        caption_block_of_table_continuation = caption_block_of_numbered_table_continuation()
     else
         latex_environment_name_of_table = "longtable*"
         caption_block_of_table_start_or_nil = nil
-        caption_block_of_table_continuation = make_caption_block_of_unnumbered_table_continuation()
+        caption_block_of_table_continuation = caption_block_of_unnumbered_table_continuation()
     end
 
     -- WTF: The table foot goes before the table body
     -- because of the way longtables works.
-    blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. make_longtable_spec_latex(table_el.colspecs)))
-    blocks:extend(make_longtable_head_blocks(table_el.head, caption_block_of_table_start_or_nil, caption_block_of_table_continuation))
-    blocks:extend(make_longtable_foot_blocks(table_el.foot))
-    blocks:extend(make_longtable_body_blocks(table_el.bodies))
+    blocks:insert(latex_to_block("\\begin{" .. latex_environment_name_of_table .. "}" .. longtable_spec_latex(table_el.colspecs)))
+    blocks:extend(longtable_head_blocks(table_el.head, caption_block_of_table_start_or_nil, caption_block_of_table_continuation))
+    blocks:extend(longtable_foot_blocks(table_el.foot))
+    blocks:extend(longtable_body_blocks(table_el.bodies))
     blocks:insert(latex_to_block("\\end{" .. latex_environment_name_of_table .. "}"))
 
     return blocks
@@ -407,7 +407,7 @@ if FORMAT:match("latex") then
     return {
         {
             Table = function (table_el)
-                return make_longtable_blocks(table_el)
+                return longtable_blocks(table_el)
             end,
         }
     }
