@@ -139,9 +139,36 @@ local function table_colspecs_to_complex_latex_column_descriptors(
             latex_alignment_command = "\\raggedright"
         end
 
-        -- "\columnwidth - {#colspec_els * 2}\tabcolsep" is the width of the
-        -- table minus the width of every cell's left and right paddings
-        latex_column_descriptors:insert(">{" .. latex_alignment_command .. "\\arraybackslash}" .. "p{(\\columnwidth - " .. string.format("%d", #colspec_els * 2) .. "\\tabcolsep) * \\real{" .. string.format("%.4f", width) .. "}}")
+        -- "\columnwidth - ..." is the width of the table minus the width of
+        -- every cell's left and right paddings, minus the thickness of 2
+        -- outside vrules, minus the thickness of every inside vrule (a vrule
+        -- which is inserted between two cells).
+        latex_column_descriptors:insert(
+            (
+                ">{"
+                .. latex_alignment_command
+                .. "\\arraybackslash"
+                .. "}"
+            ) .. (
+                "p{"
+            
+                .. "("
+                .. "\\columnwidth"
+                .. " - "
+                .. string.format("%d", #colspec_els * 2) .. "\\tabcolsep"
+                .. " - "
+                .. string.format("%.4f", 2 * OUTSIDE_VRULE_THICKNESS_IN_PT) .. "pt"
+                .. " - "
+                .. string.format("%.4f", (#colspec_els - 1) * INSIDE_VRULE_THICKNESS_IN_PT) .. "pt"
+                .. ")"
+
+                .. " * "
+
+                .. "\\real{" .. string.format("%.4f", width) .. "}"
+
+                .. "}"
+            )
+        )
     end
 
     return latex_column_descriptors
