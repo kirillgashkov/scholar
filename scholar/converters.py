@@ -22,7 +22,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_generated_resources_dir: Path,
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
-        cache_dir: Path,
+        pandoc_output_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
@@ -33,10 +33,10 @@ class MarkdownToLaTeXConverter(Converter):
         self.make_latex_table_pandoc_lua_filter_file = (
             make_latex_table_pandoc_lua_filter_file
         )
-        self.cache_dir = cache_dir
+        self.pandoc_output_dir = pandoc_output_dir
 
     def convert(self, input_file: Path) -> Path:
-        output_file = self.cache_dir / input_file.with_suffix(".tex").name
+        output_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
 
         try:
             print("[bold yellow]Running pandoc")
@@ -122,20 +122,18 @@ class MarkdownToLaTeXConverter(Converter):
 
 
 class LaTeXToPDFConverter(Converter):
-    def __init__(self, cache_dir: Path) -> None:
-        self.cache_dir = cache_dir
+    def __init__(self, latexmk_output_dir: Path) -> None:
+        self.latexmk_output_dir = latexmk_output_dir
 
     def convert(self, input_file: Path) -> Path:
-        output_dir = self.cache_dir
-
         try:
             print("[bold yellow]Running latexmk")
-            self._run_latexmk(input_file, output_dir)
+            self._run_latexmk(input_file, self.latexmk_output_dir)
         except subprocess.CalledProcessError as e:
             print("[bold red]Running latexmk failed")
             raise typer.Exit(1)
 
-        return output_dir / input_file.with_suffix(".pdf").name
+        return self.latexmk_output_dir / input_file.with_suffix(".pdf").name
 
     @staticmethod
     def _run_latexmk(input_file: Path, output_dir: Path) -> None:
