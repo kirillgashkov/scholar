@@ -8,11 +8,11 @@ from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
     CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
     MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-    MD_TO_TEX_CACHE_DIR,
+    PANDOC_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
     PANDOC_TEMPLATE_FILE,
-    TEX_TO_PDF_CACHE_DIR,
+    LATEXMK_OUTPUT_DIR,
 )
 
 T = TypeVar("T")
@@ -67,21 +67,22 @@ def main(
 
 
 def convert_md_to_tex(input_file: Path) -> Path:
-    MD_TO_TEX_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    PANDOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(
         PANDOC_TEMPLATE_FILE,
         PANDOC_EXTRACTED_RESOURCES_DIR,
         PANDOC_GENERATED_RESOURCES_DIR,
         CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
         MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-        MD_TO_TEX_CACHE_DIR,
+        PANDOC_OUTPUT_DIR,
+        LATEXMK_OUTPUT_DIR,
     )
     return converter.convert(input_file)
 
 
 def convert_tex_to_pdf(input_file: Path) -> Path:
-    TEX_TO_PDF_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    converter = LaTeXToPDFConverter(TEX_TO_PDF_CACHE_DIR)
+    LATEXMK_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    converter = LaTeXToPDFConverter(LATEXMK_OUTPUT_DIR)
     return converter.convert(input_file)
 
 
