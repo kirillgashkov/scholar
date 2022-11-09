@@ -1,11 +1,12 @@
 import subprocess
 import sys
+import re
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from pathlib import Path
 
 import typer
-from rich import print
+import rich
 
 
 class Converter(ABC):
@@ -41,10 +42,10 @@ class MarkdownToLaTeXConverter(Converter):
         output_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
 
         try:
-            print("[bold yellow]Running pandoc")
+            rich.print("[bold yellow]Running pandoc")
             self._run_pandoc(input_file, output_file)
         except subprocess.CalledProcessError as e:
-            print("[bold red]Running pandoc failed")
+            rich.print("[bold red]Running pandoc failed")
             raise typer.Exit(1)
 
         return output_file
@@ -86,6 +87,23 @@ class MarkdownToLaTeXConverter(Converter):
             "latex", disabled_extensions=["auto_identifiers", "smart"]
         )
 
+        # WTF: At the time of writting this the value of this variable is supposed to
+        # always pass the regular expression check below because it points to a
+        # directory the path elements of which are pre-defined in Scholar's
+        # 'settings.py' file. We keep the regular expression check to ensure that we
+        # don't pass any unescaped paths to LaTeX and cause mayhem. Obviously this
+        # solution is far from ideal but it will work for now.
+        minted_package_option_outputdir = self.latexmk_output_dir.relative_to(
+            Path.cwd()
+        ).as_posix()
+
+        if not re.match(r"^[A-Za-z0-9._\-\/]+$", minted_package_option_outputdir):
+            print(
+                f"Error: failed to provide a valid value for the 'outputdir' option of the 'minted' package",
+                file=sys.stderr,
+            )
+            typer.Exit(1)
+
         subprocess.run(
             [
                 "pandoc",
@@ -113,7 +131,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
                 "--variable",
-                f"latexmk-output-directory={self.latexmk_output_dir}",
+                f"minted-package-option-outputdir={minted_package_option_outputdir}",
                 # I/O options
                 "--output",
                 str(output_file),
@@ -131,10 +149,10 @@ class LaTeXToPDFConverter(Converter):
 
     def convert(self, input_file: Path) -> Path:
         try:
-            print("[bold yellow]Running latexmk")
+            rich.print("[bold yellow]Running latexmk")
             self._run_latexmk(input_file, self.latexmk_output_dir)
         except subprocess.CalledProcessError as e:
-            print("[bold red]Running latexmk failed")
+            rich.print("[bold red]Running latexmk failed")
             raise typer.Exit(1)
 
         return self.latexmk_output_dir / input_file.with_suffix(".pdf").name
