@@ -306,7 +306,13 @@
 % Listings
 %
 
-\usepackage[outputdir=$minted-package-option-outputdir$]{minted}
+% - 'newfloat' package option provides better integration
+%   with the 'caption' package.
+% - 'outputdir' package option specifies the output directory
+%   of LaTeX compiler's so that if it was changed with
+%   '-output-directory' command-line option 'minted' still
+%   could find the temporary files it created.
+\usepackage[newfloat,outputdir=$minted-package-option-outputdir$]{minted}
 
 
 \begin{document}
