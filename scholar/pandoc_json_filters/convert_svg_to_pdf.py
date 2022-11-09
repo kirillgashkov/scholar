@@ -44,9 +44,11 @@ def convert_svg_to_pdf(
 
 
 def _get_filter_generated_resources_dirpath(document_metadata: dict[str, Any]) -> Path:
-    return (
-        Path(document_metadata["generated_resources_dir"]["c"]) / "convert_svg_to_pdf"
+    generated_resources_dirpath = Path(
+        document_metadata["generated-resources-directory"]["c"]
     )
+
+    return generated_resources_dirpath / "convert_svg_to_pdf"
 
 
 def _get_pdf_image_path(

@@ -109,7 +109,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "--extract-media",
                 str(self.pandoc_extracted_resources_dir),
                 "--metadata",
-                f"generated_resources_dir={self.pandoc_generated_resources_dir}",
+                f"generated-resources-directory={self.pandoc_generated_resources_dir}",
                 # I/O options
                 "--output",
                 str(output_file),
