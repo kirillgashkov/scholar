@@ -23,6 +23,7 @@ class MarkdownToLaTeXConverter(Converter):
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
         pandoc_output_dir: Path,
+        latexmk_output_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
@@ -34,6 +35,7 @@ class MarkdownToLaTeXConverter(Converter):
             make_latex_table_pandoc_lua_filter_file
         )
         self.pandoc_output_dir = pandoc_output_dir
+        self.latexmk_output_dir = latexmk_output_dir
 
     def convert(self, input_file: Path) -> Path:
         output_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
@@ -110,6 +112,8 @@ class MarkdownToLaTeXConverter(Converter):
                 str(self.pandoc_extracted_resources_dir),
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
+                "--variable",
+                f"latexmk-output-directory={self.latexmk_output_dir}",
                 # I/O options
                 "--output",
                 str(output_file),
