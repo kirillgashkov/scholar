@@ -1,3 +1,8 @@
+local OUTSIDE_VRULE_THICKNESS_IN_PT = 1
+local OUTSIDE_HRULE_THICKNESS_IN_PT = 1
+local INSIDE_VRULE_THICKNESS_IN_PT = 0.5
+local INSIDE_HRULE_THICKNESS_IN_PT = 0.5
+
 -- Utility LaTeX builders
 
 local function vrule_latex(
@@ -160,15 +165,15 @@ local function longtable_spec_latex(
         latex_column_descriptors = table_colspecs_to_complex_latex_column_descriptors(table_colspec_els)
     end
 
-    local longtable_spec_latex = "{" .. vrule_latex("1pt")
+    local longtable_spec_latex = "{" .. vrule_latex(string.format("%.4f", OUTSIDE_VRULE_THICKNESS_IN_PT) .. "pt")
     for i, latex_column_descriptor in ipairs(latex_column_descriptors) do
         if i ~= 1 then
-            longtable_spec_latex = longtable_spec_latex .. vrule_latex("0.5pt")
+            longtable_spec_latex = longtable_spec_latex .. vrule_latex(string.format("%.4f", INSIDE_VRULE_THICKNESS_IN_PT) .. "pt")
         end
 
         longtable_spec_latex = longtable_spec_latex .. latex_column_descriptor
     end
-    longtable_spec_latex = longtable_spec_latex .. vrule_latex("1pt") .."}"
+    longtable_spec_latex = longtable_spec_latex .. vrule_latex(string.format("%.4f", OUTSIDE_VRULE_THICKNESS_IN_PT) .. "pt") .. "}"
 
     return longtable_spec_latex
 end
@@ -260,10 +265,10 @@ local function table_head_to_content_blocks(
 
     for i, row_el in ipairs(table_head_to_table_rows(head_el)) do
         if i == 1 then
-            blocks:insert(latex_to_block(hrule_latex("1pt")))
+            blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", OUTSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
         end
         blocks:insert(table_row_to_block(row_el))
-        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+        blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
     end
 
     return blocks
@@ -307,17 +312,17 @@ local function longtable_foot_blocks(
     local blocks = pandoc.Blocks({})
 
     -- WTF: This horizontal rule at the bottom of every table part except
-    -- the last is 0.5pt thick (instead of desired 1pt) because this rule
-    -- imediately follows a horizontal rule from the table body which has
-    -- a 0.5pt thickness already.
-    blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+    -- the last accounts for a fact that there is already an inside horizontal
+    -- rule from the table body at the bottom of the part because of the way
+    -- longtables work.
+    blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", OUTSIDE_HRULE_THICKNESS_IN_PT - INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
     blocks:insert(latex_to_block("\\endfoot"))
 
     for _, row_el in ipairs(table_foot_to_table_rows(table_foot_el)) do
-        blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+        blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
         blocks:insert(table_row_to_block(row_el))
     end
-    blocks:insert(latex_to_block(hrule_latex("1pt")))
+    blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", OUTSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
     blocks:insert(latex_to_block("\\endlastfoot"))
 
     return blocks
@@ -355,7 +360,7 @@ local function longtable_body_blocks(
 
     for i, row_el in ipairs(table_bodies_to_table_rows(table_body_els)) do
         if i ~= 1 then
-            blocks:insert(latex_to_block(hrule_latex("0.5pt")))
+            blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
         end
         blocks:insert(table_row_to_block(row_el))
     end
