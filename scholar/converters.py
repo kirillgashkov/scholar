@@ -149,6 +149,8 @@ class LaTeXToPDFConverter(Converter):
                 "-interaction=nonstopmode",
                 "-halt-on-error",
                 "-file-line-error",
+                # Other options
+                "-shell-escape",  # Needed for 'minted', has security implications
                 # I/O options
                 "-output-directory=" + str(output_dir),
                 str(input_file),
