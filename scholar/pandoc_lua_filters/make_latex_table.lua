@@ -76,7 +76,8 @@ local function table_cell_to_inlines(
 end
 
 local function table_row_to_block(
-    row_el -- pandoc.Row
+    row_el, -- pandoc.Row
+    is_head_row -- boolean
 )
     local inlines = pandoc.Inlines({})
 
@@ -86,7 +87,14 @@ local function table_row_to_block(
             inlines:insert(pandoc.Space())
         end
 
-        inlines:extend(table_cell_to_inlines(cell_el))
+        if is_head_row then
+            -- '\thead' comes from the 'makecell' package
+            inlines:insert(latex_to_inline("\\thead{"))
+            inlines:extend(table_cell_to_inlines(cell_el))
+            inlines:insert(latex_to_inline("}"))
+        else
+            inlines:extend(table_cell_to_inlines(cell_el))
+        end
         inlines:insert(pandoc.Space())
     end
     
@@ -294,7 +302,7 @@ local function table_head_to_content_blocks(
         if i == 1 then
             blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", OUTSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
         end
-        blocks:insert(table_row_to_block(row_el))
+        blocks:insert(table_row_to_block(row_el, true))
         blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
     end
 
@@ -347,7 +355,7 @@ local function longtable_foot_blocks(
 
     for _, row_el in ipairs(table_foot_to_table_rows(table_foot_el)) do
         blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
-        blocks:insert(table_row_to_block(row_el))
+        blocks:insert(table_row_to_block(row_el, false))
     end
     blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", OUTSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
     blocks:insert(latex_to_block("\\endlastfoot"))
@@ -389,7 +397,7 @@ local function longtable_body_blocks(
         if i ~= 1 then
             blocks:insert(latex_to_block(hrule_latex(string.format("%.4f", INSIDE_HRULE_THICKNESS_IN_PT) .. "pt")))
         end
-        blocks:insert(table_row_to_block(row_el))
+        blocks:insert(table_row_to_block(row_el, false))
     end
 
     return blocks
