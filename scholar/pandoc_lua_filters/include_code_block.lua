@@ -176,12 +176,10 @@ local function make_code_block(
 end
 
 
-if FORMAT:match("latex") then
-    return {
-        {
-            CodeBlock = function (code_block_el)
-                return make_code_block(code_block_el)
-            end,
-        }
+return {
+    {
+        CodeBlock = function (code_block_el)
+            return make_code_block(code_block_el)
+        end,
     }
-end
+}
