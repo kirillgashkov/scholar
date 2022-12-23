@@ -122,7 +122,7 @@ local function load_file(
     local file = io.open(filepath, "r")
     local lines = {}
     local line_number = 1
-    
+
     -- WTF: Our VSCode Lua linter doesn't understand that 'file' is not nil
     -- when we use a guard-style if above.
     if file ~= nil then
