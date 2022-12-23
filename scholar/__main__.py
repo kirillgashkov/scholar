@@ -7,12 +7,13 @@ import typer
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
     CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
+    LATEXMK_OUTPUT_DIR,
+    MAKE_LATEX_LISTING_PANDOC_LUA_FILTER_FILE,
     MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-    PANDOC_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
+    PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
-    LATEXMK_OUTPUT_DIR,
 )
 
 T = TypeVar("T")
@@ -69,20 +70,21 @@ def main(
 def convert_md_to_tex(input_file: Path) -> Path:
     PANDOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(
-        PANDOC_TEMPLATE_FILE,
-        PANDOC_EXTRACTED_RESOURCES_DIR,
-        PANDOC_GENERATED_RESOURCES_DIR,
-        CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
-        MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-        PANDOC_OUTPUT_DIR,
-        LATEXMK_OUTPUT_DIR,
+        pandoc_template_file=PANDOC_TEMPLATE_FILE,
+        pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
+        pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
+        convert_svg_to_pdf_pandoc_json_filter_file=CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
+        make_latex_table_pandoc_lua_filter_file=MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
+        make_latex_listing_pandoc_lua_filter_file=MAKE_LATEX_LISTING_PANDOC_LUA_FILTER_FILE,
+        pandoc_output_dir=PANDOC_OUTPUT_DIR,
+        latexmk_output_dir=LATEXMK_OUTPUT_DIR,
     )
     return converter.convert(input_file)
 
 
 def convert_tex_to_pdf(input_file: Path) -> Path:
     LATEXMK_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    converter = LaTeXToPDFConverter(LATEXMK_OUTPUT_DIR)
+    converter = LaTeXToPDFConverter(latexmk_output_dir=LATEXMK_OUTPUT_DIR)
     return converter.convert(input_file)
 
 

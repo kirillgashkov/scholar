@@ -17,6 +17,9 @@ CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE = (
 MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE = (
     PANDOC_LUA_FILTERS_DIR / "make_latex_table.lua"
 )
+MAKE_LATEX_LISTING_PANDOC_LUA_FILTER_FILE = (
+    PANDOC_LUA_FILTERS_DIR / "make_latex_listing.lua"
+)
 
 
 CACHE_DIR = Path.cwd() / ".scholar"

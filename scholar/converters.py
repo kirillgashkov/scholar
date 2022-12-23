@@ -1,12 +1,12 @@
+import re
 import subprocess
 import sys
-import re
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from pathlib import Path
 
-import typer
 import rich
+import typer
 
 
 class Converter(ABC):
@@ -18,11 +18,13 @@ class Converter(ABC):
 class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
+        *,
         pandoc_template_file: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
+        make_latex_listing_pandoc_lua_filter_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
     ) -> None:
@@ -34,6 +36,9 @@ class MarkdownToLaTeXConverter(Converter):
         )
         self.make_latex_table_pandoc_lua_filter_file = (
             make_latex_table_pandoc_lua_filter_file
+        )
+        self.make_latex_listing_pandoc_lua_filter_file = (
+            make_latex_listing_pandoc_lua_filter_file
         )
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
@@ -133,6 +138,8 @@ class MarkdownToLaTeXConverter(Converter):
                 str(self.convert_svg_to_pdf_pandoc_json_filter_file),
                 "--lua-filter",
                 str(self.make_latex_table_pandoc_lua_filter_file),
+                "--lua-filter",
+                str(self.make_latex_listing_pandoc_lua_filter_file),
                 # Other options
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
@@ -150,7 +157,7 @@ class MarkdownToLaTeXConverter(Converter):
 
 
 class LaTeXToPDFConverter(Converter):
-    def __init__(self, latexmk_output_dir: Path) -> None:
+    def __init__(self, *, latexmk_output_dir: Path) -> None:
         self.latexmk_output_dir = latexmk_output_dir
 
     def convert(self, input_file: Path) -> Path:
