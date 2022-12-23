@@ -20,6 +20,9 @@ MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE = (
 MAKE_LATEX_LISTING_PANDOC_LUA_FILTER_FILE = (
     PANDOC_LUA_FILTERS_DIR / "make_latex_listing.lua"
 )
+INCLUDE_CODE_BLOCK_PANDOC_LUA_FILTER_FILE = (
+    PANDOC_LUA_FILTERS_DIR / "include_code_block.lua"
+)
 
 
 CACHE_DIR = Path.cwd() / ".scholar"
