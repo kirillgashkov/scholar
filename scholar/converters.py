@@ -24,7 +24,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_generated_resources_dir: Path,
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
-        make_latex_listing_pandoc_lua_filter_file: Path,
+        make_latex_code_and_code_block_pandoc_lua_filter_file: Path,
         include_code_block_pandoc_lua_filter_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
@@ -38,8 +38,8 @@ class MarkdownToLaTeXConverter(Converter):
         self.make_latex_table_pandoc_lua_filter_file = (
             make_latex_table_pandoc_lua_filter_file
         )
-        self.make_latex_listing_pandoc_lua_filter_file = (
-            make_latex_listing_pandoc_lua_filter_file
+        self.make_latex_code_and_code_block_pandoc_lua_filter_file = (
+            make_latex_code_and_code_block_pandoc_lua_filter_file
         )
         self.include_code_block_pandoc_lua_filter_file = (
             include_code_block_pandoc_lua_filter_file
@@ -145,7 +145,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "--lua-filter",
                 str(self.include_code_block_pandoc_lua_filter_file),
                 "--lua-filter",
-                str(self.make_latex_listing_pandoc_lua_filter_file),
+                str(self.make_latex_code_and_code_block_pandoc_lua_filter_file),
                 # Other options
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
