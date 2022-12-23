@@ -81,10 +81,13 @@ class MarkdownToLaTeXConverter(Converter):
                 # GFM-inspired extensions
                 "task_lists",
                 "strikeout",
+                # Convenience extensions
+                "smart",
             ],
         )
         latex_pandoc_output_format = _make_pandoc_format(
-            "latex", disabled_extensions=["auto_identifiers", "smart"]
+            "latex",
+            disabled_extensions=["auto_identifiers"],
         )
 
         # WTF: At the time of writting this the value of this variable is supposed to
@@ -116,6 +119,13 @@ class MarkdownToLaTeXConverter(Converter):
                 "--standalone",
                 "--template",
                 str(self.pandoc_template_file),
+                # Writer options
+                "--shift-heading-level-by",
+                "-1",
+                "--metadata",
+                "csquotes=true",
+                "--extract-media",
+                str(self.pandoc_extracted_resources_dir),
                 # Filter options
                 "--filter",
                 "pandoc-crossref",
@@ -124,10 +134,6 @@ class MarkdownToLaTeXConverter(Converter):
                 "--lua-filter",
                 str(self.make_latex_table_pandoc_lua_filter_file),
                 # Other options
-                "--shift-heading-level-by",
-                "-1",
-                "--extract-media",
-                str(self.pandoc_extracted_resources_dir),
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
                 "--variable",
