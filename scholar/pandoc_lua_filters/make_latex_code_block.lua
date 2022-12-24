@@ -1,9 +1,60 @@
+-- Convert Pandoc code blocks to LaTeX minted blocks.
 --
+----- USAGE --------------------------------------------------------------------
 --
--- NOTE: We are trusing 'start_line_number' to be valid latex.
--- NOTE: We are trusing 'language' to be valid latex.
--- NOTE: We are trusing 'identifier' to be valid latex.
-
+-- Example input code block:
+--
+--     ```python
+--     def greet(name):
+--         print(f"Hello, {name}!")
+--     ```
+--
+--     ```{.python #greet caption="A function that greets a person"}
+--     def greet(name):
+--         print(f"Hello, {name}!")
+--     ```
+--
+-- This filter also recognizes the 'start' attribute used by the
+-- 'include_code_block.lua' filter. If the 'start' attribute is present, the
+-- filter will set the 'firstline' option of the minted environment:
+--
+--    ```{.python include="path/to/file.py" start=7}
+--    ```
+--
+----- SECURITY IMPLICATIONS ----------------------------------------------------
+--
+-- The accepted parameters 'start', 'language'  and 'identifier' ('7', 'python'
+-- and 'greet' in the examples above) are treated as raw LaTeX code.
+--
+-- However, the parameter 'caption' is treated as raw Markdown, so it will even
+-- be parsed and rendered by Pandoc.
+--
+----- LATEX REQUIREMENTS -------------------------------------------------------
+--
+-- Requires 'caption'...
+--
+--     \usepackage{caption}
+--
+-- ...and 'minted' with '[newfloat]' option (it provides better integration with
+-- the 'caption' package):
+--
+--     \usepackage[newfloat]{minted}
+--
+-- Then you need to define a 'longlisting' environment, which supports spanning
+-- over multiple pages:
+--
+--     \newenvironment{longlisting}{\captionsetup{type=listing}}{}
+--
+-- Now you can create LaTeX listings when you need a caption or a label:
+--
+--     \begin{longlisting}
+--     \begin{minted}{python}
+--     def greet(name):
+--         print(f"Hello, {name}!")
+--     \end{minted}
+--     \caption{A function that greets a person}
+--     \label{greet}
+--     \end{longlisting}
 
 local function parse_code_classes(
     classes -- pandoc.List of string
