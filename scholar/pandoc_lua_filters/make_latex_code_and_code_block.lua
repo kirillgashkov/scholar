@@ -1,7 +1,7 @@
 --
 --
--- NOTE: We are trusing the language to be valid latex.
--- NOTE: We are trusing the identifier to be valid latex.
+-- NOTE: We are trusing 'language' to be valid latex.
+-- NOTE: We are trusing 'identifier' to be valid latex.
 
 
 local function parse_code_classes(
@@ -42,13 +42,6 @@ local function latex_to_inline(
     latex -- string
 )
     return pandoc.RawInline("latex", latex)
-end
-
-
-local function latex_to_block(
-    latex -- string
-)
-    return pandoc.RawBlock("latex", latex)
 end
 
 
@@ -104,7 +97,7 @@ local function make_code_block(
 
     inlines:extend(
         {
-            -- NOTE: We are trusing the language to be valid latex.
+            -- NOTE: We are trusing 'language' to be valid latex.
             latex_to_inline("\\begin{minted}{" .. language .. "}\n"),
             latex_to_inline(code_block_el.text),
             latex_to_inline("\n"),
@@ -119,12 +112,12 @@ local function make_code_block(
     end
 
     if has_identifier then
-        -- NOTE: We are trusing the identifier to be valid latex.
+        -- NOTE: We are trusing 'identifier' to be valid latex.
         inlines:insert(latex_to_inline("\\label{" .. identifier .. "}\n"))
     end
 
     if is_listing then
-        inlines:insert(latex_to_inline("\\end{longlisting}\n"))
+        inlines:insert(latex_to_inline("\\end{longlisting}"))
     end
 
     return pandoc.Plain(inlines)
@@ -134,12 +127,6 @@ end
 if FORMAT:match("latex") then
     return {
         {
-            -- Code = function (
-            --     code_el -- pandoc.Code
-            -- )
-            --     return make_code(code)
-            -- end,
-
             CodeBlock = function (
                 code_block_el -- pandoc.CodeBlock
             )
