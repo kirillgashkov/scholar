@@ -24,7 +24,8 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_generated_resources_dir: Path,
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
-        make_latex_code_and_code_block_pandoc_lua_filter_file: Path,
+        make_latex_code_block_pandoc_lua_filter_file: Path,
+        make_latex_code_pandoc_lua_filter_file: Path,
         trim_code_block_pandoc_lua_filter_file: Path,
         include_code_block_pandoc_lua_filter_file: Path,
         pandoc_output_dir: Path,
@@ -39,8 +40,11 @@ class MarkdownToLaTeXConverter(Converter):
         self.make_latex_table_pandoc_lua_filter_file = (
             make_latex_table_pandoc_lua_filter_file
         )
-        self.make_latex_code_and_code_block_pandoc_lua_filter_file = (
-            make_latex_code_and_code_block_pandoc_lua_filter_file
+        self.make_latex_code_block_pandoc_lua_filter_file = (
+            make_latex_code_block_pandoc_lua_filter_file
+        )
+        self.make_latex_code_pandoc_lua_filter_file = (
+            make_latex_code_pandoc_lua_filter_file
         )
         self.include_code_block_pandoc_lua_filter_file = (
             include_code_block_pandoc_lua_filter_file
@@ -142,16 +146,21 @@ class MarkdownToLaTeXConverter(Converter):
                 # Filter options
                 "--filter",
                 "pandoc-crossref",
-                "--filter",
-                str(self.convert_svg_to_pdf_pandoc_json_filter_file),
                 "--lua-filter",
                 str(self.make_latex_table_pandoc_lua_filter_file),
                 "--lua-filter",
                 str(self.include_code_block_pandoc_lua_filter_file),
                 "--lua-filter",
                 str(self.trim_code_block_pandoc_lua_filter_file),
+                # NOTE: make_latex_code_block filter creates new inlines, therefore
+                # it must be run before make_latex_code filter as it operates on
+                # inlines.
                 "--lua-filter",
-                str(self.make_latex_code_and_code_block_pandoc_lua_filter_file),
+                str(self.make_latex_code_block_pandoc_lua_filter_file),
+                "--lua-filter",
+                str(self.make_latex_code_pandoc_lua_filter_file),
+                "--filter",
+                str(self.convert_svg_to_pdf_pandoc_json_filter_file),
                 # Other options
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
