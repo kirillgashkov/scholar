@@ -1,5 +1,6 @@
 --
 --
+-- NOTE: We are trusing 'start_line_number' to be valid latex.
 -- NOTE: We are trusing 'language' to be valid latex.
 -- NOTE: We are trusing 'identifier' to be valid latex.
 
@@ -25,16 +26,39 @@ local function parse_code_attributes(
     attributes -- pandoc.Attributes
 )
     local caption = nil
+    local start_line_number = nil
 
     for key, value in pairs(attributes) do
         if key == "caption" then
             caption = value
+        elseif key == "start" then
+            start_line_number = tonumber(value)
+
+            if start_line_number == nil then
+                io.stderr:write(
+                    "Error: 'start' attribute must be an integer.\n"
+                )
+                os.exit(1)
+            end
         end
     end
 
     return {
-        caption = caption
+        caption = caption,
+        start_line_number = start_line_number
     }
+end
+
+
+local function validate_start_line_number(
+    start_line_number -- int
+)
+    if start_line_number < 1 then
+        io.stderr:write(
+            "Error: the start line number must be greater than 0.\n"
+        )
+        os.exit(1)
+    end
 end
 
 
@@ -75,6 +99,11 @@ local function make_code_block(
     end
 
     local caption = parsed_attributes.caption
+    local start_line_number = parsed_attributes.start_line_number
+
+    if start_line_number ~= nil then
+        validate_start_line_number(start_line_number)
+    end
 
     -- \begin{longlisting}
     -- \begin{minted}{python}
@@ -89,16 +118,23 @@ local function make_code_block(
 
     local has_identifier = identifier ~= ""
     local has_caption = caption ~= nil
+    local has_start_line_number = start_line_number ~= nil
     local is_listing = has_identifier or has_caption
 
     if is_listing then
         inlines:insert(latex_to_inline("\\begin{longlisting}\n"))
     end
 
+    inlines:insert(latex_to_inline("\\begin{minted}"))
+
+    if has_start_line_number then
+        inlines:insert(latex_to_inline("[firstnumber=" .. start_line_number .. "]"))
+    end
+
+    inlines:insert(latex_to_inline("{" .. language .. "}\n"))
+
     inlines:extend(
         {
-            -- NOTE: We are trusing 'language' to be valid latex.
-            latex_to_inline("\\begin{minted}{" .. language .. "}\n"),
             latex_to_inline(code_block_el.text),
             latex_to_inline("\n"),
             latex_to_inline("\\end{minted}\n"),
