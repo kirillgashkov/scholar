@@ -11,6 +11,7 @@ from scholar.settings import (
     LATEXMK_OUTPUT_DIR,
     MAKE_LATEX_CODE_AND_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
     MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
+    TRIM_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
     PANDOC_OUTPUT_DIR,
@@ -78,6 +79,7 @@ def convert_md_to_tex(input_file: Path) -> Path:
         make_latex_table_pandoc_lua_filter_file=MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
         make_latex_code_and_code_block_pandoc_lua_filter_file=MAKE_LATEX_CODE_AND_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
         include_code_block_pandoc_lua_filter_file=INCLUDE_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
+        trim_code_block_pandoc_lua_filter_file=TRIM_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
     )

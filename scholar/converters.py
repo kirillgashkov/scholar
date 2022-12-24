@@ -25,6 +25,7 @@ class MarkdownToLaTeXConverter(Converter):
         convert_svg_to_pdf_pandoc_json_filter_file: Path,
         make_latex_table_pandoc_lua_filter_file: Path,
         make_latex_code_and_code_block_pandoc_lua_filter_file: Path,
+        trim_code_block_pandoc_lua_filter_file: Path,
         include_code_block_pandoc_lua_filter_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
@@ -43,6 +44,9 @@ class MarkdownToLaTeXConverter(Converter):
         )
         self.include_code_block_pandoc_lua_filter_file = (
             include_code_block_pandoc_lua_filter_file
+        )
+        self.trim_code_block_pandoc_lua_filter_file = (
+            trim_code_block_pandoc_lua_filter_file
         )
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
@@ -144,6 +148,8 @@ class MarkdownToLaTeXConverter(Converter):
                 str(self.make_latex_table_pandoc_lua_filter_file),
                 "--lua-filter",
                 str(self.include_code_block_pandoc_lua_filter_file),
+                "--lua-filter",
+                str(self.trim_code_block_pandoc_lua_filter_file),
                 "--lua-filter",
                 str(self.make_latex_code_and_code_block_pandoc_lua_filter_file),
                 # Other options
