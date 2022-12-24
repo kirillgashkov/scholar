@@ -47,9 +47,12 @@ local function make_code(
     inlines:extend(
         {
             -- NOTE: We are trusing 'language' to be valid latex.
-            latex_to_inline("\\mintinline{" .. language .. "}{"),
+            --
+            -- NOTE: We are using backticks to delimit the code, minted allows
+            --       it and it makes it more intutive to write in markdown.
+            latex_to_inline("\\mintinline{" .. language .. "}`"),
             latex_to_inline(code.text),
-            latex_to_inline("}"),
+            latex_to_inline("`"),
         }
     )
 
