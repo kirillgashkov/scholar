@@ -1,6 +1,6 @@
 -- Include code blocks from files.
 --
--- ```{.lua include="path/to/file.lua" start="1" end="10"}
+-- ```{.lua include="path/to/file.lua" start=1 end=10}
 -- ```
 --
 -- This filter has security implications, so it should only be used with
@@ -169,8 +169,6 @@ local function make_code_block(
         parsed_attributes.start_line_number,
         parsed_attributes.end_line_number
     )
-
-    remove_include_attributes(code_block_el.attributes)
 
     return code_block_el
 end
