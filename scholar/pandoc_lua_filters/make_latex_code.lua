@@ -1,7 +1,23 @@
+-- Convert Pandoc code inlines to LaTeX minted blocks.
 --
+----- USAGE --------------------------------------------------------------------
 --
--- NOTE: We are trusing 'language' to be valid latex.
--- NOTE: We are trusing 'identifier' to be valid latex.
+-- Example input code inline:
+--
+--     The function `greet` is defined in `greet.py`:
+--
+-- If you need to syntax highlight a code inline, you can use the the following
+-- syntax (requires corresponding Pandoc Markdown extensions to be enabled):
+--
+--     The function greet: `def greet(name): print(f"Hello, {name}!")`{.python}.
+--
+----- SECURITY IMPLICATIONS ----------------------------------------------------
+--
+-- The accepted parameters 'start', 'language'  and 'identifier' ('7', 'python'
+-- and 'greet' in the examples above) are treated as raw LaTeX code.
+--
+-- However, the parameter 'caption' is treated as raw Markdown, so it will even
+-- be parsed and rendered by Pandoc.
 
 
 local function parse_code_classes(
