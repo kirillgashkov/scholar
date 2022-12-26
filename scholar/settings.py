@@ -1,9 +1,13 @@
 from pathlib import Path
 from typing import Any, Callable
 
-from pydantic import BaseSettings, PrivateAttr
+from pydantic import BaseModel, BaseSettings, PrivateAttr
 from pydantic.env_settings import SettingsSourceCallable
 from yaml import safe_load
+
+
+class ParagraphCaptionSettingsGroup(BaseModel):
+    listing_prefixes: list[str] = [":", "Listing:"]
 
 
 class Settings(BaseSettings):
@@ -11,7 +15,7 @@ class Settings(BaseSettings):
     _yaml_front_matter_settings: dict[str, Any] = PrivateAttr()
     _yaml_config_file: Path | None = PrivateAttr()
 
-    # TODO: Add settings
+    paragraph_caption: ParagraphCaptionSettingsGroup = ParagraphCaptionSettingsGroup()
 
     def __init__(
         self,
