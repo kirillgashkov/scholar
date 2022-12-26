@@ -166,13 +166,17 @@ def convert_md_to_tex(input_file: Path, settings: Settings) -> Path:
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
+        settings=settings,
     )
     return converter.convert(input_file)
 
 
 def convert_tex_to_pdf(input_file: Path, settings: Settings) -> Path:
     LATEXMK_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    converter = LaTeXToPDFConverter(latexmk_output_dir=LATEXMK_OUTPUT_DIR)
+    converter = LaTeXToPDFConverter(
+        latexmk_output_dir=LATEXMK_OUTPUT_DIR,
+        settings=settings,
+    )
     return converter.convert(input_file)
 
 

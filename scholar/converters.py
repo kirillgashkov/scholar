@@ -9,6 +9,8 @@ from pathlib import Path
 import rich
 import typer
 
+from scholar.settings import Settings
+
 
 class Converter(ABC):
     @abstractmethod
@@ -40,6 +42,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_generated_resources_dir: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
+        settings: Settings,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
@@ -48,6 +51,7 @@ class MarkdownToLaTeXConverter(Converter):
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
+        self.settings = settings
 
     def convert(self, input_file: Path) -> Path:
         output_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
@@ -198,8 +202,9 @@ class MarkdownToLaTeXConverter(Converter):
 
 
 class LaTeXToPDFConverter(Converter):
-    def __init__(self, *, latexmk_output_dir: Path) -> None:
+    def __init__(self, *, latexmk_output_dir: Path, settings: Settings) -> None:
         self.latexmk_output_dir = latexmk_output_dir
+        self.settings = settings
 
     def convert(self, input_file: Path) -> Path:
         try:
