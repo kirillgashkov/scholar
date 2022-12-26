@@ -6,16 +6,6 @@ from pydantic.env_settings import SettingsSourceCallable
 from yaml import safe_load
 
 
-class FailedToLoadConfigFileError(Exception):
-    def __init__(self, config_file: Path) -> None:
-        self.config_file = config_file
-
-
-class ConfigFileNotFoundError(Exception):
-    def __init__(self, config_file: Path) -> None:
-        self.config_file = config_file
-
-
 class SettingsGroup(BaseModel):
     class Config:
         extra = Extra.forbid
@@ -91,3 +81,13 @@ def yaml_config_file_settings_source(settings: Settings) -> dict[str, Any]:
             raise ConfigFileNotFoundError(settings._yaml_config_file) from e
 
         raise FailedToLoadConfigFileError(settings._yaml_config_file) from e
+
+
+class ConfigFileNotFoundError(Exception):
+    def __init__(self, config_file: Path) -> None:
+        self.config_file = config_file
+
+
+class FailedToLoadConfigFileError(Exception):
+    def __init__(self, config_file: Path) -> None:
+        self.config_file = config_file
