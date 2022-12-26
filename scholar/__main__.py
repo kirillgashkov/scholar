@@ -14,7 +14,7 @@ from scholar.settings import (
     LATEXMK_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
-    PANDOC_JSON_FILTER_DIR,
+    PANDOC_JSON_FILTERS_DIR,
     PANDOC_LUA_FILTERS_DIR,
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
@@ -102,7 +102,7 @@ def convert_md_to_tex(input_file: Path) -> Path:
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                PANDOC_JSON_FILTER_DIR / "convert_svg_to_pdf.json",
+                PANDOC_JSON_FILTERS_DIR / "convert_svg_to_pdf.json",
                 PandocFilterType.JSON,
             ),
         ],
