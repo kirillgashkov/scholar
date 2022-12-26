@@ -156,6 +156,21 @@ python-versions = ">=3.6"
 plugins = ["importlib-metadata"]
 
 [[package]]
+name = "python-frontmatter"
+version = "1.0.0"
+description = "Parse and manage posts with YAML (or other) frontmatter"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+PyYAML = "*"
+
+[package.extras]
+docs = ["sphinx"]
+test = ["pyaml", "pytest", "toml"]
+
+[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -230,7 +245,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "59c1815b44beb23d0552772631c0f5cf0aa60f46ebf4985eb6d3494ef109550b"
+content-hash = "0ff16ad616d0543fd8ba6b5d54f5d718f6860b3f0903b1bc1d56decd4691da81"
 
 [metadata.files]
 autoflake = [
@@ -360,6 +375,10 @@ pyflakes = [
 pygments = [
     {file = "Pygments-2.13.0-py3-none-any.whl", hash = "sha256:f643f331ab57ba3c9d89212ee4a2dabc6e94f117cf4eefde99a0574720d14c42"},
     {file = "Pygments-2.13.0.tar.gz", hash = "sha256:56a8508ae95f98e2b9bdf93a6be5ae3f7d8af858b43e02c5a2ff083726be40c1"},
+]
+python-frontmatter = [
+    {file = "python-frontmatter-1.0.0.tar.gz", hash = "sha256:e98152e977225ddafea6f01f40b4b0f1de175766322004c826ca99842d19a7cd"},
+    {file = "python_frontmatter-1.0.0-py3-none-any.whl", hash = "sha256:766ae75f1b301ffc5fe3494339147e0fd80bc3deff3d7590a93991978b579b08"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
