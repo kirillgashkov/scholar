@@ -34,16 +34,18 @@ class MarkdownToLaTeXConverter(Converter):
         self,
         *,
         pandoc_template_file: Path,
+        pandoc_lua_filters_dir: Path,
+        pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
-        pandoc_filters: Iterable[PandocFilter],
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
+        self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
+        self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
-        self.pandoc_filters = list(pandoc_filters)
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
 
@@ -99,8 +101,38 @@ class MarkdownToLaTeXConverter(Converter):
             disabled_extensions=["auto_identifiers"],
         )
 
+        pandoc_filters = [
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "make_latex_table.lua",
+                PandocFilterType.LUA,
+            ),
+            # NOTE: make_latex_code_block filter creates new inlines, therefore
+            # it must be run before make_latex_code filter as it operates on
+            # inlines.
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "include_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "trim_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "make_latex_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "make_latex_code.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_json_filters_dir / "convert_svg_to_pdf.json",
+                PandocFilterType.JSON,
+            ),
+        ]
+
         pandoc_filter_options = []
-        for pandoc_filter in self.pandoc_filters:
+        for pandoc_filter in pandoc_filters:
             if pandoc_filter.filter_type == PandocFilterType.LUA:
                 pandoc_filter_options.extend(
                     ["--lua-filter", str(pandoc_filter.filter_program)]

@@ -75,37 +75,10 @@ def convert_md_to_tex(input_file: Path) -> Path:
     PANDOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(
         pandoc_template_file=PANDOC_TEMPLATE_FILE,
+        pandoc_lua_filters_dir=PANDOC_LUA_FILTERS_DIR,
+        pandoc_json_filters_dir=PANDOC_JSON_FILTERS_DIR,
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
-        pandoc_filters=[
-            PandocFilter(
-                PANDOC_LUA_FILTERS_DIR / "make_latex_table.lua",
-                PandocFilterType.LUA,
-            ),
-            # NOTE: make_latex_code_block filter creates new inlines, therefore
-            # it must be run before make_latex_code filter as it operates on
-            # inlines.
-            PandocFilter(
-                PANDOC_LUA_FILTERS_DIR / "include_code_block.lua",
-                PandocFilterType.LUA,
-            ),
-            PandocFilter(
-                PANDOC_LUA_FILTERS_DIR / "trim_code_block.lua",
-                PandocFilterType.LUA,
-            ),
-            PandocFilter(
-                PANDOC_LUA_FILTERS_DIR / "make_latex_code_block.lua",
-                PandocFilterType.LUA,
-            ),
-            PandocFilter(
-                PANDOC_LUA_FILTERS_DIR / "make_latex_code.lua",
-                PandocFilterType.LUA,
-            ),
-            PandocFilter(
-                PANDOC_JSON_FILTERS_DIR / "convert_svg_to_pdf.json",
-                PandocFilterType.JSON,
-            ),
-        ],
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
     )
