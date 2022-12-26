@@ -9,8 +9,6 @@ from pathlib import Path
 import rich
 import typer
 
-from scholar.settings import PANDOC_LUA_FILTERS_DIR
-
 
 class Converter(ABC):
     @abstractmethod
