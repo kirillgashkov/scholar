@@ -4,19 +4,21 @@ from typing import TypeVar
 
 import typer
 
-from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
+from scholar.converters import (
+    LaTeXToPDFConverter,
+    MarkdownToLaTeXConverter,
+    PandocFilter,
+    PandocFilterType,
+)
 from scholar.settings import (
     CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
-    INCLUDE_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
     LATEXMK_OUTPUT_DIR,
-    MAKE_LATEX_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
-    MAKE_LATEX_CODE_PANDOC_LUA_FILTER_FILE,
     MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-    TRIM_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
+    PANDOC_LUA_FILTERS_DIR,
 )
 
 T = TypeVar("T")
@@ -76,12 +78,35 @@ def convert_md_to_tex(input_file: Path) -> Path:
         pandoc_template_file=PANDOC_TEMPLATE_FILE,
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
-        convert_svg_to_pdf_pandoc_json_filter_file=CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
-        make_latex_table_pandoc_lua_filter_file=MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
-        make_latex_code_block_pandoc_lua_filter_file=MAKE_LATEX_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
-        make_latex_code_pandoc_lua_filter_file=MAKE_LATEX_CODE_PANDOC_LUA_FILTER_FILE,
-        include_code_block_pandoc_lua_filter_file=INCLUDE_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
-        trim_code_block_pandoc_lua_filter_file=TRIM_CODE_BLOCK_PANDOC_LUA_FILTER_FILE,
+        pandoc_filters=[
+            PandocFilter(
+                MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
+                PandocFilterType.LUA,
+            ),
+            # NOTE: make_latex_code_block filter creates new inlines, therefore
+            # it must be run before make_latex_code filter as it operates on
+            # inlines.
+            PandocFilter(
+                PANDOC_LUA_FILTERS_DIR / "include_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                PANDOC_LUA_FILTERS_DIR / "trim_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                PANDOC_LUA_FILTERS_DIR / "make_latex_code_block.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                PANDOC_LUA_FILTERS_DIR / "make_latex_code.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
+                PandocFilterType.JSON,
+            ),
+        ],
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
     )

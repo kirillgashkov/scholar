@@ -3,6 +3,7 @@ import subprocess
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
+from enum import Enum
 from pathlib import Path
 
 import rich
@@ -17,6 +18,19 @@ class Converter(ABC):
         pass
 
 
+class PandocFilterType(str, Enum):
+    LUA = "lua"
+    JSON = "json"
+
+
+class PandocFilter:
+    def __init__(
+        self, filter_program: Path | str, filter_type: PandocFilterType
+    ) -> None:
+        self.filter_program = filter_program
+        self.filter_type = filter_type
+
+
 class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
@@ -24,36 +38,14 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_template_file: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
-        convert_svg_to_pdf_pandoc_json_filter_file: Path,
-        make_latex_table_pandoc_lua_filter_file: Path,
-        make_latex_code_block_pandoc_lua_filter_file: Path,
-        make_latex_code_pandoc_lua_filter_file: Path,
-        trim_code_block_pandoc_lua_filter_file: Path,
-        include_code_block_pandoc_lua_filter_file: Path,
+        pandoc_filters: Iterable[PandocFilter],
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
-        self.convert_svg_to_pdf_pandoc_json_filter_file = (
-            convert_svg_to_pdf_pandoc_json_filter_file
-        )
-        self.make_latex_table_pandoc_lua_filter_file = (
-            make_latex_table_pandoc_lua_filter_file
-        )
-        self.make_latex_code_block_pandoc_lua_filter_file = (
-            make_latex_code_block_pandoc_lua_filter_file
-        )
-        self.make_latex_code_pandoc_lua_filter_file = (
-            make_latex_code_pandoc_lua_filter_file
-        )
-        self.include_code_block_pandoc_lua_filter_file = (
-            include_code_block_pandoc_lua_filter_file
-        )
-        self.trim_code_block_pandoc_lua_filter_file = (
-            trim_code_block_pandoc_lua_filter_file
-        )
+        self.pandoc_filters = list(pandoc_filters)
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
 
@@ -109,6 +101,19 @@ class MarkdownToLaTeXConverter(Converter):
             disabled_extensions=["auto_identifiers"],
         )
 
+        pandoc_filter_options = []
+        for pandoc_filter in self.pandoc_filters:
+            if pandoc_filter.filter_type == PandocFilterType.LUA:
+                pandoc_filter_options.extend(
+                    ["--lua-filter", str(pandoc_filter.filter_program)]
+                )
+            elif pandoc_filter.filter_type == PandocFilterType.JSON:
+                pandoc_filter_options.extend(
+                    ["--filter", str(pandoc_filter.filter_program)]
+                )
+            else:
+                raise ValueError(f"Unknown filter type: {pandoc_filter.filter_type}")
+
         # WTF: At the time of writting this the value of this variable is supposed to
         # always pass the regular expression check below because it points to a
         # directory the path elements of which are pre-defined in Scholar's
@@ -146,25 +151,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "--extract-media",
                 str(self.pandoc_extracted_resources_dir),
                 # Filter options
-                "--filter",
-                "pandoc-crossref",
-                "--lua-filter",
-                str(self.make_latex_table_pandoc_lua_filter_file),
-                "--lua-filter",
-                PANDOC_LUA_FILTERS_DIR / "merge_code_blocks_and_paragraph_captions.lua",
-                "--lua-filter",
-                str(self.include_code_block_pandoc_lua_filter_file),
-                "--lua-filter",
-                str(self.trim_code_block_pandoc_lua_filter_file),
-                # NOTE: make_latex_code_block filter creates new inlines, therefore
-                # it must be run before make_latex_code filter as it operates on
-                # inlines.
-                "--lua-filter",
-                str(self.make_latex_code_block_pandoc_lua_filter_file),
-                "--lua-filter",
-                str(self.make_latex_code_pandoc_lua_filter_file),
-                "--filter",
-                str(self.convert_svg_to_pdf_pandoc_json_filter_file),
+                *pandoc_filter_options,
                 # Other options
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
