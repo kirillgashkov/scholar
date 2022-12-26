@@ -126,7 +126,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_json_filters_dir / "convert_svg_to_pdf.json",
+                self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
                 PandocFilterType.JSON,
             ),
         ]
