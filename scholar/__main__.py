@@ -11,14 +11,13 @@ from scholar.converters import (
     PandocFilterType,
 )
 from scholar.settings import (
-    CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
     LATEXMK_OUTPUT_DIR,
-    MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
+    PANDOC_JSON_FILTER_DIR,
+    PANDOC_LUA_FILTERS_DIR,
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
-    PANDOC_LUA_FILTERS_DIR,
 )
 
 T = TypeVar("T")
@@ -80,7 +79,7 @@ def convert_md_to_tex(input_file: Path) -> Path:
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
         pandoc_filters=[
             PandocFilter(
-                MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE,
+                PANDOC_LUA_FILTERS_DIR / "make_latex_table.lua",
                 PandocFilterType.LUA,
             ),
             # NOTE: make_latex_code_block filter creates new inlines, therefore
@@ -103,7 +102,7 @@ def convert_md_to_tex(input_file: Path) -> Path:
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE,
+                PANDOC_JSON_FILTER_DIR / "convert_svg_to_pdf.json",
                 PandocFilterType.JSON,
             ),
         ],

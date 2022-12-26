@@ -11,13 +11,6 @@ PANDOC_TEMPLATE_FILE = PANDOC_TEMPLATES_DIR / "scholar.tex"
 PANDOC_JSON_FILTERS_DIR = ROOT / "pandoc_json_filters"
 PANDOC_LUA_FILTERS_DIR = ROOT / "pandoc_lua_filters"
 
-CONVERT_SVG_TO_PDF_PANDOC_JSON_FILTER_FILE = (
-    PANDOC_JSON_FILTERS_DIR / "convert_svg_to_pdf.py"
-)
-MAKE_LATEX_TABLE_PANDOC_LUA_FILTER_FILE = (
-    PANDOC_LUA_FILTERS_DIR / "make_latex_table.lua"
-)
-
 
 CACHE_DIR = Path.cwd() / ".scholar"
 
