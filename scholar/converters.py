@@ -8,6 +8,8 @@ from pathlib import Path
 import rich
 import typer
 
+from scholar.settings import PANDOC_LUA_FILTERS_DIR
+
 
 class Converter(ABC):
     @abstractmethod
@@ -148,6 +150,8 @@ class MarkdownToLaTeXConverter(Converter):
                 "pandoc-crossref",
                 "--lua-filter",
                 str(self.make_latex_table_pandoc_lua_filter_file),
+                "--lua-filter",
+                PANDOC_LUA_FILTERS_DIR / "merge_code_blocks_and_paragraph_captions.lua",
                 "--lua-filter",
                 str(self.include_code_block_pandoc_lua_filter_file),
                 "--lua-filter",
