@@ -1,7 +1,7 @@
 import shutil
 import sys
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 
 import frontmatter
 import rich
@@ -45,6 +45,16 @@ def main(
         help="The output file or directory.",
         show_default="CWD",  # type: ignore[arg-type]  # See https://github.com/tiangolo/typer/issues/158
     ),
+    config_file: Optional[
+        Path
+    ] = typer.Option(  # See https://github.com/tiangolo/typer/issues/348
+        None,
+        "--config",
+        exists=True,
+        dir_okay=False,
+        readable=True,
+        help="The YAML config file.",
+    ),
     convert_from_tex: bool = typer.Option(
         False,
         "--from-tex",
@@ -77,7 +87,7 @@ def main(
     settings = load_settings(
         cli_settings={},
         yaml_front_matter_settings=yaml_front_matter_settings,
-        yaml_config_file=None,
+        yaml_config_file=config_file,
     )
 
     if convert_from_tex:
