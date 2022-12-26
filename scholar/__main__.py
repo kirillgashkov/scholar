@@ -4,8 +4,7 @@ from typing import TypeVar
 
 import typer
 
-from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
-from scholar.settings import (
+from scholar.constants import (
     LATEXMK_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
@@ -14,6 +13,7 @@ from scholar.settings import (
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
 )
+from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 
 T = TypeVar("T")
 
