@@ -80,7 +80,6 @@ class MarkdownToLaTeXConverter(Converter):
                 "implicit_figures",
                 "link_attributes",
                 "citations",
-                "yaml_metadata_block",
                 "tex_math_dollars",
                 # Commonmark-inspired extensions
                 "escaped_line_breaks",
