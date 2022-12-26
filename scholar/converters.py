@@ -2,6 +2,7 @@ import subprocess
 import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
+from enum import Enum
 from pathlib import Path
 
 import typer
@@ -14,25 +15,33 @@ class Converter(ABC):
         pass
 
 
+class PandocFilterType(str, Enum):
+    LUA = "lua"
+    JSON = "json"
+
+
+class PandocFilter:
+    def __init__(
+        self, filter_program: Path | str, filter_type: PandocFilterType
+    ) -> None:
+        self.filter_program = filter_program
+        self.filter_type = filter_type
+
+
 class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
+        *,
         pandoc_template_file: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
-        convert_svg_to_pdf_pandoc_json_filter_file: Path,
-        make_latex_table_pandoc_lua_filter_file: Path,
+        pandoc_filters: Iterable[PandocFilter],
         cache_dir: Path,
     ) -> None:
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
-        self.convert_svg_to_pdf_pandoc_json_filter_file = (
-            convert_svg_to_pdf_pandoc_json_filter_file
-        )
-        self.make_latex_table_pandoc_lua_filter_file = (
-            make_latex_table_pandoc_lua_filter_file
-        )
+        self.pandoc_filters = list(pandoc_filters)
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
@@ -87,6 +96,19 @@ class MarkdownToLaTeXConverter(Converter):
             disabled_extensions=["auto_identifiers"],
         )
 
+        pandoc_filter_options = []
+        for pandoc_filter in self.pandoc_filters:
+            if pandoc_filter.filter_type == PandocFilterType.LUA:
+                pandoc_filter_options.extend(
+                    ["--lua-filter", str(pandoc_filter.filter_program)]
+                )
+            elif pandoc_filter.filter_type == PandocFilterType.JSON:
+                pandoc_filter_options.extend(
+                    ["--filter", str(pandoc_filter.filter_program)]
+                )
+            else:
+                raise ValueError(f"Unknown filter type: {pandoc_filter.filter_type}")
+
         subprocess.run(
             [
                 "pandoc",
@@ -107,12 +129,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "--extract-media",
                 str(self.pandoc_extracted_resources_dir),
                 # Filter options
-                "--filter",
-                "pandoc-crossref",
-                "--filter",
-                str(self.convert_svg_to_pdf_pandoc_json_filter_file),
-                "--lua-filter",
-                str(self.make_latex_table_pandoc_lua_filter_file),
+                *pandoc_filter_options,
                 # Other options
                 "--metadata",
                 f"generated-resources-directory={self.pandoc_generated_resources_dir}",
@@ -128,7 +145,7 @@ class MarkdownToLaTeXConverter(Converter):
 
 
 class LaTeXToPDFConverter(Converter):
-    def __init__(self, cache_dir: Path) -> None:
+    def __init__(self, *, cache_dir: Path) -> None:
         self.cache_dir = cache_dir
 
     def convert(self, input_file: Path) -> Path:
