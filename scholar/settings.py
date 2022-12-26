@@ -1,12 +1,27 @@
 from pathlib import Path
 from typing import Any, Callable
 
-from pydantic import BaseModel, BaseSettings, PrivateAttr
+from pydantic import BaseModel, BaseSettings, Extra, PrivateAttr
 from pydantic.env_settings import SettingsSourceCallable
 from yaml import safe_load
 
 
-class ParagraphCaptionSettingsGroup(BaseModel):
+class FailedToLoadConfigFileError(Exception):
+    def __init__(self, config_file: Path) -> None:
+        self.config_file = config_file
+
+
+class ConfigFileNotFoundError(Exception):
+    def __init__(self, config_file: Path) -> None:
+        self.config_file = config_file
+
+
+class SettingsGroup(BaseModel):
+    class Config:
+        extra = Extra.forbid
+
+
+class ParagraphCaptionSettingsGroup(SettingsGroup):
     listing_prefixes: list[str] = [":", "Listing:"]
 
 
@@ -63,5 +78,16 @@ def yaml_config_file_settings_source(settings: Settings) -> dict[str, Any]:
     if not settings._yaml_config_file:
         return {}
 
-    with open(settings._yaml_config_file) as f:
-        return safe_load(f)
+    try:
+        with open(settings._yaml_config_file) as f:
+            return safe_load(f)
+    except Exception as e:
+        is_config_file_not_found_error = (
+            isinstance(e, FileNotFoundError)
+            and Path(e.filename) == settings._yaml_config_file
+        )
+
+        if is_config_file_not_found_error:
+            raise ConfigFileNotFoundError(settings._yaml_config_file) from e
+
+        raise FailedToLoadConfigFileError(settings._yaml_config_file) from e
