@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 import panflute
 import rich
@@ -112,11 +113,15 @@ class MarkdownToLaTeXConverter(Converter):
             )
             typer.Exit(1)
 
-        metadata = {
-            # "scholar": self.settings.dict(),
-            "generated-resources-directory": str(self.pandoc_generated_resources_dir),
-            "minted-package-option-outputdir": str(minted_package_option_outputdir),
-        }
+        metadata = _value_to_metavalue(
+            {
+                "scholar": self.settings.dict(),
+                "generated-resources-directory": str(
+                    self.pandoc_generated_resources_dir
+                ),
+                "minted-package-option-outputdir": str(minted_package_option_outputdir),
+            }
+        )
 
         with open(output_metadata_json_file, "w") as f:
             json.dump(panflute.Doc(metadata=metadata).to_json(), f, ensure_ascii=False)
@@ -321,3 +326,14 @@ def _make_pandoc_format(
         pandoc_format = f"{pandoc_format}-{extension}"
 
     return pandoc_format
+
+
+def _value_to_metavalue(value: Any) -> panflute.MetaValue:
+    if isinstance(value, dict):
+        return panflute.MetaMap(**{k: _value_to_metavalue(v) for k, v in value.items()})
+    elif isinstance(value, list):
+        return panflute.MetaList(*[_value_to_metavalue(v) for v in value])
+    elif isinstance(value, bool):
+        return panflute.MetaBool(value)
+    else:
+        return panflute.MetaString(str(value))
