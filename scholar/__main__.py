@@ -4,12 +4,7 @@ from typing import TypeVar
 
 import typer
 
-from scholar.converters import (
-    LaTeXToPDFConverter,
-    MarkdownToLaTeXConverter,
-    PandocFilter,
-    PandocFilterType,
-)
+from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
     LATEXMK_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
