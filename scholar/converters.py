@@ -217,6 +217,13 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
+                (
+                    self.pandoc_lua_filters_dir
+                    / "merge_code_blocks_and_paragraph_captions.lua"
+                ),
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
                 self.pandoc_lua_filters_dir / "make_latex_code_block.lua",
                 PandocFilterType.LUA,
             ),
