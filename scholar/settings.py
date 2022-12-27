@@ -1,14 +1,41 @@
+import sys
 from pathlib import Path
 from typing import Any, Callable
 
-from pydantic import BaseModel, BaseSettings, Extra, PrivateAttr, ValidationError
+import rich
+from pydantic import (
+    BaseModel,
+    BaseSettings,
+    Extra,
+    PrivateAttr,
+    ValidationError,
+    root_validator,
+)
 from pydantic.env_settings import SettingsSourceCallable
 from yaml import safe_load
 
 
 class SettingsGroup(BaseModel):
     class Config:
-        extra = Extra.forbid
+        extra = Extra.allow
+
+    def _get_unknown_settings(self) -> list[str]:
+        unknown_settings = []
+
+        for field_set in self.__fields_set__:
+            if field_set not in self.__fields__:
+                unknown_settings.append(field_set)
+                continue
+
+            value = getattr(self, field_set)
+
+            if isinstance(value, SettingsGroup):
+                unknown_settings.extend(
+                    f"{field_set}.{extra_setting}"
+                    for extra_setting in value._get_unknown_settings()
+                )
+
+        return unknown_settings
 
 
 class ParagraphCaptionSettingsGroup(SettingsGroup):
@@ -63,6 +90,7 @@ class Settings(BaseSettings):
             )
 
     class Config:
+        extra = Extra.allow
         env_prefix = "scholar_"
 
         @classmethod
@@ -80,6 +108,31 @@ class Settings(BaseSettings):
                 _logged_source("yaml_front_matter", yaml_front_matter_settings_source),
                 _logged_source("yaml_config_file", yaml_config_file_settings_source),
             )
+
+    @root_validator
+    def _warn_about_unknown_settings(cls, values: dict[str, Any]) -> dict[str, Any]:
+        unknown_settings = []
+
+        for field_set in values:
+            if field_set not in cls.__fields__:
+                unknown_settings.append(field_set)
+                continue
+
+            value = values[field_set]
+
+            if isinstance(value, SettingsGroup):
+                unknown_settings.extend(
+                    f"{field_set}.{extra_setting}"
+                    for extra_setting in value._get_unknown_settings()
+                )
+
+        for unknown_setting in unknown_settings:
+            rich.print(
+                f"[bold yellow]Warning: [/bold yellow]Unknown setting: {unknown_setting}",
+                file=sys.stderr,
+            )
+
+        return values
 
 
 def _logged_source(
