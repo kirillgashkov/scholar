@@ -76,12 +76,24 @@ end
 local function parse_code_attributes(
     attributes -- pandoc.Attributes
 )
-    local caption = nil
+    local caption_inlines = nil
     local start_line_number = nil
+
+    local should_warn_about_extra_captions = false
 
     for key, value in pairs(attributes) do
         if key == "caption" then
-            caption = value
+            if caption_inlines ~= nil then
+                should_warn_about_extra_captions = true
+            else
+                caption_inlines = pandoc.utils.blocks_to_inlines(pandoc.read(value).blocks)
+            end
+        elseif key == "caption_json" then
+            if caption_inlines ~= nil then
+                should_warn_about_extra_captions = true
+            end
+
+            caption_inlines = pandoc.utils.blocks_to_inlines(pandoc.read(value, "json").blocks)
         elseif key == "start" then
             start_line_number = tonumber(value)
 
@@ -94,8 +106,15 @@ local function parse_code_attributes(
         end
     end
 
+    if should_warn_about_extra_captions then
+        io.stderr:write(
+            "Warning: 'caption' and 'caption_json' attributes are both provided. Ignoring 'caption'.\n"
+        )
+        io.stderr:write("Hint: Check for extra 'caption' attributes in your document when you are using paragraph captions.\n")
+    end
+
     return {
-        caption = caption,
+        caption_inlines = caption_inlines,
         start_line_number = start_line_number
     }
 end
@@ -149,7 +168,7 @@ local function make_code_block(
         language = "text"
     end
 
-    local caption = parsed_attributes.caption
+    local caption_inlines = parsed_attributes.caption_inlines
     local start_line_number = parsed_attributes.start_line_number
 
     if start_line_number ~= nil then
@@ -168,7 +187,7 @@ local function make_code_block(
     local inlines = pandoc.Inlines({})
 
     local has_identifier = identifier ~= ""
-    local has_caption = caption ~= nil
+    local has_caption = caption_inlines ~= nil
     local has_start_line_number = start_line_number ~= nil
     local is_listing = has_identifier or has_caption
 
@@ -194,7 +213,7 @@ local function make_code_block(
 
     if has_caption then
         inlines:insert(latex_to_inline("\\caption{"))
-        inlines:extend(pandoc.utils.blocks_to_inlines(pandoc.read(caption).blocks))
+        inlines:extend(caption_inlines)
         inlines:insert(latex_to_inline("}\n"))
     end
 

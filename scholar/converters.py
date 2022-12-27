@@ -205,6 +205,15 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "make_latex_table.lua",
                 PandocFilterType.LUA,
             ),
+            # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for
+            # code blocks.
+            PandocFilter(
+                (
+                    self.pandoc_lua_filters_dir
+                    / "merge_code_blocks_and_paragraph_captions.lua"
+                ),
+                PandocFilterType.LUA,
+            ),
             # NOTE: make_latex_code_block filter creates new inlines, therefore
             # it must be run before make_latex_code filter as it operates on
             # inlines.
