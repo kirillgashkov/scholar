@@ -114,7 +114,11 @@ local function merge_code_block_and_paragraph_caption(
     local classes = parsed.classes
     local attributes = parsed.attributes
 
-    if identifier ~= nil then
+    if identifier ~= nil and identifier ~= "" then
+        if code_block_el.identifier ~= "" then
+            io.stderr:write("Warning: Code block already has an identifier. Overwriting it.\n")
+        end
+
         code_block_el.identifier = identifier
     end
 
@@ -123,6 +127,10 @@ local function merge_code_block_and_paragraph_caption(
     end
 
     if caption ~= nil then
+        if code_block_el.attributes["caption"] ~= nil then
+            io.stderr:write("Warning: Code block already has a caption. Renderers will decide how to handle this.\n")
+        end
+
         code_block_el.attributes["caption_json"] = pandoc.write(
             pandoc.Pandoc({caption}), "json"
         )
