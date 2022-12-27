@@ -8,12 +8,19 @@ authors = ["Kirill Gashkov <kirill@gashkov.com>"]
 python = "^3.10"
 typer = "^0.6.1"
 rich = "^12.5.1"
+pydantic = "^1.10.2"
+pyyaml = "^6.0"
+python-frontmatter = "^1.0.0"
+panflute = "^2.2.3"
 
 [tool.poetry.dev-dependencies]
 autoflake = "^1.4"
 isort = "^5.10.1"
 black = "^22.6.0"
 mypy = "^0.971"
+
+[tool.poetry.group.dev.dependencies]
+types-pyyaml = "^6.0.12.2"
 
 [tool.isort]
 profile = "black"
@@ -24,6 +31,14 @@ disallow_any_generics = true
 disallow_untyped_defs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = ["frontmatter.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["panflute.*"]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
