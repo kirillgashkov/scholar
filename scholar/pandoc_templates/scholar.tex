@@ -356,8 +356,10 @@
   skip=0.5\baselineskip,
 }
 
-\BeforeBeginEnvironment{longlisting}{\bigskip}
-\AfterEndEnvironment{longlisting}{\bigskip}
+% Remove the default gap between normal text and 'minted' code block.
+%
+% See https://github.com/gpoore/minted/issues/256#issuecomment-605002404.
+\fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
 
 
 \begin{document}
