@@ -231,6 +231,7 @@
 
 \usepackage{babel}
 \addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
+\addto\captionsrussian{\renewcommand{\listingname}{Листинг}}
 
 \counterwithin{figure}{section}
 
@@ -343,6 +344,20 @@
 \newenvironment{longlisting}{\captionsetup{type=listing}}{}
 
 \setmonofont{Courier New}
+
+\captionsetup[listing]{
+  format=plain,
+  labelformat=simple,
+  labelsep=customDash,
+  justification=justified,
+  singlelinecheck=false,
+  width=\linewidth,
+  position=above,
+  skip=0.5\baselineskip,
+}
+
+\BeforeBeginEnvironment{longlisting}{\bigskip}
+\AfterEndEnvironment{longlisting}{\bigskip}
 
 
 \begin{document}
