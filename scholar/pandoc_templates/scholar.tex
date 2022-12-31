@@ -361,11 +361,11 @@
 % See https://github.com/gpoore/minted/issues/256#issuecomment-605002404.
 \fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
 
-\BeforeBeginEnvironment{minted}{\vspace{0.5\baselineskip}}
-\AfterEndEnvironment{minted}{\vspace{0.5\baselineskip}}
+\BeforeBeginEnvironment{minted}{\addvspace{0.5\baselineskip}}
+\AfterEndEnvironment{minted}{\addvspace{0.5\baselineskip}}
 
-\BeforeBeginEnvironment{longlisting}{\vspace{\bigskipamount}}
-\AfterEndEnvironment{longlisting}{\vspace{\bigskipamount - 0.5\baselineskip}}  % WTF: Assuming caption is above and get extra vertical spacing from "after 'minted' environment".
+\BeforeBeginEnvironment{longlisting}{\addvspace{\bigskipamount}}
+\AfterEndEnvironment{longlisting}{\addvspace{\bigskipamount}}
 
 
 \begin{document}
