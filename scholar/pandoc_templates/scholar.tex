@@ -353,13 +353,19 @@
   singlelinecheck=false,
   width=\linewidth,
   position=above,
-  skip=0.5\baselineskip,
+  % skip=0.5\baselineskip,  % No need to set this because before/after 'minted' environment covers this
 }
 
 % Remove the default gap between normal text and 'minted' code block.
 %
 % See https://github.com/gpoore/minted/issues/256#issuecomment-605002404.
 \fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
+
+\BeforeBeginEnvironment{minted}{\vspace{0.5\baselineskip}}
+\AfterEndEnvironment{minted}{\vspace{0.5\baselineskip}}
+
+\BeforeBeginEnvironment{longlisting}{\vspace{\bigskipamount}}
+\AfterEndEnvironment{longlisting}{\vspace{\bigskipamount - 0.5\baselineskip}}  % WTF: Assuming caption is above and get extra vertical spacing from "after 'minted' environment".
 
 
 \begin{document}
