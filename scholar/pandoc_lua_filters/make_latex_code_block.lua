@@ -195,6 +195,17 @@ local function make_code_block(
         inlines:insert(latex_to_inline("\\begin{longlisting}\n"))
     end
 
+    if has_caption then
+        inlines:insert(latex_to_inline("\\caption{"))
+        inlines:extend(caption_inlines)
+        inlines:insert(latex_to_inline("}\n"))
+    end
+
+    if has_identifier then
+        -- NOTE: We are trusing 'identifier' to be valid latex.
+        inlines:insert(latex_to_inline("\\label{" .. identifier .. "}\n"))
+    end
+
     inlines:insert(latex_to_inline("\\begin{minted}"))
 
     if has_start_line_number then
@@ -210,17 +221,6 @@ local function make_code_block(
             latex_to_inline("\\end{minted}\n"),
         }
     )
-
-    if has_caption then
-        inlines:insert(latex_to_inline("\\caption{"))
-        inlines:extend(caption_inlines)
-        inlines:insert(latex_to_inline("}\n"))
-    end
-
-    if has_identifier then
-        -- NOTE: We are trusing 'identifier' to be valid latex.
-        inlines:insert(latex_to_inline("\\label{" .. identifier .. "}\n"))
-    end
 
     if is_listing then
         inlines:insert(latex_to_inline("\\end{longlisting}"))

@@ -62,6 +62,32 @@
 \usepackage{csquotes}
 
 %
+% Hyphenation utilities
+%
+
+\makeatletter
+
+% See https://tex.stackexchange.com/a/52009.
+\newcommand{\scholar@disablehyphenation}{%
+  \hyphenpenalty=10000%
+  \exhyphenpenalty=10000%
+}
+\newcommand{\scholar@enablehyphenation}{%
+  \hyphenpenalty=50%
+  \exhyphenpenalty=50%
+}
+\newcommand{\scholar@savehyphenation}{%
+  \mathchardef\scholar@hyphenation@saved@hyphenpenalty=\hyphenpenalty%
+  \mathchardef\scholar@hyphenation@saved@exhyphenpenalty=\exhyphenpenalty%
+}
+\newcommand{\scholar@restorehyphenation}{%
+  \hyphenpenalty=\scholar@hyphenation@saved@hyphenpenalty%
+  \exhyphenpenalty=\scholar@hyphenation@saved@exhyphenpenalty%
+}
+
+\makeatother
+
+%
 % Paragraphs
 %
 
@@ -74,8 +100,9 @@
 \linespread{1.424}
 
 % Turn off hyphenation
-\hyphenpenalty=10000
-\exhyphenpenalty=10000
+\makeatletter
+\scholar@disablehyphenation
+\makeatother
 
 % Justify text
 \tolerance=1
@@ -231,6 +258,7 @@
 
 \usepackage{babel}
 \addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
+\addto\captionsrussian{\renewcommand{\listingname}{Листинг}}
 
 \counterwithin{figure}{section}
 
@@ -343,6 +371,37 @@
 \newenvironment{longlisting}{\captionsetup{type=listing}}{}
 
 \setmonofont{Courier New}
+
+\captionsetup[listing]{
+  format=plain,
+  labelformat=simple,
+  labelsep=customDash,
+  justification=justified,
+  singlelinecheck=false,
+  width=\linewidth,
+  % position=above,
+  % skip=0.5\baselineskip,  % No need to set this because before/after 'minted' environment covers this
+}
+
+% Remove the default gap between normal text and 'minted' code block.
+%
+% See https://github.com/gpoore/minted/issues/256#issuecomment-605002404.
+\fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
+
+\BeforeBeginEnvironment{minted}{\addvspace{0.5\baselineskip}}
+\AfterEndEnvironment{minted}{\addvspace{0.5\baselineskip}}
+
+% Enable hyphenation in 'minted' code blocks so that 'minted's 'breakanywhere'
+% option could work properly.
+\makeatletter
+\BeforeBeginEnvironment{minted}{\scholar@savehyphenation\scholar@enablehyphenation}
+\AfterEndEnvironment{minted}{\scholar@restorehyphenation}
+\makeatother
+
+\BeforeBeginEnvironment{longlisting}{\addvspace{\bigskipamount}}
+\AfterEndEnvironment{longlisting}{\addvspace{\bigskipamount}}
+
+\setminted{breakanywhere,breaklines,fontsize=\small,style=xcode}
 
 
 \begin{document}

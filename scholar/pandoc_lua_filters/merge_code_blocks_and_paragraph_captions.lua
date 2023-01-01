@@ -70,6 +70,10 @@ local function parse_paragraph_caption(
 
     if #prefix == #first_inline.text then
         inlines:remove(1)
+
+        while inlines[1].t == "Space" do
+            inlines:remove(1)
+        end
     else
         inlines[1].text = first_inline.text:sub(#prefix + 1)
     end
