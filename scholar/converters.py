@@ -146,7 +146,6 @@ class MarkdownToLaTeXConverter(Converter):
                 "raw_tex",
                 "implicit_figures",
                 "link_attributes",
-                "citations",
                 "tex_math_dollars",
                 # Commonmark-inspired extensions
                 "escaped_line_breaks",
