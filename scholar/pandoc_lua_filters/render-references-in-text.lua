@@ -1,4 +1,4 @@
-local scholar_metadata = {}
+local scholar_metadata
 
 
 local function load_scholar_metadata(
