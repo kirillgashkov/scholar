@@ -19,7 +19,7 @@ local function validate_reference(
     link -- pandoc.Link
 )
     if link.target:sub(1, 1) ~= "#" then
-        error("Reference target must start with '#'.")
+        error("Reference target must start with '#': " .. link.target)
     end
 end
 
