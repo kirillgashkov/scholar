@@ -4,7 +4,7 @@ local scholar_metadata
 local function load_scholar_metadata(
     meta -- pandoc.Meta
 )
-    scholar_metadata = meta.scholar or {}
+    scholar_metadata = meta.scholar
 end
 
 
@@ -27,8 +27,7 @@ end
 local function is_reference_citation(
     link -- pandoc.Link
 )
-    local references = scholar_metadata.references or {}
-    return references[link.target:sub(2)] ~= nil
+    return scholar_metadata.references[link.target:sub(2)] ~= nil
 end
 
 
