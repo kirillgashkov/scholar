@@ -233,7 +233,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render-references-in-text.lua",
+                self.pandoc_lua_filters_dir / "render_references_in_text.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
