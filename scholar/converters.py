@@ -146,7 +146,6 @@ class MarkdownToLaTeXConverter(Converter):
                 "raw_tex",
                 "implicit_figures",
                 "link_attributes",
-                "citations",
                 "tex_math_dollars",
                 # Commonmark-inspired extensions
                 "escaped_line_breaks",
@@ -231,6 +230,14 @@ class MarkdownToLaTeXConverter(Converter):
             ),
             PandocFilter(
                 self.pandoc_lua_filters_dir / "make_latex_code.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_references_in_text.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_citations_in_text.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
