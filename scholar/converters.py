@@ -237,6 +237,10 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
+                self.pandoc_lua_filters_dir / "render_citations_in_text.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
                 self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
                 PandocFilterType.JSON,
             ),
