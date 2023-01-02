@@ -34,7 +34,7 @@ return {
 
             return pandoc.RawInline(
                 "latex",
-                "\\cite{" .. citation_to_citation_id(link) .. "}"
+                "\\autocite{" .. citation_to_citation_id(link) .. "}"
             )
         end,
     }
