@@ -407,7 +407,42 @@
 % Citations
 %
 
-\usepackage{biblatex}
+% Create a custom BibLaTeX entry type "scholar" that has only one
+% field "text" that is used to store the rendered bibliography entry.
+%
+% Example:
+%
+%     @scholar{knuth84,
+%       text = {Knuth, D. E. (1984). {\em The {\TeX}book}. Addison-Wesley.}
+%     }
+%
+% See https://tex.stackexchange.com/a/175896.
+
+\usepackage{filecontents}
+
+\begin{filecontents}{scholar.dbx}
+\DeclareDatamodelEntrytypes{scholar}
+\DeclareDatamodelFields[type=field,datatype=literal]{text}
+\DeclareDatamodelEntryfields[scholar]{text}
+\end{filecontents}
+
+\usepackage[backend=biber,datamodel=scholar]{biblatex}
+
+\DeclareFieldFormat[scholar]{text}{#1}
+
+\newbibmacro*{scholartext}{%
+  \printfield{text}%
+}
+
+\DeclareBibliographyDriver{scholar}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{begentry}%
+  \usebibmacro{scholartext}%
+  \newunit\newblock
+  \usebibmacro{finentry}%
+}
+
+
 \addbibresource{$scholar.variables.biblatex_bibresource$}
 
 
