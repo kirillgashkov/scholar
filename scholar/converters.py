@@ -210,6 +210,29 @@ class MarkdownToLaTeXConverter(Converter):
             *pandoc_filter_options,
         ]
 
+    def _convert_string_from_md_to_tex_using_pandoc(
+        self, *, input_md_string: str
+    ) -> str:
+        try:
+            return subprocess.check_output(
+                [
+                    "pandoc",
+                    "--from",
+                    self._make_markdown_pandoc_input_format(),
+                    "--to",
+                    self._make_latex_pandoc_output_format(),
+                    *self._make_markdown_pandoc_reader_options(),
+                    *self._make_latex_pandoc_writer_options(),
+                ],
+                input=input_md_string.encode(),
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            rich.print(
+                "[bold red]Running Pandoc (Markdown string to LaTeX string) failed"
+            )
+            raise typer.Exit(1)
+
     def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
         # WTF: At the time of writting this the value of this variable is supposed to
         # always pass the regular expression check below because it points to a
