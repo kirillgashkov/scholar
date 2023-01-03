@@ -43,6 +43,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
+        generated_biblatex_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
         settings: Settings,
@@ -52,6 +53,7 @@ class MarkdownToLaTeXConverter(Converter):
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
+        self.generated_biblatex_file = generated_biblatex_file
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
         self.settings = settings
@@ -64,6 +66,9 @@ class MarkdownToLaTeXConverter(Converter):
             self.pandoc_output_dir / input_file.with_suffix(".content.json").name
         )
         output_tex_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
+
+        rich.print("[bold yellow]Generating BibLaTeX from metadata")
+        self._generate_biblatex_file()
 
         rich.print("[bold yellow]Generating Pandoc JSON from metadata")
         self._generate_metadata_json_file(output_metadata_json_file=metadata_json_file)
@@ -233,7 +238,7 @@ class MarkdownToLaTeXConverter(Converter):
             )
             raise typer.Exit(1)
 
-    def _generate_biblatex_file(self, *, output_biblatex_file: Path) -> None:
+    def _generate_biblatex_file(self) -> None:
         biblatex_file_content = ""
 
         is_first_reference = True
@@ -250,7 +255,7 @@ class MarkdownToLaTeXConverter(Converter):
             biblatex_file_content += "    title = {" + reference_title_tex + "}\n"
             biblatex_file_content += "}\n"
 
-        with open(output_biblatex_file, "w") as f:
+        with open(self.generated_biblatex_file, "w") as f:
             f.write(biblatex_file_content)
 
     def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
@@ -264,16 +269,35 @@ class MarkdownToLaTeXConverter(Converter):
             Path.cwd()
         ).as_posix()
 
-        if not re.match(r"^[A-Za-z0-9._\-\/]+$", minted_package_option_outputdir):
+        # WTF: Same for the biblatex resource file.
+        biblatex_bibresource = self.generated_biblatex_file.relative_to(
+            Path.cwd()
+        ).as_posix()
+
+        pattern = re.compile(r"^[A-Za-z0-9._\-\/]+$")
+
+        if not pattern.match(minted_package_option_outputdir):
             rich.print(
                 f"[bold red]Error: [/bold red]Failed to provide a valid value for the 'outputdir' option of the 'minted' package",
                 file=sys.stderr,
             )
             typer.Exit(1)
 
+        if not pattern.match(biblatex_bibresource):
+            rich.print(
+                f"[bold red]Error: [/bold red]Failed to provide a valid value for the '\\addbibresouce' command of the 'biblatex' package",
+                file=sys.stderr,
+            )
+            typer.Exit(1)
+
         metadata = _value_to_metavalue(
             {
-                "scholar": self.settings.dict(),
+                "scholar": {
+                    "settings": self.settings.dict(),
+                    "variables": {
+                        "biblatex-bibresource": biblatex_bibresource,
+                    },
+                },
                 "generated-resources-directory": str(
                     self.pandoc_generated_resources_dir
                 ),

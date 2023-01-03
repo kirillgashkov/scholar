@@ -16,6 +16,7 @@ from scholar.constants import (
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
     SCHOLAR_OUTPUT_DIR,
+    GENERATED_BIBLATEX_FILE,
 )
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
@@ -164,6 +165,7 @@ def convert_md_to_tex(input_file: Path, settings: Settings) -> Path:
         pandoc_json_filters_dir=PANDOC_JSON_FILTERS_DIR,
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
+        generated_biblatex_file=GENERATED_BIBLATEX_FILE,
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
         settings=settings,
