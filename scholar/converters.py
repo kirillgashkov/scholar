@@ -43,6 +43,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
+        generated_biblatex_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
         settings: Settings,
@@ -52,6 +53,7 @@ class MarkdownToLaTeXConverter(Converter):
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
+        self.generated_biblatex_file = generated_biblatex_file
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
         self.settings = settings
@@ -64,6 +66,9 @@ class MarkdownToLaTeXConverter(Converter):
             self.pandoc_output_dir / input_file.with_suffix(".content.json").name
         )
         output_tex_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
+
+        rich.print("[bold yellow]Generating BibLaTeX from metadata")
+        self._generate_biblatex_file()
 
         rich.print("[bold yellow]Generating Pandoc JSON from metadata")
         self._generate_metadata_json_file(output_metadata_json_file=metadata_json_file)
@@ -95,41 +100,8 @@ class MarkdownToLaTeXConverter(Converter):
 
         return output_tex_file
 
-    def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
-        # WTF: At the time of writting this the value of this variable is supposed to
-        # always pass the regular expression check below because it points to a
-        # directory the path elements of which are pre-defined in Scholar's
-        # 'settings.py' file. We keep the regular expression check to ensure that we
-        # don't pass any unescaped paths to LaTeX and cause mayhem. Obviously this
-        # solution is far from ideal but it will work for now.
-        minted_package_option_outputdir = self.latexmk_output_dir.relative_to(
-            Path.cwd()
-        ).as_posix()
-
-        if not re.match(r"^[A-Za-z0-9._\-\/]+$", minted_package_option_outputdir):
-            rich.print(
-                f"[bold red]Error: [/bold red]Failed to provide a valid value for the 'outputdir' option of the 'minted' package",
-                file=sys.stderr,
-            )
-            typer.Exit(1)
-
-        metadata = _value_to_metavalue(
-            {
-                "scholar": self.settings.dict(),
-                "generated-resources-directory": str(
-                    self.pandoc_generated_resources_dir
-                ),
-                "minted-package-option-outputdir": str(minted_package_option_outputdir),
-            }
-        )
-
-        with open(output_metadata_json_file, "w") as f:
-            json.dump(panflute.Doc(metadata=metadata).to_json(), f, ensure_ascii=False)
-
-    def _run_pandoc_from_md_to_json(
-        self, *, input_md_file: Path, output_content_json_file: Path
-    ) -> None:
-        markdown_pandoc_input_format = _make_pandoc_format(
+    def _make_markdown_pandoc_input_format(self) -> str:
+        return _make_pandoc_format(
             "markdown_strict",
             enabled_extensions=[
                 # Must-have extensions
@@ -161,44 +133,22 @@ class MarkdownToLaTeXConverter(Converter):
                 "smart",
             ],
         )
-        json_pandoc_output_format = "json"
 
-        subprocess.run(
-            [
-                "pandoc",
-                # Format options
-                "--from",
-                markdown_pandoc_input_format,
-                "--to",
-                json_pandoc_output_format,
-                # Reader options
-                "--shift-heading-level-by",
-                "-1",
-                "--extract-media",
-                str(self.pandoc_extracted_resources_dir),
-                # I/O options
-                "--output",
-                str(output_content_json_file),
-                str(input_md_file),
-            ],
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-            check=True,
-        )
-
-    def _run_pandoc_from_jsons_to_tex(
-        self,
-        *,
-        input_metadata_json_file: Path,
-        input_content_json_file: Path,
-        output_tex_file: Path,
-    ) -> None:
-        json_pandoc_input_format = "json"
-        latex_pandoc_output_format = _make_pandoc_format(
+    def _make_latex_pandoc_output_format(self) -> str:
+        return _make_pandoc_format(
             "latex",
             disabled_extensions=["auto_identifiers"],
         )
 
+    def _make_markdown_pandoc_reader_options(self) -> list[str]:
+        return [
+            "--shift-heading-level-by",
+            "-1",
+            "--extract-media",
+            str(self.pandoc_extracted_resources_dir),
+        ]
+
+    def _make_latex_pandoc_writer_filter_options(self) -> list[str]:
         pandoc_filters = [
             PandocFilter(
                 self.pandoc_lua_filters_dir / "make_latex_table.lua",
@@ -259,6 +209,149 @@ class MarkdownToLaTeXConverter(Converter):
             else:
                 raise ValueError(f"Unknown filter type: {pandoc_filter.filter_type}")
 
+        return pandoc_filter_options
+
+    def _make_latex_pandoc_writer_options(self) -> list[str]:
+        return [
+            "--metadata",
+            "csquotes=true",
+        ]
+
+    def _convert_string_from_md_to_tex_using_pandoc(
+        self, *, input_md_string: str
+    ) -> str:
+        try:
+            return subprocess.check_output(
+                [
+                    "pandoc",
+                    "--from",
+                    self._make_markdown_pandoc_input_format(),
+                    "--to",
+                    self._make_latex_pandoc_output_format(),
+                    *self._make_markdown_pandoc_reader_options(),
+                    *self._make_latex_pandoc_writer_options(),
+                    # NOTE: Filters are not available yet because the 'scholar' metadata
+                    # field is not created yet.
+                    # # *self._make_latex_pandoc_writer_filter_options(),
+                ],
+                input=input_md_string,
+                text=True,
+            )
+        except subprocess.CalledProcessError as e:
+            rich.print(
+                "[bold red]Error: [/bold red]Failed to convert Markdown string to LaTeX."
+            )
+            raise typer.Exit(1)
+
+    def _generate_biblatex_file(self) -> None:
+        biblatex_file_content = ""
+
+        is_first_reference = True
+
+        for reference_id, reference_title_md in self.settings.references.items():
+            raw_reference_title_tex = self._convert_string_from_md_to_tex_using_pandoc(
+                input_md_string=reference_title_md
+            )
+            # WTF: Pandoc can add extra whitespace to the the output string even if the
+            # input string doesn't have it (particularly at the end of the string).
+            reference_title_tex = raw_reference_title_tex.strip()
+
+            if not is_first_reference:
+                biblatex_file_content += "\n"
+
+            biblatex_file_content += "@misc{" + reference_id + ",\n"
+            biblatex_file_content += "    title = {" + reference_title_tex + "}\n"
+            biblatex_file_content += "}\n"
+
+        with open(self.generated_biblatex_file, "w") as f:
+            f.write(biblatex_file_content)
+
+    def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
+        # WTF: At the time of writting this the value of this variable is supposed to
+        # always pass the regular expression check below because it points to a
+        # directory the path elements of which are pre-defined in Scholar's
+        # 'settings.py' file. We keep the regular expression check to ensure that we
+        # don't pass any unescaped paths to LaTeX and cause mayhem. Obviously this
+        # solution is far from ideal but it will work for now.
+        minted_package_option_outputdir = self.latexmk_output_dir.relative_to(
+            Path.cwd()
+        ).as_posix()
+
+        # WTF: Same for the biblatex resource file.
+        biblatex_bibresource = self.generated_biblatex_file.relative_to(
+            Path.cwd()
+        ).as_posix()
+
+        pattern = re.compile(r"^[A-Za-z0-9._\-\/]+$")
+
+        if not pattern.match(minted_package_option_outputdir):
+            rich.print(
+                f"[bold red]Error: [/bold red]Failed to provide a valid value for the 'outputdir' option of the 'minted' package",
+                file=sys.stderr,
+            )
+            typer.Exit(1)
+
+        if not pattern.match(biblatex_bibresource):
+            rich.print(
+                f"[bold red]Error: [/bold red]Failed to provide a valid value for the '\\addbibresouce' command of the 'biblatex' package",
+                file=sys.stderr,
+            )
+            typer.Exit(1)
+
+        metadata = _value_to_metavalue(
+            {
+                "scholar": {
+                    "settings": self.settings.dict(),
+                    "variables": {
+                        "biblatex_bibresource": biblatex_bibresource,
+                    },
+                },
+                "generated-resources-directory": str(
+                    self.pandoc_generated_resources_dir
+                ),
+                "minted-package-option-outputdir": str(minted_package_option_outputdir),
+            }
+        )
+
+        with open(output_metadata_json_file, "w") as f:
+            json.dump(panflute.Doc(metadata=metadata).to_json(), f, ensure_ascii=False)
+
+    def _run_pandoc_from_md_to_json(
+        self, *, input_md_file: Path, output_content_json_file: Path
+    ) -> None:
+        markdown_pandoc_input_format = self._make_markdown_pandoc_input_format()
+        json_pandoc_output_format = "json"
+
+        subprocess.run(
+            [
+                "pandoc",
+                # Format options
+                "--from",
+                markdown_pandoc_input_format,
+                "--to",
+                json_pandoc_output_format,
+                # Reader options
+                *self._make_markdown_pandoc_reader_options(),
+                # I/O options
+                "--output",
+                str(output_content_json_file),
+                str(input_md_file),
+            ],
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            check=True,
+        )
+
+    def _run_pandoc_from_jsons_to_tex(
+        self,
+        *,
+        input_metadata_json_file: Path,
+        input_content_json_file: Path,
+        output_tex_file: Path,
+    ) -> None:
+        json_pandoc_input_format = "json"
+        latex_pandoc_output_format = self._make_latex_pandoc_output_format()
+
         subprocess.run(
             [
                 "pandoc",
@@ -272,10 +365,8 @@ class MarkdownToLaTeXConverter(Converter):
                 "--template",
                 str(self.pandoc_template_file),
                 # Writer options
-                "--metadata",
-                "csquotes=true",
-                # Filter options
-                *pandoc_filter_options,
+                *self._make_latex_pandoc_writer_options(),
+                *self._make_latex_pandoc_writer_filter_options(),
                 # I/O options
                 "--output",
                 str(output_tex_file),

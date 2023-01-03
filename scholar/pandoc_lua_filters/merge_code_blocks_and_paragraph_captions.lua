@@ -15,9 +15,9 @@ local function load_settings(
     meta_el -- pandoc.Meta
 )
     LISTING_PREFIXES = (
-        meta_el.scholar
-        and meta_el.scholar.paragraph_caption
-        and meta_el.scholar.paragraph_caption.listing_prefixes
+        meta_el.scholar.settings
+        and meta_el.scholar.settings.paragraph_caption
+        and meta_el.scholar.settings.paragraph_caption.listing_prefixes
         or LISTING_PREFIXES
     )
 end
