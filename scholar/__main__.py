@@ -8,6 +8,7 @@ import rich
 import typer
 
 from scholar.constants import (
+    GENERATED_BIBLATEX_FILE,
     LATEXMK_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
     PANDOC_GENERATED_RESOURCES_DIR,
@@ -16,7 +17,6 @@ from scholar.constants import (
     PANDOC_OUTPUT_DIR,
     PANDOC_TEMPLATE_FILE,
     SCHOLAR_OUTPUT_DIR,
-    GENERATED_BIBLATEX_FILE,
 )
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
 from scholar.settings import (
