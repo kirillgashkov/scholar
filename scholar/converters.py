@@ -249,9 +249,12 @@ class MarkdownToLaTeXConverter(Converter):
         is_first_reference = True
 
         for reference_id, reference_title_md in self.settings.references.items():
-            reference_title_tex = self._convert_string_from_md_to_tex_using_pandoc(
+            raw_reference_title_tex = self._convert_string_from_md_to_tex_using_pandoc(
                 input_md_string=reference_title_md
             )
+            # WTF: Pandoc can add extra whitespace to the the output string even if the
+            # input string doesn't have it (particularly at the end of the string).
+            reference_title_tex = raw_reference_title_tex.strip()
 
             if not is_first_reference:
                 biblatex_file_content += "\n"
