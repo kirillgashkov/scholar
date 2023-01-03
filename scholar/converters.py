@@ -95,6 +95,46 @@ class MarkdownToLaTeXConverter(Converter):
 
         return output_tex_file
 
+    def _make_markdown_pandoc_input_format(self) -> str:
+        return _make_pandoc_format(
+            "markdown_strict",
+            enabled_extensions=[
+                # Must-have extensions
+                "header_attributes",
+                "fenced_divs",
+                "bracketed_spans",
+                "fenced_code_blocks",
+                "backtick_code_blocks",
+                "fenced_code_attributes",
+                "table_captions",
+                "grid_tables",
+                "pipe_tables",
+                "inline_code_attributes",
+                "raw_tex",
+                "implicit_figures",
+                "link_attributes",
+                "tex_math_dollars",
+                # Commonmark-inspired extensions
+                "escaped_line_breaks",
+                "space_in_atx_header",
+                "startnum",
+                "all_symbols_escapable",
+                "intraword_underscores",
+                "shortcut_reference_links",
+                # GFM-inspired extensions
+                "task_lists",
+                "strikeout",
+                # Convenience extensions
+                "smart",
+            ],
+        )
+
+    def _make_latex_pandoc_output_format(self) -> str:
+        return _make_pandoc_format(
+            "latex",
+            disabled_extensions=["auto_identifiers"],
+        )
+
     def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
         # WTF: At the time of writting this the value of this variable is supposed to
         # always pass the regular expression check below because it points to a
@@ -129,38 +169,7 @@ class MarkdownToLaTeXConverter(Converter):
     def _run_pandoc_from_md_to_json(
         self, *, input_md_file: Path, output_content_json_file: Path
     ) -> None:
-        markdown_pandoc_input_format = _make_pandoc_format(
-            "markdown_strict",
-            enabled_extensions=[
-                # Must-have extensions
-                "header_attributes",
-                "fenced_divs",
-                "bracketed_spans",
-                "fenced_code_blocks",
-                "backtick_code_blocks",
-                "fenced_code_attributes",
-                "table_captions",
-                "grid_tables",
-                "pipe_tables",
-                "inline_code_attributes",
-                "raw_tex",
-                "implicit_figures",
-                "link_attributes",
-                "tex_math_dollars",
-                # Commonmark-inspired extensions
-                "escaped_line_breaks",
-                "space_in_atx_header",
-                "startnum",
-                "all_symbols_escapable",
-                "intraword_underscores",
-                "shortcut_reference_links",
-                # GFM-inspired extensions
-                "task_lists",
-                "strikeout",
-                # Convenience extensions
-                "smart",
-            ],
-        )
+        markdown_pandoc_input_format = self._make_markdown_pandoc_input_format()
         json_pandoc_output_format = "json"
 
         subprocess.run(
@@ -194,10 +203,7 @@ class MarkdownToLaTeXConverter(Converter):
         output_tex_file: Path,
     ) -> None:
         json_pandoc_input_format = "json"
-        latex_pandoc_output_format = _make_pandoc_format(
-            "latex",
-            disabled_extensions=["auto_identifiers"],
-        )
+        latex_pandoc_output_format = self._make_latex_pandoc_output_format()
 
         pandoc_filters = [
             PandocFilter(
