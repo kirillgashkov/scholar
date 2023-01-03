@@ -300,7 +300,7 @@ class MarkdownToLaTeXConverter(Converter):
                 "scholar": {
                     "settings": self.settings.dict(),
                     "variables": {
-                        "biblatex-bibresource": biblatex_bibresource,
+                        "biblatex_bibresource": biblatex_bibresource,
                     },
                 },
                 "generated-resources-directory": str(
