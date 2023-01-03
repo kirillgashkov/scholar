@@ -229,7 +229,7 @@ class MarkdownToLaTeXConverter(Converter):
             )
         except subprocess.CalledProcessError as e:
             rich.print(
-                "[bold red]Running Pandoc (Markdown string to LaTeX string) failed"
+                "[bold red]Error: [/bold red]Failed to convert Markdown string to LaTeX."
             )
             raise typer.Exit(1)
 
