@@ -233,6 +233,26 @@ class MarkdownToLaTeXConverter(Converter):
             )
             raise typer.Exit(1)
 
+    def _generate_biblatex_file(self, *, output_biblatex_file: Path) -> None:
+        biblatex_file_content = ""
+
+        is_first_reference = True
+
+        for reference_id, reference_title_md in self.settings.references.items():
+            reference_title_tex = self._convert_string_from_md_to_tex_using_pandoc(
+                input_md_string=reference_title_md
+            )
+
+            if not is_first_reference:
+                biblatex_file_content += "\n"
+
+            biblatex_file_content += "@misc{" + reference_id + ",\n"
+            biblatex_file_content += "    title = {" + reference_title_tex + "}\n"
+            biblatex_file_content += "}\n"
+
+        with open(output_biblatex_file, "w") as f:
+            f.write(biblatex_file_content)
+
     def _generate_metadata_json_file(self, *, output_metadata_json_file: Path) -> None:
         # WTF: At the time of writting this the value of this variable is supposed to
         # always pass the regular expression check below because it points to a
