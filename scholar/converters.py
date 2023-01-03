@@ -148,7 +148,7 @@ class MarkdownToLaTeXConverter(Converter):
             str(self.pandoc_extracted_resources_dir),
         ]
 
-    def _make_latex_pandoc_writer_options(self) -> list[str]:
+    def _make_latex_pandoc_writer_filter_options(self) -> list[str]:
         pandoc_filters = [
             PandocFilter(
                 self.pandoc_lua_filters_dir / "make_latex_table.lua",
@@ -209,10 +209,12 @@ class MarkdownToLaTeXConverter(Converter):
             else:
                 raise ValueError(f"Unknown filter type: {pandoc_filter.filter_type}")
 
+        return pandoc_filter_options
+
+    def _make_latex_pandoc_writer_options(self) -> list[str]:
         return [
             "--metadata",
             "csquotes=true",
-            *pandoc_filter_options,
         ]
 
     def _convert_string_from_md_to_tex_using_pandoc(
@@ -228,8 +230,11 @@ class MarkdownToLaTeXConverter(Converter):
                     self._make_latex_pandoc_output_format(),
                     *self._make_markdown_pandoc_reader_options(),
                     *self._make_latex_pandoc_writer_options(),
+                    # NOTE: Filters are not available yet because the 'scholar' metadata
+                    # field is not created yet.
+                    # # *self._make_latex_pandoc_writer_filter_options(),
                 ],
-                input=input_md_string.encode(),
+                input=input_md_string,
                 text=True,
             )
         except subprocess.CalledProcessError as e:
@@ -358,6 +363,7 @@ class MarkdownToLaTeXConverter(Converter):
                 str(self.pandoc_template_file),
                 # Writer options
                 *self._make_latex_pandoc_writer_options(),
+                *self._make_latex_pandoc_writer_filter_options(),
                 # I/O options
                 "--output",
                 str(output_tex_file),
