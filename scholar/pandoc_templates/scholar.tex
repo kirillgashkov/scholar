@@ -426,7 +426,8 @@
 \DeclareDatamodelEntryfields[scholar]{text}
 \end{filecontents}
 
-\usepackage[backend=biber,datamodel=scholar]{biblatex}
+% "sorting=none" makes entries appear in the order they appear in the text.
+\usepackage[backend=biber,datamodel=scholar,sorting=none]{biblatex}
 
 \DeclareFieldFormat[scholar]{text}{#1}
 
