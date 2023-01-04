@@ -430,20 +430,13 @@
 
 \DeclareFieldFormat[scholar]{text}{#1}
 
-\newbibmacro*{scholartext}{%
-  \printfield{text}%
-}
-
-\DeclareBibliographyDriver{scholar}{%
-  \usebibmacro{bibindex}%
-  \usebibmacro{begentry}%
-  \usebibmacro{scholartext}%
-  \newunit\newblock
-  \usebibmacro{finentry}%
-}
+% Format "scholar" entry types. Note that this bibliography driver doesn't
+% respect BibLaTeX's before/after hooks because they add unwanted punctuation.
+\DeclareBibliographyDriver{scholar}{\printfield{text}}
 
 % WTF: Format the bibliography entries using enumitem's list as a base. Note
-% that this bibenvironment doesn't respect BibLaTeX's field formatters.
+% that this bibenvironment doesn't respect BibLaTeX's field formatters because
+% currently there was no way found to make them work with enumitem's list.
 \defbibenvironment{scholar}
 {\itemize[label={\protect\thefield{labelnumber}.},widest={0.}]}
 {\enditemize}
