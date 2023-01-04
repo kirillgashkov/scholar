@@ -191,6 +191,10 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
+                self.pandoc_lua_filters_dir / "render_references_container.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
                 self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
                 PandocFilterType.JSON,
             ),
@@ -248,19 +252,20 @@ class MarkdownToLaTeXConverter(Converter):
 
         is_first_reference = True
 
-        for reference_id, reference_title_md in self.settings.references.items():
-            raw_reference_title_tex = self._convert_string_from_md_to_tex_using_pandoc(
-                input_md_string=reference_title_md
+        for reference_id, reference_text_md in self.settings.references.items():
+            raw_reference_text_tex = self._convert_string_from_md_to_tex_using_pandoc(
+                input_md_string=reference_text_md
             )
             # WTF: Pandoc can add extra whitespace to the the output string even if the
             # input string doesn't have it (particularly at the end of the string).
-            reference_title_tex = raw_reference_title_tex.strip()
+            reference_text_tex = raw_reference_text_tex.strip()
 
             if not is_first_reference:
                 biblatex_file_content += "\n"
 
-            biblatex_file_content += "@misc{" + reference_id + ",\n"
-            biblatex_file_content += "    title = {" + reference_title_tex + "}\n"
+            # NOTE: This is a custom entry type that has to be defined in the template.
+            biblatex_file_content += "@scholar{" + reference_id + ",\n"
+            biblatex_file_content += "    text = {" + reference_text_tex + "}\n"
             biblatex_file_content += "}\n"
 
         with open(self.generated_biblatex_file, "w") as f:
