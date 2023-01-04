@@ -442,6 +442,13 @@
   \usebibmacro{finentry}%
 }
 
+% WTF: Format the bibliography entries using enumitem's list as a base. Note
+% that this bibenvironment doesn't respect BibLaTeX's field formatters.
+\defbibenvironment{scholar}
+{\itemize[label={\protect\thefield{labelnumber}.},widest={0.}]}
+{\enditemize}
+{\item}
+
 
 \addbibresource{$scholar.variables.biblatex_bibresource$}
 
