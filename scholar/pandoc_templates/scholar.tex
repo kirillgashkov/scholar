@@ -427,11 +427,11 @@
 \end{filecontents}
 
 \RequirePackage[
-  backend=biber,      % Explicitly set the backend to Biber.
-  datamodel=scholar,  % Use the custom datamodel defined in "scholar.dbx".
-  style=numeric,      % Use numeric citations (GOST).
+  backend=biber,      % Explicitly use Biber as the backend.
+  datamodel=scholar,  % Use the custom data model defined in "scholar.dbx".
+  style=numeric,      % Use numbers to cite the bibliography entries (GOST).
   autocite=inline,    % Make "\autocite" behave like "\parencite".
-  labelnumber=true,   % Provide the special field "labelnumber".
+  labelnumber=true,   % Enable the special field "labelnumber".
   sorting=none,       % Sort bibliography entries by the order they were cited (GOST).
   hyperref=true       % Transform citations into clickable hyperlinks (requires the "hyperref" package).
 ]{biblatex}
