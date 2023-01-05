@@ -454,7 +454,9 @@
 % Table of contents, list of figures, and list of tables
 %
 
+
 \usepackage{tocloft}
+
 
 % Render the ToC/LoF/LoT without title and on the same page. (See https://tex.stackexchange.com/q/51479, https://tex.stackexchange.com/q/173177.)
 \makeatletter
@@ -463,9 +465,54 @@
 \newcommand{\scholar@listoftables}{\@starttoc{lot}}
 \makeatother
 
+
 \setcounter{tocdepth}{3}  % Include sections, subsections, and subsubsections in the ToC (ГОСТ 7.32-2017 5.4.1) (WARNING: Nameless subsubsections will still be included in violation of requirements).
 \setcounter{lofdepth}{1}  % Include only figures (without subfigures) in the LoF.
 \setcounter{lotdepth}{1}  % Include only tables (without subtables) in the LoT.
+
+
+% Remove extra vertical space before ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1).
+\setlength{\cftbeforesecskip}{0pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\setlength{\cftbeforesubsubsecskip}{0pt}
+\setlength{\cftbeforefigskip}{0pt}
+\setlength{\cftbeforetabskip}{0pt}
+
+% Set the indentation of ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1).
+\setlength{\cftsecindent}{\parindent}
+\setlength{\cftsubsecindent}{\dimexpr \parindent + 2em \relax}
+\setlength{\cftsubsubsecindent}{\dimexpr \parindent + 4em \relax}
+\setlength{\cftfigindent}{\parindent}
+\setlength{\cfttabindent}{\parindent}
+
+
+% Use regular text titles for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface titles.)
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsubsecfont}{\normalfont}
+\renewcommand{\cftfigfont}{\normalfont}
+\renewcommand{\cfttabfont}{\normalfont}
+
+% Enable the dots of ToC/LoF/LoT entry dot leaders (ГОСТ 7.32-2017 5.4.1). (Some had dots disabled with "\cftnodots" instead of "\cftdotsep".)
+\renewcommand{\cftsecdotsep}{\cftdotsep}
+\renewcommand{\cftsubsecdotsep}{\cftdotsep}
+\renewcommand{\cftsubsubsecdotsep}{\cftdotsep}
+\renewcommand{\cftfigdotsep}{\cftdotsep}
+\renewcommand{\cfttabdotsep}{\cftdotsep}
+
+% Use regular text dot ledgers for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface dot leaders.)
+\renewcommand{\cftsecleader}{\cftdotfill{\cftsecdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftsubsecdotsep}}
+\renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftsubsubsecdotsep}}
+\renewcommand{\cftfigleader}{\cftdotfill{\cftfigdotsep}}
+\renewcommand{\cfttableader}{\cftdotfill{\cfttabdotsep}}
+
+% Use regular text page numbers for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface page numbers.)
+\renewcommand{\cftsecpagefont}{\normalfont}
+\renewcommand{\cftsubsecpagefont}{\normalfont}
+\renewcommand{\cftsubsubsecpagefont}{\normalfont}
+\renewcommand{\cftfigpagefont}{\normalfont}
+\renewcommand{\cfttabpagefont}{\normalfont}
 
 
 \begin{document}
