@@ -26,7 +26,7 @@ return {
             check_table_of_contents_container(div)
 
             local rendered = table.concat({
-                "\\emph{Table of contents will be rendered here.}",
+                "\\tableofcontents",
             }, "\n")
 
             return pandoc.RawBlock("latex", rendered)
