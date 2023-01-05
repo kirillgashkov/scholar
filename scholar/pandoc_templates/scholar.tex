@@ -471,7 +471,7 @@
 \setcounter{lotdepth}{1}  % Include only tables (without subtables) in the LoT.
 
 
-% Remove extra vertical space before ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1).
+% Render ToC/LoF/LoT entries like regular paragraphs (ГОСТ 7.32-2017 6.13). (By removing extra vertical space before the entries.)
 \setlength{\cftbeforesecskip}{0pt}
 \setlength{\cftbeforesubsecskip}{0pt}
 \setlength{\cftbeforesubsubsecskip}{0pt}
@@ -485,29 +485,31 @@
 \setlength{\cftfigindent}{\parindent}
 \setlength{\cfttabindent}{\parindent}
 
-
-% Use regular text titles for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface titles.)
-\renewcommand{\cftsecfont}{\normalfont}
-\renewcommand{\cftsubsecfont}{\normalfont}
-\renewcommand{\cftsubsubsecfont}{\normalfont}
-\renewcommand{\cftfigfont}{\normalfont}
-\renewcommand{\cfttabfont}{\normalfont}
-
-% Enable the dots of ToC/LoF/LoT entry dot leaders (ГОСТ 7.32-2017 5.4.1). (Some had dots disabled with "\cftnodots" instead of "\cftdotsep".)
+% Enable the dot ledgers of ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had dot ledgers disabled by having "\cftnodots" instead of "\cftdotsep".)
 \renewcommand{\cftsecdotsep}{\cftdotsep}
 \renewcommand{\cftsubsecdotsep}{\cftdotsep}
 \renewcommand{\cftsubsubsecdotsep}{\cftdotsep}
 \renewcommand{\cftfigdotsep}{\cftdotsep}
 \renewcommand{\cfttabdotsep}{\cftdotsep}
 
-% Use regular text dot ledgers for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface dot leaders.)
+
+% Style ToC/LoF/LoT entries as regular text:
+
+% - Style titles as regular text. (Some titles were bold.)
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsubsecfont}{\normalfont}
+\renewcommand{\cftsubsubsecfont}{\normalfont}
+\renewcommand{\cftfigfont}{\normalfont}
+\renewcommand{\cfttabfont}{\normalfont}
+
+% - Style dot ledgers as regular text. (Some dot leaders were bold.)
 \renewcommand{\cftsecleader}{\cftdotfill{\cftsecdotsep}}
 \renewcommand{\cftsubsecleader}{\cftdotfill{\cftsubsecdotsep}}
 \renewcommand{\cftsubsubsecleader}{\cftdotfill{\cftsubsubsecdotsep}}
 \renewcommand{\cftfigleader}{\cftdotfill{\cftfigdotsep}}
 \renewcommand{\cfttableader}{\cftdotfill{\cfttabdotsep}}
 
-% Use regular text page numbers for ToC/LoF/LoT entries (ГОСТ 7.32-2017 5.4.1). (Some had boldface page numbers.)
+% - Style page numbers as regular text. (Some page numbers were bold.)
 \renewcommand{\cftsecpagefont}{\normalfont}
 \renewcommand{\cftsubsecpagefont}{\normalfont}
 \renewcommand{\cftsubsubsecpagefont}{\normalfont}
