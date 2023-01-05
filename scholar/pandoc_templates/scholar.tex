@@ -451,12 +451,17 @@
 \addbibresource{$scholar.variables.biblatex_bibresource$}
 
 %
-% Table of contents
+% Table of contents, list of figures, and list of tables
 %
 
-% - Prevent '\tableofcontents' (also '\listoffigures', '\listoftables') from
-%   starting a new page.
 \usepackage{tocloft}
+
+% Render ToCs without titles and new pages. (See https://tex.stackexchange.com/q/51479, https://tex.stackexchange.com/q/173177.)
+\makeatletter
+\newcommand{\scholar@tableofcontents}{\@starttoc{toc}}
+\newcommand{\scholar@listoffigures}{\@starttoc{lof}}
+\newcommand{\scholar@listoftables}{\@starttoc{lot}}
+\makeatother
 
 
 \begin{document}

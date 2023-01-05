@@ -26,7 +26,9 @@ return {
             check_table_of_contents_container(div)
 
             local rendered = table.concat({
-                "\\tableofcontents",
+                "\\makeatletter",
+                "\\scholar@tableofcontents",
+                "\\makeatother",
             }, "\n")
 
             return pandoc.RawBlock("latex", rendered)
