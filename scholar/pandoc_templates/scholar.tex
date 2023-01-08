@@ -145,7 +145,7 @@
 
 \usepackage{titlesec}
 
-\titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\section}[block]{\filright\Large\bfseries}{\IfAppendix{\appendixname~}{\relax}\thesection}{0.5em}{}
 \titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}
 \titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
 \titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
@@ -515,6 +515,25 @@
 \renewcommand{\cftsubsubsecpagefont}{\normalfont}
 \renewcommand{\cftfigpagefont}{\normalfont}
 \renewcommand{\cfttabpagefont}{\normalfont}
+
+
+%
+% Appendices
+%
+
+\RequirePackage[titletoc]{appendix}
+\RequirePackage{apptools}
+\AtBeginEnvironment{appendices}{\appendixtrue}
+
+\makeatletter
+\newenvironment{scholar@appendix}{%
+  \appendixtrue%
+  \appendices%
+  \renewcommand{\thesection}{\Asbuk{section}}%
+}{%
+  \endappendices%
+}
+\makeatother
 
 
 \begin{document}
