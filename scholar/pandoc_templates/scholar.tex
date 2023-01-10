@@ -145,7 +145,7 @@
 
 \usepackage{titlesec}
 
-\titleformat{\section}[block]{\filright\Large\bfseries}{\IfAppendix{\appendixname~}{\relax}\thesection}{0.5em}{}
+\titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
 \titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}
 \titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
 \titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
@@ -522,14 +522,13 @@
 %
 
 \RequirePackage[titletoc]{appendix}
-\RequirePackage{apptools}
-\AtBeginEnvironment{appendices}{\appendixtrue}
 
 \makeatletter
 \newenvironment{scholar@appendix}{%
-  \appendixtrue%
   \appendices%
   \renewcommand{\thesection}{\Asbuk{section}}%
+  \titleformat{\section}[display]{\filcenter\Large\bfseries}{\appendixname~\thesection}{2ex}{}%  % (See https://tex.stackexchange.com/q/69025.)
+  \titlespacing{\section}{0pt}{3ex}{2ex}%                                                        % (See https://tex.stackexchange.com/q/69025.)
 }{%
   \endappendices%
 }
