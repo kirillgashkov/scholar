@@ -517,6 +517,24 @@
 \renewcommand{\cfttabpagefont}{\normalfont}
 
 
+%
+% Appendices
+%
+
+\RequirePackage[titletoc]{appendix}
+
+\makeatletter
+\newenvironment{scholar@appendices}{%
+  \appendices%
+  \renewcommand{\thesection}{\Asbuk{section}}%
+  \titleformat{\section}[display]{\filcenter\Large\bfseries}{\appendixname~\thesection}{2ex}{}%  % (See https://tex.stackexchange.com/q/69025.)
+  \titlespacing{\section}{0pt}{3ex}{2ex}%                                                        % (See https://tex.stackexchange.com/q/69025.)
+}{%
+  \endappendices%
+}
+\makeatother
+
+
 \begin{document}
 
 $body$
