@@ -40,7 +40,7 @@ local function render_main_section(
         "\\makeatletter",
         "\\begin{scholar@section@main}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     blocks:extend(with_section_identifier_moved_to_header(section).content)
 
@@ -48,7 +48,7 @@ local function render_main_section(
         "\\makeatletter",
         "\\end{scholar@section@main}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     return blocks
 end
@@ -62,7 +62,7 @@ local function render_side_section(
         "\\makeatletter",
         "\\begin{scholar@section@side}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     blocks:extend(with_section_identifier_moved_to_header(section).content)
 
@@ -70,7 +70,7 @@ local function render_side_section(
         "\\makeatletter",
         "\\end{scholar@section@side}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     return blocks
 end
@@ -84,7 +84,7 @@ local function render_appendix_section(
         "\\makeatletter",
         "\\begin{scholar@section@appendix}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     blocks:extend(with_section_identifier_moved_to_header(section).content)
 
@@ -92,7 +92,7 @@ local function render_appendix_section(
         "\\makeatletter",
         "\\end{scholar@section@appendix}",
         "\\makeatother",
-    }, "\n")))
+    }, "")))
 
     return blocks
 end
