@@ -53,6 +53,28 @@ local function render_main_section(
     return blocks
 end
 
+local function render_contents_section(
+    section -- pandoc.Div
+)
+    local blocks = pandoc.Blocks({})
+
+    blocks:insert(pandoc.RawBlock("latex", table.concat({
+        "\\makeatletter",
+        "\\begin{scholar@section@contents}",
+        "\\makeatother",
+    }, "")))
+
+    blocks:extend(with_section_identifier_moved_to_header(section).content)
+
+    blocks:insert(pandoc.RawBlock("latex", table.concat({
+        "\\makeatletter",
+        "\\end{scholar@section@contents}",
+        "\\makeatother",
+    }, "")))
+
+    return blocks
+end
+
 local function render_side_section(
     section -- pandoc.Div
 )
@@ -99,6 +121,7 @@ end
 
 local section_renderers = {
     ["main"] = render_main_section,
+    ["contents"] = render_contents_section,
     ["side"] = render_side_section,
     ["appendix"] = render_appendix_section,
 }

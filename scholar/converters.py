@@ -202,11 +202,6 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "make_and_render_sections.lua",
                 PandocFilterType.LUA,
             ),
-            # NOTE: tocless_headers should run after make_and_render_sections.
-            PandocFilter(
-                self.pandoc_lua_filters_dir / "tocless_headers.lua",
-                PandocFilterType.LUA,
-            ),
             PandocFilter(
                 self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
                 PandocFilterType.JSON,
