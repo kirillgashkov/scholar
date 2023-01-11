@@ -525,6 +525,7 @@
 
 \makeatletter
 \newenvironment{scholar@section@side}{%
+  \makeatletter\c@secnumdepth=0\makeatother%  % Disable section numbering. Using \c@secnumdepth=0 instead of \setcounter{secnumdepth}{0} to have the counter restored at the end of the environment. (See the comments to https://tex.stackexchange.com/a/11669.)
   \titleformat{\section}[block]{\filcenter\Large\bfseries}{}{0pt}{}%
   \titlespacing{\section}{0pt}{3ex}{2ex}%
   %
