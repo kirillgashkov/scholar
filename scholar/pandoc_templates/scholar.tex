@@ -140,24 +140,10 @@
 \newcommand{\tightlist}{}
 
 %
-% Headings
+% Headers
 %
 
 \usepackage{titlesec}
-
-\titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}
-\titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}
-\titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
-\titleformat{name=\section,numberless}[block]{\filcenter\Large\bfseries}{}{0pt}{}
-\titleformat{name=\subsection,numberless}[block]{\filcenter\large\bfseries}{}{0pt}{}
-\titleformat{name=\subsubsection,numberless}[block]{\filcenter\normalsize\bfseries}{}{0pt}{}
-
-\titlespacing{\section}{\parindent}{3ex}{2ex}
-\titlespacing{\subsection}{\parindent}{3ex}{2ex}
-\titlespacing{\subsubsection}{\parindent}{3ex}{2ex}
-\titlespacing{name=\section,numberless}{0pt}{3ex}{2ex}
-\titlespacing{name=\subsection,numberless}{0pt}{3ex}{2ex}
-\titlespacing{name=\subsubsection,numberless}{0pt}{3ex}{2ex}
 
 %
 % Floats (figures, tables, listings)
@@ -518,17 +504,52 @@
 
 
 %
-% Appendices
+% Sections
 %
 
+% \RequirePackage{titlesec}  % Already loaded.
 \RequirePackage[titletoc]{appendix}
 
 \makeatletter
-\newenvironment{scholar@appendices}{%
+\newenvironment{scholar@section@main}{%
+  \titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}%
+  \titlespacing{\section}{\parindent}{3ex}{2ex}%
+  %
+  \titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}%
+  \titlespacing{\subsection}{\parindent}{3ex}{2ex}%
+  %
+  \titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}%
+  \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}%
+}{}
+\makeatother
+
+\makeatletter
+\newenvironment{scholar@section@side}{%
+  \makeatletter\c@secnumdepth=0\makeatother%  % Disable section numbering. Using \c@secnumdepth=0 instead of \setcounter{secnumdepth}{0} to have the counter restored at the end of the environment. (See the comments to https://tex.stackexchange.com/a/11669.)
+  \titleformat{\section}[block]{\filcenter\Large\bfseries}{}{0pt}{}%
+  \titlespacing{\section}{0pt}{3ex}{2ex}%
+  %
+  \titleformat{\subsection}[block]{\filcenter\large\bfseries}{}{0pt}{}%
+  \titlespacing{\subsection}{0pt}{3ex}{2ex}%
+  %
+  \titleformat{\subsubsection}[block]{\filcenter\normalsize\bfseries}{}{0pt}{}%
+  \titlespacing{\subsubsection}{0pt}{3ex}{2ex}%
+}{}
+\makeatother
+
+\makeatletter
+\newenvironment{scholar@section@appendix}{%
   \appendices%
   \renewcommand{\thesection}{\Asbuk{section}}%
-  \titleformat{\section}[display]{\filcenter\Large\bfseries}{\appendixname~\thesection}{2ex}{}%  % (See https://tex.stackexchange.com/q/69025.)
-  \titlespacing{\section}{0pt}{3ex}{2ex}%                                                        % (See https://tex.stackexchange.com/q/69025.)
+  %
+  \titleformat{\section}[display]{\filcenter\Large\bfseries}{\appendixname~\thesection}{2ex}{}%
+  \titlespacing{\section}{0pt}{3ex}{2ex}%
+  %
+  \titleformat{\subsection}[block]{\filright\large\bfseries}{\thesubsection}{0.5em}{}%
+  \titlespacing{\subsection}{\parindent}{3ex}{2ex}%
+  %
+  \titleformat{\subsubsection}[block]{\filright\normalsize\bfseries}{\thesubsubsection}{0.5em}{}%
+  \titlespacing{\subsubsection}{\parindent}{3ex}{2ex}%
 }{%
   \endappendices%
 }
