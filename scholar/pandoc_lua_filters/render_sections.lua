@@ -114,7 +114,7 @@ local function render_section(
 )
     local section_types = get_keys(section_renderers)
     local section_type = nil
-    for _, class in ipairs(section.header_block.classes) do
+    for _, class in ipairs(section.classes) do
         if has_value(section_types, class) then
             if section_type ~= nil then
                 warn("Multiple section types specified. Using the last one.")
