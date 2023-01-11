@@ -199,11 +199,12 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "tocless_headers.lua",
+                self.pandoc_lua_filters_dir / "make_and_render_sections.lua",
                 PandocFilterType.LUA,
             ),
+            # NOTE: tocless_headers should run after make_and_render_sections.
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_and_render_sections.lua",
+                self.pandoc_lua_filters_dir / "tocless_headers.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
