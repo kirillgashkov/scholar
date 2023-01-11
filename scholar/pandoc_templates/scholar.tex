@@ -537,6 +537,17 @@
 }{}
 \makeatother
 
+\newcommand{\nocontentsline}[3]{}
+
+\makeatletter
+\newenvironment{scholar@section@contents}{%
+  \let\addcontentsline=\nocontentsline%  % See https://stackoverflow.com/q/2785260.
+  \scholar@section@side%
+}{%
+  \endscholar@section@side%
+}
+\makeatother
+
 \makeatletter
 \newenvironment{scholar@section@appendix}{%
   \appendices%
@@ -553,20 +564,6 @@
 }{%
   \endappendices%
 }
-\makeatother
-
-
-%
-% Tocless headers
-%
-
-\newcommand{\nocontentsline}[3]{}
-
-% See https://stackoverflow.com/q/2785260.
-\makeatletter
-\newenvironment{scholar@tocless}{%
-  \let\addcontentsline=\nocontentsline%
-}{}
 \makeatother
 
 
