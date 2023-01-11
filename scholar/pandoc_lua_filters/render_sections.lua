@@ -106,7 +106,7 @@ local section_renderers = {
 local function is_section_div(
     div -- pandoc.Div
 )
-    return has_value(get_keys(div.classes), "section")
+    return has_value(div.classes, "section")
 end
 
 local function render_section(
