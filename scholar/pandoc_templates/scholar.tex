@@ -556,6 +556,20 @@
 \makeatother
 
 
+%
+% Tocless headers
+%
+
+\newcommand{\nocontentsline}[3]{}
+
+% See https://stackoverflow.com/q/2785260.
+\makeatletter
+\newenvironment{scholar@tocless}{%
+  \let\addcontentsline=\nocontentsline%
+}{}
+\makeatother
+
+
 \begin{document}
 
 $body$
