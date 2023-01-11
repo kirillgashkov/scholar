@@ -122,10 +122,7 @@ class MarkdownToLaTeXConverter(Converter):
         )
 
     def _make_latex_pandoc_output_format(self) -> str:
-        return _make_pandoc_format(
-            "latex",
-            disabled_extensions=["auto_identifiers"],
-        )
+        return _make_pandoc_format("latex")
 
     def _make_markdown_pandoc_reader_options(self) -> list[str]:
         return [
