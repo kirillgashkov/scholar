@@ -18,7 +18,7 @@ end
 local function with_section_identifier_moved_to_header(
     section -- pandoc.Div
 )
-    local new_section = section.clone()
+    local new_section = section:clone()
 
     for _, block in ipairs(new_section.content) do
         if block.t == "Header" then
