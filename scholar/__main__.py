@@ -16,7 +16,6 @@ from scholar.constants import (
     PANDOC_JSON_FILTERS_DIR,
     PANDOC_LUA_FILTERS_DIR,
     PANDOC_OUTPUT_DIR,
-    PANDOC_TEMPLATE_FILE,
     SCHOLAR_OUTPUT_DIR,
 )
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
@@ -26,13 +25,23 @@ from scholar.settings import (
     InvalidSettingsError,
     Settings,
 )
+from scholar.styles import DEFAULT_STYLE, get_styles
+
+app = typer.Typer()
 
 T = TypeVar("T")
 
 
+def styles_callback(show_styles: bool) -> None:
+    if show_styles:
+        print("\n".join(get_styles()))
+        raise typer.Exit()
+
+
+@app.command()
 def main(
     input_file: Path = typer.Argument(
-        ...,
+        None,
         metavar="INPUT",
         exists=True,
         dir_okay=False,
@@ -46,6 +55,19 @@ def main(
         writable=True,
         help="The output file or directory.",
         show_default="CWD",  # type: ignore[arg-type]  # See https://github.com/tiangolo/typer/issues/158
+    ),
+    style: str = typer.Option(
+        DEFAULT_STYLE,
+        "--style",
+        help="The style to use.",
+    ),
+    title_page: Optional[Path] = typer.Option(
+        None,
+        "--title-page",
+        exists=True,
+        dir_okay=False,
+        readable=True,
+        help="The title page to use.",
     ),
     config_file: Optional[
         Path
@@ -67,6 +89,13 @@ def main(
         "--to-tex",
         help="Convert to LaTeX instead of PDF.",
     ),
+    show_styles: bool = typer.Option(
+        False,
+        "--styles",
+        callback=styles_callback,
+        is_eager=True,
+        help="Show available styles and exit.",
+    ),
 ) -> None:
     """
     Convert the INPUT Markdown file to PDF.
@@ -87,7 +116,10 @@ def main(
             f.write(input_document.content)
 
     settings = load_settings(
-        cli_settings={},
+        cli_settings={
+            "style": style,
+            "title_page": title_page,
+        },
         yaml_front_matter_settings=yaml_front_matter_settings,
         yaml_config_file=config_file,
     )
@@ -161,7 +193,6 @@ def load_settings(
 def convert_md_to_tex(input_file: Path, settings: Settings) -> Path:
     PANDOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(
-        pandoc_template_file=PANDOC_TEMPLATE_FILE,
         pandoc_lua_filters_dir=PANDOC_LUA_FILTERS_DIR,
         pandoc_json_filters_dir=PANDOC_JSON_FILTERS_DIR,
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
@@ -185,4 +216,4 @@ def convert_tex_to_pdf(input_file: Path, settings: Settings) -> Path:
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()

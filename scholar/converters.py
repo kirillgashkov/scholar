@@ -14,6 +14,7 @@ import rich
 import typer
 
 from scholar.settings import Settings
+from scholar.styles import get_style
 
 
 class Converter(ABC):
@@ -39,7 +40,6 @@ class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
         *,
-        pandoc_template_file: Path,
         pandoc_lua_filters_dir: Path,
         pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
@@ -50,7 +50,7 @@ class MarkdownToLaTeXConverter(Converter):
         latexmk_output_dir: Path,
         settings: Settings,
     ) -> None:
-        self.pandoc_template_file = pandoc_template_file
+        self.style = get_style(settings)
         self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
@@ -272,9 +272,7 @@ class MarkdownToLaTeXConverter(Converter):
         # 'settings.py' file. We keep the regular expression check to ensure that we
         # don't pass any unescaped paths to LaTeX and cause mayhem. Obviously this
         # solution is far from ideal but it will work for now.
-        minted_package_option_outputdir = self.latexmk_output_dir.relative_to(
-            Path.cwd()
-        ).as_posix()
+        minted_outputdir = self.latexmk_output_dir.relative_to(Path.cwd()).as_posix()
 
         # WTF: Same for the biblatex resource file.
         biblatex_bibresource = self.generated_biblatex_file.relative_to(
@@ -293,7 +291,7 @@ class MarkdownToLaTeXConverter(Converter):
 
         pattern = re.compile(r"^[A-Za-z0-9._\-\/]+$")
 
-        if not pattern.match(minted_package_option_outputdir):
+        if not pattern.match(minted_outputdir):
             rich.print(
                 f"[bold red]Error: [/bold red]Failed to provide a valid value for the 'outputdir' option of the 'minted' package",
                 file=sys.stderr,
@@ -319,15 +317,13 @@ class MarkdownToLaTeXConverter(Converter):
             {
                 "scholar": {
                     "settings": self.settings.dict(),
-                    "variables": {
+                    "constants": {
                         "biblatex_bibresource": biblatex_bibresource,
                         "includepdf_title_page": includepdf_title_page,
+                        "minted_outputdir": minted_outputdir,
                     },
+                    "variables": self.style.variables,
                 },
-                "generated-resources-directory": str(
-                    self.pandoc_generated_resources_dir
-                ),
-                "minted-package-option-outputdir": str(minted_package_option_outputdir),
             }
         )
 
@@ -381,7 +377,7 @@ class MarkdownToLaTeXConverter(Converter):
                 # Template options
                 "--standalone",
                 "--template",
-                str(self.pandoc_template_file),
+                str(self.style.template_file),
                 # Writer options
                 *self._make_latex_pandoc_writer_options(),
                 *self._make_latex_pandoc_writer_filter_options(),

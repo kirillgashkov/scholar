@@ -205,7 +205,7 @@
   \setlength{\@fptop}{0pt}%
   \setlength{\@fpsep}{1.2\baselineskip}%
   \setlength{\@fpbot}{0pt plus 1fil}%
-  \clearpage%
+  $if(scholar.variables.disable_section_page_breaks)$$else$\clearpage$endif$%
   % Restore original values
   \setlength{\@fptop}{\old@fptop}%
   \setlength{\@fpsep}{\old@fpsep}%
@@ -246,7 +246,10 @@
 \addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
 \addto\captionsrussian{\renewcommand{\listingname}{Листинг}}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{figure}{section}
+$endif$
 
 \usepackage{caption}
 \DeclareCaptionLabelSeparator{customDash}{ --- }
@@ -322,7 +325,10 @@
 \renewcommand\theadgape{}
 \renewcommand\rotheadgape{}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{table}{section}
+$endif$
 
 %
 % Listings
@@ -334,7 +340,7 @@
 %   of LaTeX compiler's so that if it was changed with
 %   '-output-directory' command-line option 'minted' still
 %   could find the temporary files it created.
-\usepackage[newfloat,outputdir=$minted-package-option-outputdir$]{minted}
+\usepackage[newfloat,outputdir=$scholar.constants.minted_outputdir$]{minted}
 
 % Our own 'longlisting' environment that is powered by the
 % 'minted' and 'caption' packages. This is how to use it:
@@ -391,7 +397,10 @@
 
 \setminted{breakanywhere,breaklines,fontsize=\small,style=xcode}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{listing}{section}
+$endif$
 
 %
 % Citations
@@ -438,7 +447,7 @@
 {\enditemize}
 {\item}
 
-\addbibresource{$scholar.variables.biblatex_bibresource$}
+\addbibresource{$scholar.constants.biblatex_bibresource$}
 
 %
 % Table of contents, list of figures, and list of tables
@@ -516,6 +525,7 @@
 
 \makeatletter
 \newenvironment{scholar@section@main}{%
+  $if(scholar.variables.disable_main_section_numbering)$\makeatletter\c@secnumdepth=0\makeatother$else$$endif$%  % (Conditionally) disable section numbering. Using \c@secnumdepth=0 instead of \setcounter{secnumdepth}{0} to have the counter restored at the end of the environment. (See the comments to https://tex.stackexchange.com/a/11669.)
   \titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}%
   \titlespacing{\section}{\parindent}{3ex}{2ex}%
   %
@@ -581,7 +591,10 @@
 \usepackage{mathtools}
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}  % (See https://tex.stackexchange.com/q/570548.)
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{equation}{section}
+$endif$
 
 
 %
@@ -593,8 +606,8 @@
 
 \begin{document}
 
-$if(scholar.variables.includepdf_title_page)$
-\includepdf[pages=-]{$scholar.variables.includepdf_title_page$}
+$if(scholar.constants.includepdf_title_page)$
+\includepdf[pages=-]{$scholar.constants.includepdf_title_page$}
 $endif$
 
 $body$
