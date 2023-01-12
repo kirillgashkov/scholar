@@ -102,43 +102,26 @@ class MarkdownToLaTeXConverter(Converter):
 
     def _make_markdown_pandoc_input_format(self) -> str:
         return _make_pandoc_format(
-            "markdown_strict",
+            "commonmark",
             enabled_extensions=[
+                # GFM extensions
+                "autolink_bare_uris",  # https://github.github.com/gfm/#autolinks-extension-
+                "pipe_tables",  # https://github.github.com/gfm/#tables-extension-
+                "strikeout",  # https://github.github.com/gfm/#strikethrough-extension-
+                "task_lists",  # https://github.github.com/gfm/#task-list-items-extension-
                 # Must-have extensions
-                "header_attributes",
+                "attributes",
+                "tex_math_dollars",
+                # Handy extensions
                 "fenced_divs",
                 "bracketed_spans",
-                "fenced_code_blocks",
-                "backtick_code_blocks",
-                "fenced_code_attributes",
-                "table_captions",
-                "grid_tables",
-                "pipe_tables",
-                "inline_code_attributes",
-                "raw_tex",
                 "implicit_figures",
-                "link_attributes",
-                "tex_math_dollars",
-                # Commonmark-inspired extensions
-                "escaped_line_breaks",
-                "space_in_atx_header",
-                "startnum",
-                "all_symbols_escapable",
-                "intraword_underscores",
-                "shortcut_reference_links",
-                # GFM-inspired extensions
-                "task_lists",
-                "strikeout",
-                # Convenience extensions
                 "smart",
             ],
         )
 
     def _make_latex_pandoc_output_format(self) -> str:
-        return _make_pandoc_format(
-            "latex",
-            disabled_extensions=["auto_identifiers"],
-        )
+        return _make_pandoc_format("latex")
 
     def _make_markdown_pandoc_reader_options(self) -> list[str]:
         return [
@@ -151,7 +134,15 @@ class MarkdownToLaTeXConverter(Converter):
     def _make_latex_pandoc_writer_filter_options(self) -> list[str]:
         pandoc_filters = [
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_latex_table.lua",
+                self.pandoc_lua_filters_dir / "render_table.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_image.lua",
+                PandocFilterType.LUA,
+            ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_math.lua",
                 PandocFilterType.LUA,
             ),
             # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for
@@ -175,7 +166,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_latex_code_block.lua",
+                self.pandoc_lua_filters_dir / "render_code_block.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
