@@ -9,7 +9,7 @@ PANDOC_TEMPLATE_FILE = PANDOC_TEMPLATES_DIR / "scholar.tex"
 
 
 PANDOC_JSON_FILTERS_DIR = ROOT / "pandoc_json_filters"
-PANDOC_LUA_FILTERS_DIR = ROOT / "pandoc_lua_filters"
+PANDOC_LUA_FILTERS_DIR = ROOT / "pandoc_filters"
 
 
 CACHE_DIR = Path.cwd() / ".scholar"
