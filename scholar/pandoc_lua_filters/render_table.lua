@@ -537,7 +537,11 @@ return {
                 table_.head,                             -- head -- pandoc.TableHead
                 table_.bodies,                           -- bodies -- pandoc.List[pandoc.TableBody]
                 table_.foot,                             -- foot -- pandoc.TableFoot
-                nil                                      -- attr -- pandoc.Attr | nil
+                pandoc.Attr(                             -- attr -- pandoc.Attr | nil
+                    "",              -- identifier -- string
+                    pandoc.List({}), -- classes -- pandoc.List[string]
+                    {}               -- attributes -- table
+                )
             )
 
             if captionable:has_caption() then

@@ -1,27 +1,78 @@
--- Convert Pandoc code blocks to LaTeX minted blocks.
+Captionable = {}
+Captionable.__index = Captionable
+
+function Captionable:new(
+    id, -- string | nil
+    caption -- pandoc.Inlines | nil
+)
+   local o = {}
+   setmetatable(o, Captionable)
+
+   o.id = id
+   o.caption = caption
+
+   return o
+end
+
+function Captionable:has_caption()
+    return self.id ~= nil or self.caption ~= nil
+end
+
+function Captionable:render_caption()
+    local inlines = pandoc.Inlines({})
+
+    if self.caption ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\caption{"))
+        inlines:extend(self.caption)
+        inlines:insert(pandoc.RawInline("latex", "}"))
+    elseif self.id ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\caption{}"))
+    end
+
+    if self.id ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\label{" .. self.id .. "}"))
+    end
+
+    return inlines
+end
+
+
 --
------ USAGE --------------------------------------------------------------------
+-- Code block
 --
--- Example input code block:
---
---     ```python
---     def greet(name):
---         print(f"Hello, {name}!")
---     ```
---
---     ```{.python #greet caption="A function that greets a person"}
---     def greet(name):
---         print(f"Hello, {name}!")
---     ```
---
--- This filter also recognizes the 'from' attribute used by the
--- 'include_code_block.lua' filter. If the 'from' attribute is present, the
--- filter will set the 'firstline' option of the minted environment:
---
---    ```{.python include="path/to/file.py" from=7}
---    ```
---
------ SECURITY IMPLICATIONS ----------------------------------------------------
+
+
+local function get_code_block_id(
+    code_block -- pandoc.CodeBlock
+)
+    local id = code_block.identifier
+
+    if id == "" then
+        return nil
+    end
+
+    return id
+end
+
+
+local function get_code_block_caption(
+    code_block -- pandoc.CodeBlock
+)
+    local caption_string = code_block.attributes.caption
+
+    if caption_string == nil then
+        return nil
+    end
+
+    return pandoc.utils.blocks_to_inlines(pandoc.read(caption_string).blocks)
+end
+
+
+--------------------------------------------------------------------------------
+-- Brace yourself for the legacy code ------------------------------------------
+--------------------------------------------------------------------------------
+
+-- ## Security implications
 --
 -- The accepted parameters 'from', 'language'  and 'identifier' ('7', 'python'
 -- and 'greet' in the examples above) are treated as raw LaTeX code.
@@ -29,7 +80,8 @@
 -- However, the parameter 'caption' is treated as raw Markdown, so it will even
 -- be parsed and rendered by Pandoc.
 --
------ LATEX REQUIREMENTS -------------------------------------------------------
+--
+-- ## LaTeX requirements
 --
 -- Requires 'caption'...
 --
@@ -44,17 +96,7 @@
 -- over multiple pages:
 --
 --     \newenvironment{longlisting}{\captionsetup{type=listing}}{}
---
--- Now you can create LaTeX listings when you need a caption or a label:
---
---     \begin{longlisting}
---     \begin{minted}{python}
---     def greet(name):
---         print(f"Hello, {name}!")
---     \end{minted}
---     \caption{A function that greets a person}
---     \label{greet}
---     \end{longlisting}
+
 
 local function parse_code_classes(
     classes -- pandoc.List of string
@@ -230,14 +272,52 @@ local function make_code_block(
 end
 
 
-if FORMAT:match("latex") then
-    return {
-        {
-            CodeBlock = function (
-                code_block_el -- pandoc.CodeBlock
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+return {
+    {
+        CodeBlock = function (
+            code_block -- pandoc.CodeBlock
+        )
+            local id = get_code_block_id(code_block)
+            local caption = get_code_block_caption(code_block)
+            local captionable = Captionable:new(id, caption)
+
+            local classes_of_code_block_to_render = code_block.classes:clone()
+
+            local attributes_of_code_block_to_render = {
+                ["from"] = code_block.attributes["from"]
+            }
+
+            local code_block_to_render = pandoc.CodeBlock(
+                code_block.text, -- text -- string
+                pandoc.Attr(     -- attr -- pandoc.Attr | nil
+                    "",                                -- identifier -- string
+                    classes_of_code_block_to_render,   -- classes -- pandoc.List[string]
+                    attributes_of_code_block_to_render -- attributes -- table
+                )
             )
-                return make_code_block(code_block_el)
-            end,
-        }
+
+            if captionable:has_caption() then
+                if captionable.caption ~= nil then
+                    code_block_to_render.attributes.caption_json = pandoc.write(
+                        pandoc.Pandoc({captionable.caption}), "json"
+                    )
+                elseif captionable.id ~= nil then
+                    code_block_to_render.attributes.caption_json = pandoc.write(
+                        pandoc.Pandoc({}), "json"
+                    )
+                end
+
+                if captionable.id ~= nil then
+                    code_block_to_render.identifier = captionable.id
+                end
+            end
+
+            return make_code_block(code_block_to_render)
+        end
     }
-end
+}
