@@ -173,7 +173,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_citations_in_text.lua",
+                self.pandoc_lua_filters_dir / "render_link_citation.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
