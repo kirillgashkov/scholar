@@ -246,7 +246,10 @@
 \addto\captionsrussian{\renewcommand{\figurename}{Рисунок}}
 \addto\captionsrussian{\renewcommand{\listingname}{Листинг}}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{figure}{section}
+$endif$
 
 \usepackage{caption}
 \DeclareCaptionLabelSeparator{customDash}{ --- }
@@ -322,7 +325,10 @@
 \renewcommand\theadgape{}
 \renewcommand\rotheadgape{}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{table}{section}
+$endif$
 
 %
 % Listings
@@ -391,7 +397,10 @@
 
 \setminted{breakanywhere,breaklines,fontsize=\small,style=xcode}
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{listing}{section}
+$endif$
 
 %
 % Citations
@@ -582,7 +591,10 @@
 \usepackage{mathtools}
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}  % (See https://tex.stackexchange.com/q/570548.)
 
+$if(scholar.variables.disable_numbering_within_section)$
+$else$
 \counterwithin{equation}{section}
+$endif$
 
 
 %
