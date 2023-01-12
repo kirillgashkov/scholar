@@ -1,4 +1,4 @@
-Captionable = {}
+local Captionable = {}
 Captionable.__index = Captionable
 
 function Captionable:new(
