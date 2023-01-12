@@ -294,15 +294,10 @@ local function table_id_to_latex(
     identifier -- string
 )
     if identifier == "" then
-        warn(
-            "nonempty table IDs are not supported; treating a nonempty table ID as empty"
-        )
-        -- WTF: Because the 'pandoc-crossref' filter parses the table ID on
-        -- itself, converts it to LaTeX's '\label{...}' command and embeds it
-        -- into the caption as raw LaTeX.
+        return ""
     end
 
-    return ""
+    return "\\label{" .. identifier .. "}"
 end
 
 local function caption_block_of_numbered_table_start(
