@@ -134,7 +134,7 @@ class MarkdownToLaTeXConverter(Converter):
     def _make_latex_pandoc_writer_filter_options(self) -> list[str]:
         pandoc_filters = [
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_latex_table.lua",
+                self.pandoc_lua_filters_dir / "render_table.lua",
                 PandocFilterType.LUA,
             ),
             # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for

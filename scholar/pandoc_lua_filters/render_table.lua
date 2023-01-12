@@ -1,3 +1,78 @@
+Captionable = {}
+Captionable.__index = Captionable
+
+function Captionable:new(
+    id, -- string | nil
+    caption -- pandoc.Inlines | nil
+)
+   local o = {}
+   setmetatable(o, Captionable)
+
+   o.id = id
+   o.caption = caption
+
+   return o
+end
+
+function Captionable:has_caption()
+    return self.id ~= nil or self.caption ~= nil
+end
+
+function Captionable:render_caption()
+    local inlines = pandoc.Inlines({})
+
+    if self.caption ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\caption{"))
+        inlines:extend(self.caption)
+        inlines:insert(pandoc.RawInline("latex", "}"))
+    elseif self.id ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\caption{}"))
+    end
+
+    if self.id ~= nil then
+        inlines:insert(pandoc.RawInline("latex", "\\label{" .. self.id .. "}"))
+    end
+
+    return inlines
+end
+
+
+--
+-- Table
+--
+
+
+local function get_table_id(
+    table_ -- pandoc.Table
+)
+    local id = table_.identifier
+
+    if id == "" then
+        return nil
+    end
+
+    return id
+end
+
+
+local function get_table_caption(
+    table_ -- pandoc.Table
+)
+    local caption_string = table_.attributes.caption
+
+    if caption_string == nil then
+        return nil
+    end
+
+    return pandoc.utils.blocks_to_inlines(pandoc.read(caption_string).blocks)
+end
+
+
+--------------------------------------------------------------------------------
+-- Brace yourself for the legacy code ------------------------------------------
+--------------------------------------------------------------------------------
+
+
 local OUTSIDE_VRULE_THICKNESS_IN_PT = 1
 local OUTSIDE_HRULE_THICKNESS_IN_PT = 1
 local INSIDE_VRULE_THICKNESS_IN_PT = 0.5
@@ -441,14 +516,49 @@ local function longtable_blocks(
     return blocks
 end
 
--- Module exports
 
-if FORMAT:match("latex") then
-    return {
-        {
-            Table = function (table_el)
-                return longtable_blocks(table_el)
-            end,
-        }
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+return {
+    {
+        Table = function (
+            table_ -- pandoc.Table
+        )
+            local id = get_table_id(table_)
+            local caption = get_table_caption(table_)
+            local captionable = Captionable:new(id, caption)
+
+            local table_to_render = pandoc.Table(
+                {long = pandoc.Blocks({}), short = nil}, -- caption -- {long -- pandoc.Blocks, short -- pandoc.Inlines | nil}
+                table_.colspecs,                         -- colspecs -- pandoc.List[pandoc.ColSpec]
+                table_.head,                             -- head -- pandoc.TableHead
+                table_.bodies,                           -- bodies -- pandoc.List[pandoc.TableBody]
+                table_.foot,                             -- foot -- pandoc.TableFoot
+                nil                                      -- attr -- pandoc.Attr | nil
+            )
+
+            if captionable:has_caption() then
+                if captionable.caption ~= nil then
+                    table_to_render.caption = {
+                        long = pandoc.Blocks({pandoc.Plain(captionable.caption)}),
+                        short = nil
+                    }
+                elseif captionable.id ~= nil then
+                    table_to_render.caption = {
+                        long = pandoc.Blocks({pandoc.Plain({})}),
+                        short = nil
+                    }
+                end
+
+                if captionable.id ~= nil then
+                    table_to_render.identifier = captionable.id
+                end
+            end
+
+            return longtable_blocks(table_to_render)
+        end
     }
-end
+}
