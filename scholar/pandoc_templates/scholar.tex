@@ -322,6 +322,8 @@
 \renewcommand\theadgape{}
 \renewcommand\rotheadgape{}
 
+\counterwithin{table}{section}
+
 %
 % Listings
 %
@@ -388,6 +390,8 @@
 \AfterEndEnvironment{longlisting}{\addvspace{\bigskipamount}}
 
 \setminted{breakanywhere,breaklines,fontsize=\small,style=xcode}
+
+\counterwithin{listing}{section}
 
 %
 % Citations
@@ -576,6 +580,8 @@
 \usepackage{amsmath,amsfonts,amssymb}
 \usepackage{mathtools}
 \usepackage{unicode-math}
+
+\counterwithin{equation}{section}
 
 
 %
