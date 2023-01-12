@@ -1,15 +1,15 @@
-local function is_references_container(
+local function is_list_of_references_div(
     div -- pandoc.Div
 )
-    return div.identifier == "references"
+    return div.identifier == "list-of-references"
 end
 
 
-local function check_references_container(
+local function check_list_of_references_div(
     div -- pandoc.Div
 )
     if #div.content > 0 then
-        warn("References container isn't empty. Ignoring its content.")
+        warn("'List of References' div isn't empty. Ignoring its content.")
     end
 end
 
@@ -19,11 +19,11 @@ return {
         Div = function (
             div -- pandoc.Div
         )
-            if not is_references_container(div) then
+            if not is_list_of_references_div(div) then
                 return div
             end
 
-            check_references_container(div)
+            check_list_of_references_div(div)
 
             local rendered_references = table.concat({
                 "\\nocite{*}",
