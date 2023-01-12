@@ -10,11 +10,11 @@ class Style:
         *,
         # template_file: Path,  # Not supported yet
         # filter_files: list[Path],  # Not supported yet
-        parameters: dict[str, Any],
+        variables: dict[str, Any],
     ):
         # self.template_file = template_file  # Not supported yet
         # self.filter_files = filter_files  # Not supported yet
-        self.parameters = parameters
+        self.variables = variables
 
 
 class GostStyle(Style):
@@ -27,7 +27,7 @@ class GostStyle(Style):
         disable_numbering_within_section: bool,
     ):
         super().__init__(
-            parameters={
+            variables={
                 "title_page": title_page,
                 "disable_main_section_numbering": disable_main_section_numbering,
                 "disable_section_page_breaks": disable_section_page_breaks,
