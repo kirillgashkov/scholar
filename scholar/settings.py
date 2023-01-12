@@ -55,6 +55,7 @@ class Settings(BaseSettings):
     _yaml_config_file: Path | None = PrivateAttr()
 
     paragraph_caption: ParagraphCaptionSettingsGroup = ParagraphCaptionSettingsGroup()
+    title_page: Path | None = None
     references: dict[str, str] = {}
 
     def __init__(

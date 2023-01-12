@@ -1,5 +1,6 @@
 import json
 import re
+import shutil
 import subprocess
 import sys
 from abc import ABC, abstractmethod
@@ -44,6 +45,7 @@ class MarkdownToLaTeXConverter(Converter):
         pandoc_extracted_resources_dir: Path,
         pandoc_generated_resources_dir: Path,
         generated_biblatex_file: Path,
+        extracted_title_page_file: Path,
         pandoc_output_dir: Path,
         latexmk_output_dir: Path,
         settings: Settings,
@@ -54,6 +56,7 @@ class MarkdownToLaTeXConverter(Converter):
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
         self.pandoc_generated_resources_dir = pandoc_generated_resources_dir
         self.generated_biblatex_file = generated_biblatex_file
+        self.extracted_title_page_file = extracted_title_page_file
         self.pandoc_output_dir = pandoc_output_dir
         self.latexmk_output_dir = latexmk_output_dir
         self.settings = settings
@@ -66,6 +69,10 @@ class MarkdownToLaTeXConverter(Converter):
             self.pandoc_output_dir / input_file.with_suffix(".content.json").name
         )
         output_tex_file = self.pandoc_output_dir / input_file.with_suffix(".tex").name
+
+        if self.settings.title_page:
+            rich.print("[bold yellow]Extracting the title page file")
+            shutil.copy(self.settings.title_page, self.extracted_title_page_file)
 
         rich.print("[bold yellow]Generating BibLaTeX from metadata")
         self._generate_biblatex_file()
@@ -288,6 +295,16 @@ class MarkdownToLaTeXConverter(Converter):
 
         pattern = re.compile(r"^[A-Za-z0-9._\-\/]+$")
 
+        # WTF: Same for the title page file.
+        if self.settings.title_page:
+            includepdf_title_page = self.extracted_title_page_file.relative_to(
+                Path.cwd()
+            ).as_posix()
+        else:
+            includepdf_title_page = None
+
+        pattern = re.compile(r"^[A-Za-z0-9._\-\/]+$")
+
         if not pattern.match(minted_package_option_outputdir):
             rich.print(
                 f"[bold red]Error: [/bold red]Failed to provide a valid value for the 'outputdir' option of the 'minted' package",
@@ -302,12 +319,21 @@ class MarkdownToLaTeXConverter(Converter):
             )
             typer.Exit(1)
 
+        if includepdf_title_page and not pattern.match(includepdf_title_page):
+            if not pattern.match(biblatex_bibresource):
+                rich.print(
+                    f"[bold red]Error: [/bold red]Failed to provide a valid value for the '\\includepdf' command that includes a title page",
+                    file=sys.stderr,
+                )
+                typer.Exit(1)
+
         metadata = _value_to_metavalue(
             {
                 "scholar": {
                     "settings": self.settings.dict(),
                     "variables": {
                         "biblatex_bibresource": biblatex_bibresource,
+                        "includepdf_title_page": includepdf_title_page,
                     },
                 },
                 "generated-resources-directory": str(
@@ -441,9 +467,13 @@ def _make_pandoc_format(
 
 def _value_to_metavalue(value: Any) -> panflute.MetaValue:
     if isinstance(value, dict):
-        return panflute.MetaMap(**{k: _value_to_metavalue(v) for k, v in value.items()})
+        return panflute.MetaMap(
+            **{k: _value_to_metavalue(v) for k, v in value.items() if v is not None}
+        )
     elif isinstance(value, list):
-        return panflute.MetaList(*[_value_to_metavalue(v) for v in value])
+        return panflute.MetaList(
+            *[_value_to_metavalue(v) for v in value if v is not None]
+        )
     elif isinstance(value, bool):
         return panflute.MetaBool(value)
     else:
