@@ -137,6 +137,10 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "render_table.lua",
                 PandocFilterType.LUA,
             ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_image.lua",
+                PandocFilterType.LUA,
+            ),
             # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for
             # code blocks.
             PandocFilter(
@@ -163,10 +167,6 @@ class MarkdownToLaTeXConverter(Converter):
             ),
             PandocFilter(
                 self.pandoc_lua_filters_dir / "make_latex_code.lua",
-                PandocFilterType.LUA,
-            ),
-            PandocFilter(
-                self.pandoc_lua_filters_dir / "render_image.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
