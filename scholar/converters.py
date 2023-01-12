@@ -52,6 +52,7 @@ class MarkdownToLaTeXConverter(Converter):
         latexmk_output_dir: Path,
         settings: Settings,
     ) -> None:
+        self.style = style
         self.pandoc_template_file = pandoc_template_file
         self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
@@ -274,9 +275,7 @@ class MarkdownToLaTeXConverter(Converter):
         # 'settings.py' file. We keep the regular expression check to ensure that we
         # don't pass any unescaped paths to LaTeX and cause mayhem. Obviously this
         # solution is far from ideal but it will work for now.
-        minted_outputdir = self.latexmk_output_dir.relative_to(
-            Path.cwd()
-        ).as_posix()
+        minted_outputdir = self.latexmk_output_dir.relative_to(Path.cwd()).as_posix()
 
         # WTF: Same for the biblatex resource file.
         biblatex_bibresource = self.generated_biblatex_file.relative_to(
@@ -326,6 +325,7 @@ class MarkdownToLaTeXConverter(Converter):
                         "includepdf_title_page": includepdf_title_page,
                         "minted_outputdir": minted_outputdir,
                     },
+                    "variables": self.style.variables,
                 },
             }
         )
