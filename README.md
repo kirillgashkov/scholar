@@ -27,23 +27,36 @@ $ python -m scholar --help
 
  Convert the INPUT Markdown file to PDF.
 
-╭─ Arguments ────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│   input_file      INPUT  The input Markdown file. [default: None]                                                          │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --output              -o      PATH                             The output file or directory. [default: (CWD)]              │
-│ --style                       TEXT                             The style to use. [default: gost_thesis]                    │
-│ --title-page                  FILE                             The title page to use. [default: None]                      │
-│ --config                      FILE                             The YAML config file. [default: None]                       │
-│ --from-tex                                                     Convert from LaTeX instead of Markdown.                     │
-│ --to-tex                                                       Convert to LaTeX instead of PDF.                            │
-│ --styles                                                       Show available styles and exit.                             │
-│ --install-completion          [bash|zsh|fish|powershell|pwsh]  Install completion for the specified shell. [default: None] │
-│ --show-completion             [bash|zsh|fish|powershell|pwsh]  Show completion for the specified shell, to copy it or      │
-│                                                                customize the installation.                                 │
-│                                                                [default: None]                                             │
-│ --help                                                         Show this message and exit.                                 │
-╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Arguments ──────────────────────────────────────────────────────────────────╮
+│   input_file      INPUT  The input Markdown file. [default: None]            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --output              -o      PATH                   The output file or      │
+│                                                      directory.              │
+│                                                      [default: (CWD)]        │
+│ --style                       TEXT                   The style to use.       │
+│                                                      [default: gost_thesis]  │
+│ --title-page                  FILE                   The title page to use.  │
+│                                                      [default: None]         │
+│ --config                      FILE                   The YAML config file.   │
+│                                                      [default: None]         │
+│ --from-tex                                           Convert from LaTeX      │
+│                                                      instead of Markdown.    │
+│ --to-tex                                             Convert to LaTeX        │
+│                                                      instead of PDF.         │
+│ --styles                                             Show available styles   │
+│                                                      and exit.               │
+│ --install-completion          [bash|zsh|fish|powers  Install completion for  │
+│                               hell|pwsh]             the specified shell.    │
+│                                                      [default: None]         │
+│ --show-completion             [bash|zsh|fish|powers  Show completion for the │
+│                               hell|pwsh]             specified shell, to     │
+│                                                      copy it or customize    │
+│                                                      the installation.       │
+│                                                      [default: None]         │
+│ --help                                               Show this message and   │
+│                                                      exit.                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 
