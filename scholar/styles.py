@@ -22,15 +22,15 @@ class GostStyle(Style):
     def __init__(
         self,
         *,
-        title_page: Path | None,
+        # title_page: Path | None,  # Implemented somewhere else for now.
         disable_main_section_numbering: bool,
         disable_section_page_breaks: bool,
         disable_numbering_within_section: bool,
-    ):
+    ) -> None:
         super().__init__(
             template_file=PANDOC_TEMPLATE_FILE,
             variables={
-                "title_page": title_page,
+                # "title_page": title_page,  # Implemented somewhere else for now.
                 "disable_main_section_numbering": disable_main_section_numbering,
                 "disable_section_page_breaks": disable_section_page_breaks,
                 "disable_numbering_within_section": disable_numbering_within_section,
@@ -39,9 +39,13 @@ class GostStyle(Style):
 
 
 class GostThesisStyle(GostStyle):
-    def __init__(self, *, title_page: Path | None = None):
+    def __init__(
+        self,
+        # *,
+        # title_page: Path | None = None,  # Implemented somewhere else for now.
+    ) -> None:
         super().__init__(
-            title_page=title_page,
+            # title_page=title_page,  # Implemented somewhere else for now.
             disable_main_section_numbering=False,
             disable_section_page_breaks=False,
             disable_numbering_within_section=False,
@@ -49,9 +53,13 @@ class GostThesisStyle(GostStyle):
 
 
 class GostReportStyle(GostStyle):
-    def __init__(self, *, title_page: Path | None = None):
+    def __init__(
+        self,
+        # *,
+        # title_page: Path | None = None,  # Implemented somewhere else for now.
+    ) -> None:
         super().__init__(
-            title_page=title_page,
+            # title_page=title_page,  # Implemented somewhere else for now.
             disable_main_section_numbering=True,
             disable_section_page_breaks=True,
             disable_numbering_within_section=True,
@@ -63,8 +71,8 @@ DEFAULT_STYLE = "gost_thesis"
 
 def get_styles(settings: Settings) -> dict[str, Style]:
     return {
-        "gost_thesis": GostThesisStyle(title_page=settings.title_page),
-        "gost_report": GostReportStyle(title_page=settings.title_page),
+        "gost_thesis": GostThesisStyle(),
+        "gost_report": GostReportStyle(),
     }
 
 
