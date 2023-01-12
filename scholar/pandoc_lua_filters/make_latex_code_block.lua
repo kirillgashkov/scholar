@@ -14,16 +14,16 @@
 --         print(f"Hello, {name}!")
 --     ```
 --
--- This filter also recognizes the 'start' attribute used by the
--- 'include_code_block.lua' filter. If the 'start' attribute is present, the
+-- This filter also recognizes the 'from' attribute used by the
+-- 'include_code_block.lua' filter. If the 'from' attribute is present, the
 -- filter will set the 'firstline' option of the minted environment:
 --
---    ```{.python include="path/to/file.py" start=7}
+--    ```{.python include="path/to/file.py" from=7}
 --    ```
 --
 ----- SECURITY IMPLICATIONS ----------------------------------------------------
 --
--- The accepted parameters 'start', 'language'  and 'identifier' ('7', 'python'
+-- The accepted parameters 'from', 'language'  and 'identifier' ('7', 'python'
 -- and 'greet' in the examples above) are treated as raw LaTeX code.
 --
 -- However, the parameter 'caption' is treated as raw Markdown, so it will even
@@ -94,12 +94,12 @@ local function parse_code_attributes(
             end
 
             caption_inlines = pandoc.utils.blocks_to_inlines(pandoc.read(value, "json").blocks)
-        elseif key == "start" then
+        elseif key == "from" then
             start_line_number = tonumber(value)
 
             if start_line_number == nil then
                 io.stderr:write(
-                    "Error: 'start' attribute must be an integer.\n"
+                    "Error: 'from' attribute must be an integer.\n"
                 )
                 os.exit(1)
             end

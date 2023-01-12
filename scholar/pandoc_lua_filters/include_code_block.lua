@@ -1,6 +1,6 @@
 -- Include code blocks from files.
 --
--- ```{.lua include="path/to/file.lua" start=1 end=10}
+-- ```{.lua include="path/to/file.lua" from=1 to=10}
 -- ```
 --
 -- This filter has security implications, so it should only be used with
@@ -16,21 +16,21 @@ local function parse_include_attributes(
     for key, value in pairs(attributes) do
         if key == "include" then
             include_filepath = value
-        elseif key == "start" then
+        elseif key == "from" then
             start_line_number = tonumber(value)
 
             if start_line_number == nil then
                 io.stderr:write(
-                    "Error: 'start' attribute must be an integer.\n"
+                    "Error: 'from' attribute must be an integer.\n"
                 )
                 os.exit(1)
             end
-        elseif key == "end" then
+        elseif key == "to" then
             end_line_number = tonumber(value)
 
             if end_line_number == nil then
                 io.stderr:write(
-                    "Error: 'end' attribute must be an integer.\n"
+                    "Error: 'to' attribute must be an integer.\n"
                 )
                 os.exit(1)
             end
@@ -39,7 +39,7 @@ local function parse_include_attributes(
 
     if include_filepath == nil and (start_line_number ~= nil or end_line_number ~= nil) then
         io.stderr:write(
-            "Warning: code block has 'start' or 'end' attribute, but no 'include' attribute.\n"
+            "Warning: code block has 'from' or 'to' attribute, but no 'include' attribute.\n"
         )
     end
 
@@ -48,17 +48,6 @@ local function parse_include_attributes(
         start_line_number = start_line_number,
         end_line_number = end_line_number
     }
-end
-
-
-local function remove_include_attributes(
-    attributes -- pandoc.Attributes
-)
-    for key, value in pairs(attributes) do
-        if key == "include" or key == "start" or key == "end" then
-            attributes[key] = nil
-        end
-    end
 end
 
 
