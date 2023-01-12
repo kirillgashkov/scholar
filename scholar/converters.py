@@ -165,7 +165,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_latex_code.lua",
+                self.pandoc_lua_filters_dir / "render_code.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
