@@ -105,7 +105,7 @@ class MarkdownToLaTeXConverter(Converter):
             "commonmark",
             enabled_extensions=[
                 # GFM extensions
-                "autolink_bare_uris"  # https://github.github.com/gfm/#autolinks-extension-
+                "autolink_bare_uris",  # https://github.github.com/gfm/#autolinks-extension-
                 "pipe_tables",  # https://github.github.com/gfm/#tables-extension-
                 "strikeout",  # https://github.github.com/gfm/#strikethrough-extension-
                 "task_lists",  # https://github.github.com/gfm/#task-list-items-extension-
@@ -115,7 +115,6 @@ class MarkdownToLaTeXConverter(Converter):
                 # Handy extensions
                 "fenced_divs",
                 "bracketed_spans",
-                "raw_tex",
                 "implicit_figures",
                 "smart",
             ],
