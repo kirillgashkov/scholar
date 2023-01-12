@@ -27,9 +27,12 @@ from scholar.settings import (
 )
 from scholar.styles import DEFAULT_STYLE
 
+app = typer.Typer()
+
 T = TypeVar("T")
 
 
+@app.command()
 def main(
     input_file: Path = typer.Argument(
         ...,
@@ -189,4 +192,4 @@ def convert_tex_to_pdf(input_file: Path, settings: Settings) -> Path:
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()
