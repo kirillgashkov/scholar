@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 
+from scholar.constants import PANDOC_TEMPLATE_FILE
 from scholar.settings import Settings
 
 
@@ -8,11 +9,11 @@ class Style:
     def __init__(
         self,
         *,
-        # template_file: Path,  # Not supported yet
+        template_file: Path,
         # filter_files: list[Path],  # Not supported yet
         variables: dict[str, Any],
     ):
-        # self.template_file = template_file  # Not supported yet
+        self.template_file = template_file
         # self.filter_files = filter_files  # Not supported yet
         self.variables = variables
 
@@ -27,6 +28,7 @@ class GostStyle(Style):
         disable_numbering_within_section: bool,
     ):
         super().__init__(
+            template_file=PANDOC_TEMPLATE_FILE,
             variables={
                 "title_page": title_page,
                 "disable_main_section_numbering": disable_main_section_numbering,
