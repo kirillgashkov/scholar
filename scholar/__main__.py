@@ -61,6 +61,14 @@ def main(
         "--style",
         help="The style to use.",
     ),
+    title_page: Optional[Path] = typer.Option(
+        None,
+        "--title-page",
+        exists=True,
+        dir_okay=False,
+        readable=True,
+        help="The title page to use.",
+    ),
     config_file: Optional[
         Path
     ] = typer.Option(  # See https://github.com/tiangolo/typer/issues/348
@@ -108,7 +116,10 @@ def main(
             f.write(input_document.content)
 
     settings = load_settings(
-        cli_settings={"style": style},
+        cli_settings={
+            "style": style,
+            "title_page": title_page,
+        },
         yaml_front_matter_settings=yaml_front_matter_settings,
         yaml_config_file=config_file,
     )
