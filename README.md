@@ -11,6 +11,7 @@ Write academic articles in Markdown.
 - [LaTeX](https://www.latex-project.org/)
 - [Librsvg](https://wiki.gnome.org/Projects/LibRsvg) (if you want to use SVG
   images)
+- [Pygments](https://pygments.org/) (if you want to use syntax highlighting)
 
 ### GOST style requirements
 
