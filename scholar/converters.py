@@ -192,10 +192,6 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "convert_image_from_svg_to_pdf.lua",
                 PandocFilterType.LUA,
             ),
-            PandocFilter(
-                self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
-                PandocFilterType.JSON,
-            ),
         ]
 
         pandoc_filter_options = []
