@@ -425,6 +425,7 @@ class LaTeXToPDFConverter(Converter):
                 "-interaction=nonstopmode",
                 "-halt-on-error",
                 "-file-line-error",
+                "-quiet",
                 # Other options
                 "-shell-escape",  # Needed for 'minted', has security implications
                 # I/O options
