@@ -41,7 +41,6 @@ class MarkdownToLaTeXConverter(Converter):
         self,
         *,
         style: Style,
-        pandoc_template_file: Path,
         pandoc_lua_filters_dir: Path,
         pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
@@ -53,7 +52,6 @@ class MarkdownToLaTeXConverter(Converter):
         settings: Settings,
     ) -> None:
         self.style = style
-        self.pandoc_template_file = pandoc_template_file
         self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir
@@ -380,7 +378,7 @@ class MarkdownToLaTeXConverter(Converter):
                 # Template options
                 "--standalone",
                 "--template",
-                str(self.pandoc_template_file),
+                str(self.style.template_file),
                 # Writer options
                 *self._make_latex_pandoc_writer_options(),
                 *self._make_latex_pandoc_writer_filter_options(),
