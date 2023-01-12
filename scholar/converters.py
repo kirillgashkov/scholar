@@ -141,6 +141,10 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "render_image.lua",
                 PandocFilterType.LUA,
             ),
+            PandocFilter(
+                self.pandoc_lua_filters_dir / "render_math.lua",
+                PandocFilterType.LUA,
+            ),
             # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for
             # code blocks.
             PandocFilter(
