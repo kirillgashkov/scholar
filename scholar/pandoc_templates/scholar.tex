@@ -525,7 +525,7 @@ $endif$
 
 \makeatletter
 \newenvironment{scholar@section@main}{%
-  $if(scholar.variables.disable_main_section_numbering)$$else$\makeatletter\c@secnumdepth=0\makeatother$endif$%  % (Conditionally) disable section numbering. Using \c@secnumdepth=0 instead of \setcounter{secnumdepth}{0} to have the counter restored at the end of the environment. (See the comments to https://tex.stackexchange.com/a/11669.)
+  $if(scholar.variables.disable_main_section_numbering)$\makeatletter\c@secnumdepth=0\makeatother$else$$endif$%  % (Conditionally) disable section numbering. Using \c@secnumdepth=0 instead of \setcounter{secnumdepth}{0} to have the counter restored at the end of the environment. (See the comments to https://tex.stackexchange.com/a/11669.)
   \titleformat{\section}[block]{\filright\Large\bfseries}{\thesection}{0.5em}{}%
   \titlespacing{\section}{\parindent}{3ex}{2ex}%
   %
