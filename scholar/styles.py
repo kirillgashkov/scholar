@@ -69,7 +69,7 @@ class GostReportStyle(GostStyle):
 DEFAULT_STYLE = "gost_thesis"
 
 
-def get_styles(settings: Settings) -> dict[str, Style]:
+def get_styles() -> dict[str, Style]:
     return {
         "gost_thesis": GostThesisStyle(),
         "gost_report": GostReportStyle(),
@@ -77,4 +77,4 @@ def get_styles(settings: Settings) -> dict[str, Style]:
 
 
 def get_style(settings: Settings) -> Style:
-    return get_styles(settings)[settings.style]
+    return get_styles()[settings.style]

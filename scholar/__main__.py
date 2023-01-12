@@ -25,17 +25,23 @@ from scholar.settings import (
     InvalidSettingsError,
     Settings,
 )
-from scholar.styles import DEFAULT_STYLE
+from scholar.styles import DEFAULT_STYLE, get_styles
 
 app = typer.Typer()
 
 T = TypeVar("T")
 
 
+def styles_callback(show_styles: bool) -> None:
+    if show_styles:
+        print("\n".join(get_styles()))
+        raise typer.Exit()
+
+
 @app.command()
 def main(
     input_file: Path = typer.Argument(
-        ...,
+        None,
         metavar="INPUT",
         exists=True,
         dir_okay=False,
@@ -74,6 +80,13 @@ def main(
         False,
         "--to-tex",
         help="Convert to LaTeX instead of PDF.",
+    ),
+    show_styles: bool = typer.Option(
+        False,
+        "--styles",
+        callback=styles_callback,
+        is_eager=True,
+        help="Show available styles and exit.",
     ),
 ) -> None:
     """
