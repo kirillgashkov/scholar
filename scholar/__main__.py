@@ -8,6 +8,7 @@ import rich
 import typer
 
 from scholar.constants import (
+    EXTRACTED_TITLE_PAGE_FILE,
     GENERATED_BIBLATEX_FILE,
     LATEXMK_OUTPUT_DIR,
     PANDOC_EXTRACTED_RESOURCES_DIR,
@@ -166,6 +167,7 @@ def convert_md_to_tex(input_file: Path, settings: Settings) -> Path:
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
         pandoc_generated_resources_dir=PANDOC_GENERATED_RESOURCES_DIR,
         generated_biblatex_file=GENERATED_BIBLATEX_FILE,
+        extracted_title_page_file=EXTRACTED_TITLE_PAGE_FILE,
         pandoc_output_dir=PANDOC_OUTPUT_DIR,
         latexmk_output_dir=LATEXMK_OUTPUT_DIR,
         settings=settings,

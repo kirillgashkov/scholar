@@ -578,7 +578,18 @@
 \usepackage{unicode-math}
 
 
+%
+% Title page
+%
+
+\usepackage{pdfpages}
+
+
 \begin{document}
+
+$if(scholar.variables.includepdf_title_page)$
+\includepdf[pages=-]{$scholar.variables.includepdf_title_page$}
+$endif$
 
 $body$
 
