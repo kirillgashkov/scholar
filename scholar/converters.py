@@ -14,6 +14,7 @@ import rich
 import typer
 
 from scholar.settings import Settings
+from scholar.styles import Style
 
 
 class Converter(ABC):
@@ -39,6 +40,7 @@ class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
         *,
+        style: Style,
         pandoc_template_file: Path,
         pandoc_lua_filters_dir: Path,
         pandoc_json_filters_dir: Path,
@@ -324,9 +326,6 @@ class MarkdownToLaTeXConverter(Converter):
                         "includepdf_title_page": includepdf_title_page,
                     },
                 },
-                "generated-resources-directory": str(
-                    self.pandoc_generated_resources_dir
-                ),
                 "minted-package-option-outputdir": str(minted_package_option_outputdir),
             }
         )
