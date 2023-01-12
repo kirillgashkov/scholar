@@ -152,18 +152,6 @@ class MarkdownToLaTeXConverter(Converter):
                 self.pandoc_lua_filters_dir / "render_math.lua",
                 PandocFilterType.LUA,
             ),
-            # NOTE: merge_code_blocks_and_paragraph_captions creates new attributes for
-            # code blocks.
-            PandocFilter(
-                (
-                    self.pandoc_lua_filters_dir
-                    / "merge_code_blocks_and_paragraph_captions.lua"
-                ),
-                PandocFilterType.LUA,
-            ),
-            # NOTE: make_latex_code_block filter creates new inlines, therefore
-            # it must be run before make_latex_code filter as it operates on
-            # inlines.
             PandocFilter(
                 self.pandoc_lua_filters_dir / "include_code_block.lua",
                 PandocFilterType.LUA,
@@ -177,23 +165,23 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "make_latex_code.lua",
+                self.pandoc_lua_filters_dir / "render_code.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_references_in_text.lua",
+                self.pandoc_lua_filters_dir / "render_link_reference.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_citations_in_text.lua",
+                self.pandoc_lua_filters_dir / "render_link_citation.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_references_container.lua",
+                self.pandoc_lua_filters_dir / "render_div_list_of_references.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_table_of_contents_container.lua",
+                self.pandoc_lua_filters_dir / "render_div_table_of_contents.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
@@ -201,8 +189,8 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_json_filters_dir / "convert_svg_to_pdf.py",
-                PandocFilterType.JSON,
+                self.pandoc_lua_filters_dir / "convert_image_from_svg_to_pdf.lua",
+                PandocFilterType.LUA,
             ),
         ]
 
@@ -437,6 +425,7 @@ class LaTeXToPDFConverter(Converter):
                 "-interaction=nonstopmode",
                 "-halt-on-error",
                 "-file-line-error",
+                "-quiet",
                 # Other options
                 "-shell-escape",  # Needed for 'minted', has security implications
                 # I/O options
