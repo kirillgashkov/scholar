@@ -10,9 +10,12 @@ from pydantic import (
     PrivateAttr,
     ValidationError,
     root_validator,
+    validator,
 )
 from pydantic.env_settings import SettingsSourceCallable
 from yaml import safe_load
+
+from scholar.constants import CACHE_DIR
 
 
 class SettingsGroup(BaseModel):
@@ -50,8 +53,17 @@ class Settings(BaseSettings):
     _yaml_front_matter_settings: dict[str, Any] = PrivateAttr()
     _yaml_config_file: Path | None = PrivateAttr()
 
+    cache_dir: Path = CACHE_DIR
+    rsvg_convert_executable: str = "rsvg-convert"
+
     title_page: Path | None = None
     references: dict[str, str] = {}
+
+    @validator("cache_dir")
+    def cache_dir_must_be_default(cls, v: Path) -> Path:
+        if v != CACHE_DIR:
+            raise ValueError("Non-default cache_dir is not yet supported.")
+        return v
 
     def __init__(
         self,
