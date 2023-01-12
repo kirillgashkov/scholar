@@ -319,7 +319,7 @@ class MarkdownToLaTeXConverter(Converter):
             {
                 "scholar": {
                     "settings": self.settings.dict(),
-                    "variables": {
+                    "constants": {
                         "biblatex_bibresource": biblatex_bibresource,
                         "includepdf_title_page": includepdf_title_page,
                     },
