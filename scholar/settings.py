@@ -38,10 +38,6 @@ class SettingsGroup(BaseModel):
         return unknown_settings
 
 
-class ParagraphCaptionSettingsGroup(SettingsGroup):
-    listing_prefixes: list[str] = [":", "Listing:"]
-
-
 class SettingsSourceLogEntry(BaseModel):
     source: str
     settings: dict[str, Any]
@@ -54,7 +50,6 @@ class Settings(BaseSettings):
     _yaml_front_matter_settings: dict[str, Any] = PrivateAttr()
     _yaml_config_file: Path | None = PrivateAttr()
 
-    paragraph_caption: ParagraphCaptionSettingsGroup = ParagraphCaptionSettingsGroup()
     title_page: Path | None = None
     references: dict[str, str] = {}
 
