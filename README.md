@@ -20,7 +20,7 @@ Write academic articles in Markdown.
 
 ## Usage
 
-```sh
+```
 $ python -m scholar --help
 
  Usage: python -m scholar [OPTIONS] INPUT
