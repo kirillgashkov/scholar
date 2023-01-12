@@ -181,7 +181,7 @@ class MarkdownToLaTeXConverter(Converter):
                 PandocFilterType.LUA,
             ),
             PandocFilter(
-                self.pandoc_lua_filters_dir / "render_table_of_contents_container.lua",
+                self.pandoc_lua_filters_dir / "render_div_table_of_contents.lua",
                 PandocFilterType.LUA,
             ),
             PandocFilter(
