@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     cache_dir: Path = CACHE_DIR
     rsvg_convert_executable: str = "rsvg-convert"
 
-    style: str = "gost_thesis"
+    style: str
 
     title_page: Path | None = None
     references: dict[str, str] = {}

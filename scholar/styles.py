@@ -58,6 +58,9 @@ class GostReportStyle(GostStyle):
         )
 
 
+DEFAULT_STYLE = "gost_thesis"
+
+
 def get_styles(settings: Settings) -> dict[str, Style]:
     return {
         "gost_thesis": GostThesisStyle(title_page=settings.title_page),

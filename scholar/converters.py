@@ -14,7 +14,7 @@ import rich
 import typer
 
 from scholar.settings import Settings
-from scholar.styles import Style
+from scholar.styles import get_style
 
 
 class Converter(ABC):
@@ -40,7 +40,6 @@ class MarkdownToLaTeXConverter(Converter):
     def __init__(
         self,
         *,
-        style: Style,
         pandoc_lua_filters_dir: Path,
         pandoc_json_filters_dir: Path,
         pandoc_extracted_resources_dir: Path,
@@ -51,7 +50,7 @@ class MarkdownToLaTeXConverter(Converter):
         latexmk_output_dir: Path,
         settings: Settings,
     ) -> None:
-        self.style = style
+        self.style = get_style(settings)
         self.pandoc_lua_filters_dir = pandoc_lua_filters_dir
         self.pandoc_json_filters_dir = pandoc_json_filters_dir
         self.pandoc_extracted_resources_dir = pandoc_extracted_resources_dir

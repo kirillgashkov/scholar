@@ -16,7 +16,6 @@ from scholar.constants import (
     PANDOC_JSON_FILTERS_DIR,
     PANDOC_LUA_FILTERS_DIR,
     PANDOC_OUTPUT_DIR,
-    PANDOC_TEMPLATE_FILE,
     SCHOLAR_OUTPUT_DIR,
 )
 from scholar.converters import LaTeXToPDFConverter, MarkdownToLaTeXConverter
@@ -26,6 +25,7 @@ from scholar.settings import (
     InvalidSettingsError,
     Settings,
 )
+from scholar.styles import DEFAULT_STYLE
 
 T = TypeVar("T")
 
@@ -46,6 +46,11 @@ def main(
         writable=True,
         help="The output file or directory.",
         show_default="CWD",  # type: ignore[arg-type]  # See https://github.com/tiangolo/typer/issues/158
+    ),
+    style: str = typer.Option(
+        DEFAULT_STYLE,
+        "--style",
+        help="The style to use.",
     ),
     config_file: Optional[
         Path
@@ -87,7 +92,7 @@ def main(
             f.write(input_document.content)
 
     settings = load_settings(
-        cli_settings={},
+        cli_settings={"style": style},
         yaml_front_matter_settings=yaml_front_matter_settings,
         yaml_config_file=config_file,
     )
@@ -161,7 +166,6 @@ def load_settings(
 def convert_md_to_tex(input_file: Path, settings: Settings) -> Path:
     PANDOC_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     converter = MarkdownToLaTeXConverter(
-        pandoc_template_file=PANDOC_TEMPLATE_FILE,
         pandoc_lua_filters_dir=PANDOC_LUA_FILTERS_DIR,
         pandoc_json_filters_dir=PANDOC_JSON_FILTERS_DIR,
         pandoc_extracted_resources_dir=PANDOC_EXTRACTED_RESOURCES_DIR,
